@@ -10,6 +10,7 @@
   - [Drop all tables in database](#drop-all-tables-in-database)
 - [Working with database schema (Mongoose)](#working-with-database-schema-mongoose)
   - [Create schema](#create-schema)
+- [LMS Database Schema](#lms-database-schema)
 - [Seeding (TypeORM)](#seeding-typeorm)
   - [Creating seeds (TypeORM)](#creating-seeds-typeorm)
   - [Run seed (TypeORM)](#run-seed-typeorm)
@@ -120,6 +121,98 @@ npm run schema:drop
 
    export const PostSchema = SchemaFactory.createForClass(PostSchemaClass);
    ```
+
+---
+
+## LMS Database Schema
+
+The LMS module adds 28 new tables to the database, organized into four domains. All entities use auto-increment integer primary keys and extend `EntityRelationalHelper`.
+
+### Migrations
+
+Two migrations manage the full schema:
+
+| Migration | Description |
+|-----------|-------------|
+| `CreateUser1715028537217` | Base boilerplate tables (user, role, status, file, session) |
+| `LmsSchema1770930398142` | All 28 LMS tables with indexes and foreign keys |
+
+### Entity-Relationship Overview
+
+**Institution Domain** (7 tables):
+
+| Table | Key Relationships |
+|-------|-------------------|
+| `institution` | Root entity — all LMS data belongs to an institution |
+| `academic_year` | Belongs to `institution` |
+| `term` | Belongs to `academic_year` |
+| `department` | Belongs to `institution` |
+| `grade_class` | Belongs to `institution`, optional `department` |
+| `section` | Belongs to `grade_class` |
+| `subject` | Belongs to `grade_class`, optional `department` |
+
+**Student Domain** (13 tables):
+
+| Table | Key Relationships |
+|-------|-------------------|
+| `student` | Links to `user` (OneToOne) and `institution` |
+| `admission_enquiry` | Belongs to `institution` and optional `grade_class` |
+| `student_document` | Belongs to `student`, optional `file` upload |
+| `student_enrollment` | Links `student` ↔ `section` ↔ `academic_year` |
+| `student_attendance` | Daily attendance per student/section |
+| `leave_request` | Belongs to `student`, approved by `user` |
+| `fee_structure` | Fee definition per `institution`/`grade_class`/`academic_year` |
+| `fee_challan` | Invoice per `student` + `fee_structure` |
+| `fee_payment` | Payment against `fee_challan` |
+| `exam` | Belongs to `term` |
+| `exam_subject` | Links `exam` ↔ `subject` |
+| `exam_result` | Score per `student` + `exam_subject` |
+| `course_material` | Belongs to `subject`, optional `file` |
+
+**Staff Domain** (6 tables):
+
+| Table | Key Relationships |
+|-------|-------------------|
+| `staff` | Links to `user` (OneToOne), `institution`, optional `department` |
+| `staff_attendance` | Daily attendance per staff |
+| `staff_leave` | Leave request per staff, approved by `user` |
+| `notice` | Published by `user`, belongs to `institution` |
+| `timetable_slot` | Links `section` ↔ `subject` ↔ `staff` (teacher) |
+| `salary_slip` | Monthly salary per `staff` |
+
+**Accounts Domain** (2 tables):
+
+| Table | Key Relationships |
+|-------|-------------------|
+| `income` | Belongs to `institution`, optional link to `fee_payment` |
+| `expense` | Belongs to `institution`, optional link to `salary_slip` |
+
+### Enums
+
+Enum types used across the schema:
+
+| Enum | Values |
+|------|--------|
+| `GenderEnum` | male, female, other |
+| `BloodGroupEnum` | A+, A-, B+, B-, AB+, AB-, O+, O- |
+| `AdmissionStatusEnum` | new_enquiry, contacted, visit_scheduled, applied, accepted, enrolled, rejected, withdrawn |
+| `AttendanceStatusEnum` | present, absent, late, half_day, excused |
+| `LeaveStatusEnum` | pending, approved, rejected, cancelled |
+| `LeaveTypeEnum` | casual, sick, earned, maternity, paternity, unpaid |
+| `PaymentStatusEnum` | pending, partial, paid, overdue, cancelled, refunded |
+| `PaymentMethodEnum` | cash, bank_transfer, cheque, online, card |
+| `FeeFrequencyEnum` | one_time, monthly, quarterly, semi_annual, annual |
+| `ExamTypeEnum` | midterm, final, unit_test, practical, assignment |
+| `EnrollmentStatusEnum` | active, promoted, graduated, transferred, dropped |
+| `EmploymentTypeEnum` | full_time, part_time, contract, visiting |
+| `TargetAudienceEnum` | all, students, staff, parents |
+| `CourseMaterialTypeEnum` | document, video, link, assignment |
+| `DayOfWeekEnum` | monday – sunday |
+| `SalaryStatusEnum` | pending, paid, partial, held |
+| `ExpenseStatusEnum` | pending, approved, paid, rejected |
+| `EnquirySourceEnum` | walk_in, phone, email, website, referral |
+
+For more details, see the [LMS module documentation](lms.md).
 
 ---
 

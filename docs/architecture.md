@@ -59,6 +59,66 @@ The main reason for using Hexagonal Architecture is to separate the business log
 └── service.ts
 ```
 
+### LMS Module Structure
+
+The LMS (Learning Management System) extends the base boilerplate with a multi-module domain organized under `src/lms/`. It follows the same hexagonal architecture principles:
+
+```txt
+src/lms/
+├── lms.module.ts                    # Aggregator module
+├── common/
+│   └── enums/                       # Shared LMS enums
+│       ├── admission-status.enum.ts
+│       ├── attendance-status.enum.ts
+│       ├── exam.enum.ts
+│       ├── general.enum.ts
+│       ├── leave-status.enum.ts
+│       ├── payment-status.enum.ts
+│       └── index.ts
+├── institution/
+│   ├── institution.module.ts
+│   └── infrastructure/persistence/relational/entities/
+│       ├── institution.entity.ts
+│       ├── academic-year.entity.ts
+│       ├── term.entity.ts
+│       ├── department.entity.ts
+│       ├── grade-class.entity.ts
+│       ├── section.entity.ts
+│       └── subject.entity.ts
+├── student/
+│   ├── student.module.ts
+│   └── infrastructure/persistence/relational/entities/
+│       ├── student.entity.ts
+│       ├── admission-enquiry.entity.ts
+│       ├── student-document.entity.ts
+│       ├── student-enrollment.entity.ts
+│       ├── student-attendance.entity.ts
+│       ├── leave-request.entity.ts
+│       ├── fee-structure.entity.ts
+│       ├── fee-challan.entity.ts
+│       ├── fee-payment.entity.ts
+│       ├── exam.entity.ts
+│       ├── exam-subject.entity.ts
+│       ├── exam-result.entity.ts
+│       └── course-material.entity.ts
+├── staff/
+│   ├── staff.module.ts
+│   └── infrastructure/persistence/relational/entities/
+│       ├── staff.entity.ts
+│       ├── staff-attendance.entity.ts
+│       ├── staff-leave.entity.ts
+│       ├── notice.entity.ts
+│       ├── timetable-slot.entity.ts
+│       └── salary-slip.entity.ts
+└── accounts/
+    ├── accounts.module.ts
+    └── infrastructure/persistence/relational/entities/
+        ├── income.entity.ts
+        └── expense.entity.ts
+```
+
+Each LMS sub-module (Institution, Student, Staff, Accounts) registers its TypeORM entities and follows the same entity → domain separation pattern. See the [LMS Module](lms.md) documentation for full details.
+
 `[DOMAIN ENTITY].ts` represents an entity used in the business logic. Domain entity has no dependencies on the database or any other infrastructure.
 
 `[SCHEMA].ts` represents the **database structure**. It is used in the document-oriented database (MongoDB).

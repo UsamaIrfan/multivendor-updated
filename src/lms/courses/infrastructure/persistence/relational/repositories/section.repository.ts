@@ -1,0 +1,61 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SectionEntity } from '../entities/section.entity';
+import { SectionRepository } from '../../section.repository';
+import { SectionMapper } from '../mappers/section.mapper';
+import { Section } from '../../../../domain/section';
+import { NullableType } from '../../../../../../utils/types/nullable.type';
+
+@Injectable()
+export class SectionRelationalRepository implements SectionRepository {
+  constructor(
+    @InjectRepository(SectionEntity)
+    private readonly repo: Repository<SectionEntity>,
+  ) {}
+
+  async create(
+    data: Omit<Section, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+  ): Promise<Section> {
+    const persistenceModel = this.repo.create(
+      SectionMapper.toPersistence(data as Section),
+    );
+    const saved = await this.repo.save(persistenceModel);
+    return SectionMapper.toDomain(saved);
+  }
+
+  async findAll(): Promise<Section[]> {
+    const entities = await this.repo.find({ relations: ['gradeClass'] });
+    return entities.map(SectionMapper.toDomain);
+  }
+
+  async findById(id: number): Promise<NullableType<Section>> {
+    const entity = await this.repo.findOne({
+      where: { id },
+      relations: ['gradeClass'],
+    });
+    return entity ? SectionMapper.toDomain(entity) : null;
+  }
+
+  async update(id: number, payload: Partial<Section>): Promise<Section | null> {
+    const entity = await this.repo.findOne({
+      where: { id },
+      relations: ['gradeClass'],
+    });
+    if (!entity) return null;
+
+    const updated = await this.repo.save(
+      this.repo.create(
+        SectionMapper.toPersistence({
+          ...SectionMapper.toDomain(entity),
+          ...payload,
+        }),
+      ),
+    );
+    return SectionMapper.toDomain(updated);
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.repo.softDelete(id);
+  }
+}
