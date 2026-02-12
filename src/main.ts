@@ -7,7 +7,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { apiReference } from '@scalar/nestjs-api-reference';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import validationOptions from './utils/validation-options';
@@ -55,13 +54,30 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
 
-  app.use(
-    '/reference',
-    apiReference({
-      content: document,
-      theme: 'alternate',
-    }),
-  );
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.get('/reference', (_req: any, res: any) => {
+    res.setHeader('Content-Type', 'text/html');
+    res.send(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>API Reference</title>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+        </head>
+        <body>
+          <div id="app"></div>
+          <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+          <script>
+            Scalar.createApiReference(document.getElementById('app'), {
+              url: '/docs-json',
+              theme: 'alternate',
+            })
+          </script>
+        </body>
+      </html>
+    `);
+  });
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
