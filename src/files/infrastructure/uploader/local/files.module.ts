@@ -48,7 +48,7 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
             callback(null, true);
           },
           storage: diskStorage({
-            destination: process.env.NODE_ENV === 'production' ? '/tmp/files' : './files',
+            destination: process.env.VERCEL ? '/tmp/files' : './files',
             filename: (request, file, callback) => {
               callback(
                 null,
