@@ -65,6 +65,15 @@ export class TenantService {
 
   async createBranch(dto: CreateBranchDto): Promise<Branch> {
     await this.findOneTenant(dto.tenantId);
+    const existing = await this.branchRepository.findByTenantAndCode(
+      dto.tenantId,
+      dto.code,
+    );
+    if (existing) {
+      throw new ConflictException(
+        `Branch with code '${dto.code}' already exists for this tenant`,
+      );
+    }
     return this.branchRepository.create({
       ...dto,
       isActive: true,
@@ -109,6 +118,11 @@ export class TenantService {
       dto.userId,
     );
     if (existing) {
+      // Reactivate if soft-deleted, otherwise conflict
+      if (existing.deletedAt) {
+        const restored = await this.tenantUserRepository.restore(existing.id);
+        return restored ?? existing;
+      }
       throw new ConflictException('User is already assigned to this tenant');
     }
     return this.tenantUserRepository.create({

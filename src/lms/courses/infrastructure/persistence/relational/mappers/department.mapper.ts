@@ -1,5 +1,6 @@
 import { Department } from '../../../../domain/department';
 import { DepartmentEntity } from '../entities/department.entity';
+import { InstitutionEntity } from '../entities/institution.entity';
 
 export class DepartmentMapper {
   static toDomain(entity: DepartmentEntity): Department {
@@ -20,6 +21,13 @@ export class DepartmentMapper {
   static toPersistence(domain: Department): DepartmentEntity {
     const entity = new DepartmentEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.institutionId) {
+      const institution = new InstitutionEntity();
+      institution.id = domain.institutionId;
+      entity.institution = institution;
+    }
+
     entity.name = domain.name;
     entity.code = domain.code;
     entity.description = domain.description;

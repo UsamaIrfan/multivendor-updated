@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsInt, IsNumber, IsOptional } from 'class-validator';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateExamSubjectDto {
+export class CreateExamSubjectDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   examId: number;

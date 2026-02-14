@@ -1,5 +1,8 @@
 import { FeeStructure } from '../../../../domain/fee-structure';
 import { FeeStructureEntity } from '../entities/fee-structure.entity';
+import { InstitutionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/institution.entity';
+import { GradeClassEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/grade-class.entity';
+import { AcademicYearEntity } from '../../../../../academic/infrastructure/persistence/relational/entities/academic-year.entity';
 
 export class FeeStructureMapper {
   static toDomain(entity: FeeStructureEntity): FeeStructure {
@@ -23,6 +26,29 @@ export class FeeStructureMapper {
   static toPersistence(domain: FeeStructure): FeeStructureEntity {
     const entity = new FeeStructureEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.institutionId) {
+      const institution = new InstitutionEntity();
+      institution.id = domain.institutionId;
+      entity.institution = institution;
+    }
+
+    if (domain.gradeClassId) {
+      const gradeClass = new GradeClassEntity();
+      gradeClass.id = domain.gradeClassId;
+      entity.gradeClass = gradeClass;
+    } else {
+      entity.gradeClass = null;
+    }
+
+    if (domain.academicYearId) {
+      const academicYear = new AcademicYearEntity();
+      academicYear.id = domain.academicYearId;
+      entity.academicYear = academicYear;
+    } else {
+      entity.academicYear = null;
+    }
+
     entity.name = domain.name;
     entity.amount = domain.amount;
     entity.frequency = domain.frequency;

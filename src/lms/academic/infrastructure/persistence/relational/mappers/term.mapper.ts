@@ -1,5 +1,6 @@
 import { Term } from '../../../../domain/term';
 import { TermEntity } from '../entities/term.entity';
+import { AcademicYearEntity } from '../entities/academic-year.entity';
 
 export class TermMapper {
   static toDomain(entity: TermEntity): Term {
@@ -20,6 +21,13 @@ export class TermMapper {
   static toPersistence(domain: Term): TermEntity {
     const entity = new TermEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.academicYearId) {
+      const academicYear = new AcademicYearEntity();
+      academicYear.id = domain.academicYearId;
+      entity.academicYear = academicYear;
+    }
+
     entity.name = domain.name;
     entity.startDate = domain.startDate;
     entity.endDate = domain.endDate;

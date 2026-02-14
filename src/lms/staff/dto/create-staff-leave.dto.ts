@@ -11,8 +11,9 @@ import {
   LeaveTypeEnum,
   LeaveStatusEnum,
 } from '../../common/enums/leave-status.enum';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateStaffLeaveDto {
+export class CreateStaffLeaveDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   staffId: number;

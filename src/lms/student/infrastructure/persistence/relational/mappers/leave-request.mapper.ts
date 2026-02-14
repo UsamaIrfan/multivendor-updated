@@ -1,5 +1,7 @@
 import { LeaveRequest } from '../../../../domain/leave-request';
 import { LeaveRequestEntity } from '../entities/leave-request.entity';
+import { StudentEntity } from '../entities/student.entity';
+import { UserEntity } from '../../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 
 export class LeaveRequestMapper {
   static toDomain(entity: LeaveRequestEntity): LeaveRequest {
@@ -23,6 +25,21 @@ export class LeaveRequestMapper {
   static toPersistence(domain: LeaveRequest): LeaveRequestEntity {
     const entity = new LeaveRequestEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.studentId) {
+      const student = new StudentEntity();
+      student.id = domain.studentId;
+      entity.student = student;
+    }
+
+    if (domain.approvedById) {
+      const approvedBy = new UserEntity();
+      approvedBy.id = domain.approvedById;
+      entity.approvedBy = approvedBy;
+    } else {
+      entity.approvedBy = null;
+    }
+
     entity.fromDate = domain.fromDate;
     entity.toDate = domain.toDate;
     entity.reason = domain.reason;

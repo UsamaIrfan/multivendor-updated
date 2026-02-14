@@ -1,5 +1,7 @@
 import { FeeChallan } from '../../../../domain/fee-challan';
 import { FeeChallanEntity } from '../entities/fee-challan.entity';
+import { StudentEntity } from '../entities/student.entity';
+import { FeeStructureEntity } from '../entities/fee-structure.entity';
 
 export class FeeChallanMapper {
   static toDomain(entity: FeeChallanEntity): FeeChallan {
@@ -26,6 +28,19 @@ export class FeeChallanMapper {
   static toPersistence(domain: FeeChallan): FeeChallanEntity {
     const entity = new FeeChallanEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.studentId) {
+      const student = new StudentEntity();
+      student.id = domain.studentId;
+      entity.student = student;
+    }
+
+    if (domain.feeStructureId) {
+      const feeStructure = new FeeStructureEntity();
+      feeStructure.id = domain.feeStructureId;
+      entity.feeStructure = feeStructure;
+    }
+
     entity.challanNumber = domain.challanNumber;
     entity.totalAmount = domain.totalAmount;
     entity.paidAmount = domain.paidAmount;

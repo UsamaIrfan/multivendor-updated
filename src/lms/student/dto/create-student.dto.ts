@@ -8,8 +8,9 @@ import {
   IsString,
 } from 'class-validator';
 import { GenderEnum, BloodGroupEnum } from '../../common/enums/general.enum';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateStudentDto {
+export class CreateStudentDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   userId: number;

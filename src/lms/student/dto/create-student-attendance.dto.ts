@@ -7,8 +7,9 @@ import {
   IsString,
 } from 'class-validator';
 import { AttendanceStatusEnum } from '../../common/enums/attendance-status.enum';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateStudentAttendanceDto {
+export class CreateStudentAttendanceDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   studentId: number;

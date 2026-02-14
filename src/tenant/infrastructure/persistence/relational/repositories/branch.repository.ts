@@ -36,6 +36,17 @@ export class BranchRelationalRepository implements BranchRepository {
     return entities.map(BranchMapper.toDomain);
   }
 
+  async findByTenantAndCode(
+    tenantId: string,
+    code: string,
+  ): Promise<NullableType<Branch>> {
+    const entity = await this.repo.findOne({
+      where: { tenant: { id: tenantId }, code },
+      relations: ['tenant'],
+    });
+    return entity ? BranchMapper.toDomain(entity) : null;
+  }
+
   async findById(id: string): Promise<NullableType<Branch>> {
     const entity = await this.repo.findOne({
       where: { id },

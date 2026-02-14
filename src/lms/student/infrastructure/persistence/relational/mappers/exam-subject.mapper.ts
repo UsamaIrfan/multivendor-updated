@@ -1,5 +1,7 @@
 import { ExamSubject } from '../../../../domain/exam-subject';
 import { ExamSubjectEntity } from '../entities/exam-subject.entity';
+import { ExamEntity } from '../entities/exam.entity';
+import { SubjectEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/subject.entity';
 
 export class ExamSubjectMapper {
   static toDomain(entity: ExamSubjectEntity): ExamSubject {
@@ -21,6 +23,19 @@ export class ExamSubjectMapper {
   static toPersistence(domain: ExamSubject): ExamSubjectEntity {
     const entity = new ExamSubjectEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.examId) {
+      const exam = new ExamEntity();
+      exam.id = domain.examId;
+      entity.exam = exam;
+    }
+
+    if (domain.subjectId) {
+      const subject = new SubjectEntity();
+      subject.id = domain.subjectId;
+      entity.subject = subject;
+    }
+
     entity.examDate = domain.examDate;
     entity.totalMarks = domain.totalMarks;
     entity.passingMarks = domain.passingMarks;

@@ -1,5 +1,7 @@
 import { StudentAttendance } from '../../../../domain/student-attendance';
 import { StudentAttendanceEntity } from '../entities/student-attendance.entity';
+import { StudentEntity } from '../entities/student.entity';
+import { SectionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/section.entity';
 
 export class StudentAttendanceMapper {
   static toDomain(entity: StudentAttendanceEntity): StudentAttendance {
@@ -21,6 +23,19 @@ export class StudentAttendanceMapper {
   static toPersistence(domain: StudentAttendance): StudentAttendanceEntity {
     const entity = new StudentAttendanceEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.studentId) {
+      const student = new StudentEntity();
+      student.id = domain.studentId;
+      entity.student = student;
+    }
+
+    if (domain.sectionId) {
+      const section = new SectionEntity();
+      section.id = domain.sectionId;
+      entity.section = section;
+    }
+
     entity.date = domain.date;
     entity.status = domain.status;
     entity.remarks = domain.remarks;

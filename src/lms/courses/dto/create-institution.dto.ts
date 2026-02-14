@@ -7,8 +7,9 @@ import {
   IsString,
   IsUrl,
 } from 'class-validator';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateInstitutionDto {
+export class CreateInstitutionDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 'Springfield Academy' })
   @IsNotEmpty()
   @IsString()

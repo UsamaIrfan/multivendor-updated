@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { TenantContextService } from '../tenant-context/tenant-context.service';
 import { TenantRepository } from '../infrastructure/persistence/tenant.repository';
 import { TenantUserRepository } from '../infrastructure/persistence/tenant-user.repository';
+import { RoleEnum } from '../../roles/roles.enum';
 
 /**
  * Intercepts every request and sets the tenant context using AsyncLocalStorage.
@@ -35,7 +36,13 @@ export class TenantInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
-    const tenantId = await this.resolveTenantId(request);
+
+    // Try to resolve tenant — if none found, proceed without tenant context
+    const tenantId = await this.resolveTenantIdOptional(request);
+    if (!tenantId) {
+      return next.handle();
+    }
+
     const branchId = this.resolveBranchId(request);
 
     // Validate tenant exists and is active
@@ -47,8 +54,9 @@ export class TenantInterceptor implements NestInterceptor {
       throw new ForbiddenException('Tenant is inactive');
     }
 
-    // If user is authenticated, verify they belong to this tenant
-    if (request.user?.id) {
+    // If user is authenticated and not an admin, verify they belong to this tenant
+    const isAdmin = request.user?.role?.id === RoleEnum.admin;
+    if (request.user?.id && !isAdmin) {
       const tenantUser = await this.tenantUserRepository.findByTenantAndUser(
         tenantId,
         request.user.id,
@@ -72,7 +80,13 @@ export class TenantInterceptor implements NestInterceptor {
     });
   }
 
-  private async resolveTenantId(request: any): Promise<string> {
+  /**
+   * Tries to resolve a tenant ID. Returns null if none can be determined
+   * (e.g. public/auth routes with no header or JWT claim).
+   */
+  private async resolveTenantIdOptional(
+    request: any,
+  ): Promise<string | null> {
     // 1) JWT claim
     if (request.user?.tenantId) {
       return request.user.tenantId;
@@ -94,9 +108,7 @@ export class TenantInterceptor implements NestInterceptor {
       }
     }
 
-    throw new BadRequestException(
-      'Tenant ID is required. Provide via JWT, X-Tenant-ID header, or subdomain.',
-    );
+    return null;
   }
 
   private resolveBranchId(request: any): string | null {

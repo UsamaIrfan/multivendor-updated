@@ -9,8 +9,9 @@ import {
 } from 'class-validator';
 import { AdmissionStatusEnum } from '../../common/enums/admission-status.enum';
 import { EnquirySourceEnum } from '../../common/enums/general.enum';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateAdmissionEnquiryDto {
+export class CreateAdmissionEnquiryDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   institutionId: number;

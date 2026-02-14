@@ -46,14 +46,37 @@ async function bootstrap() {
     .setDescription('API docs')
     .setVersion('1.0')
     .addBearerAuth()
-    .addGlobalParameters({
-      in: 'header',
-      required: false,
-      name: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
-      schema: {
-        example: 'en',
+    .addGlobalParameters(
+      {
+        in: 'header',
+        required: false,
+        name: 'X-Tenant-ID',
+        description: 'Tenant UUID (overrides JWT tenantId claim)',
+        schema: {
+          type: 'string',
+          format: 'uuid',
+          example: '00000000-0000-0000-0000-000000000001',
+        },
       },
-    })
+      {
+        in: 'header',
+        required: false,
+        name: 'X-Branch-ID',
+        description: 'Branch UUID (optional, scopes data to a specific branch)',
+        schema: {
+          type: 'string',
+          format: 'uuid',
+        },
+      },
+      {
+        in: 'header',
+        required: false,
+        name: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
+        schema: {
+          example: 'en',
+        },
+      },
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

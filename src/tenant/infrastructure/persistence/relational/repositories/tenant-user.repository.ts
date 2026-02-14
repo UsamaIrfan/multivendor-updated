@@ -37,6 +37,7 @@ export class TenantUserRelationalRepository implements TenantUserRepository {
         tenant: { id: tenantId },
         user: { id: userId },
       },
+      withDeleted: true,
       relations: ['tenant', 'user'],
     });
     return entity ? TenantUserMapper.toDomain(entity) : null;
@@ -56,6 +57,16 @@ export class TenantUserRelationalRepository implements TenantUserRepository {
       relations: ['tenant', 'user'],
     });
     return entities.map(TenantUserMapper.toDomain);
+  }
+
+  async restore(id: string): Promise<NullableType<TenantUser>> {
+    await this.repo.restore(id);
+    await this.repo.update(id, { isActive: true } as any);
+    const entity = await this.repo.findOne({
+      where: { id },
+      relations: ['tenant', 'user'],
+    });
+    return entity ? TenantUserMapper.toDomain(entity) : null;
   }
 
   async remove(id: string): Promise<void> {

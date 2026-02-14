@@ -14,5 +14,7 @@ export abstract class TenantUserRepository {
 
   abstract findAllByTenant(tenantId: string): Promise<TenantUser[]>;
 
+  abstract restore(id: string): Promise<NullableType<TenantUser>>;
+
   abstract remove(id: string): Promise<void>;
 }

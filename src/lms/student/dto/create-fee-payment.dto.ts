@@ -8,8 +8,9 @@ import {
   IsString,
 } from 'class-validator';
 import { PaymentMethodEnum } from '../../common/enums/payment-status.enum';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateFeePaymentDto {
+export class CreateFeePaymentDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   feeChallanId: number;

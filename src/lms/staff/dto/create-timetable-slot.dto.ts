@@ -7,8 +7,9 @@ import {
   IsString,
 } from 'class-validator';
 import { DayOfWeekEnum } from '../../common/enums/general.enum';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateTimetableSlotDto {
+export class CreateTimetableSlotDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   sectionId: number;

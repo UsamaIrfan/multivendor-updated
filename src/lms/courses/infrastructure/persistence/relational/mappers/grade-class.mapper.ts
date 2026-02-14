@@ -1,5 +1,6 @@
 import { GradeClass } from '../../../../domain/grade-class';
 import { GradeClassEntity } from '../entities/grade-class.entity';
+import { InstitutionEntity } from '../entities/institution.entity';
 
 export class GradeClassMapper {
   static toDomain(entity: GradeClassEntity): GradeClass {
@@ -20,6 +21,13 @@ export class GradeClassMapper {
   static toPersistence(domain: GradeClass): GradeClassEntity {
     const entity = new GradeClassEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.institutionId) {
+      const institution = new InstitutionEntity();
+      institution.id = domain.institutionId;
+      entity.institution = institution;
+    }
+
     entity.name = domain.name;
     entity.numericGrade = domain.numericGrade;
     entity.description = domain.description;

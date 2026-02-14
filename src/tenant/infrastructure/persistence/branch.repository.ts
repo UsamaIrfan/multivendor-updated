@@ -7,6 +7,11 @@ export abstract class BranchRepository {
 
   abstract findAllByTenant(tenantId: string): Promise<Branch[]>;
 
+  abstract findByTenantAndCode(
+    tenantId: string,
+    code: string,
+  ): Promise<NullableType<Branch>>;
+
   abstract findById(id: string): Promise<NullableType<Branch>>;
 
   abstract update(

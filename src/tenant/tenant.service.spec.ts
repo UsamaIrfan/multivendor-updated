@@ -24,6 +24,7 @@ function createMockBranchRepo() {
     create: jest.fn(),
     findAllByTenant: jest.fn(),
     findById: jest.fn(),
+    findByTenantAndCode: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
   };
@@ -36,6 +37,7 @@ function createMockTenantUserRepo() {
     findAllByUser: jest.fn(),
     findAllByTenant: jest.fn(),
     remove: jest.fn(),
+    restore: jest.fn(),
   };
 }
 
@@ -168,6 +170,7 @@ describe('TenantService', () => {
     describe('createBranch', () => {
       it('should create a branch', async () => {
         tenantRepo.findById.mockResolvedValue({ id: 'uuid-1' });
+        branchRepo.findByTenantAndCode.mockResolvedValue(null);
         branchRepo.create.mockResolvedValue(mockBranch);
 
         const result = await service.createBranch({

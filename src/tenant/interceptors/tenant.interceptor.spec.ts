@@ -125,16 +125,26 @@ describe('TenantInterceptor', () => {
       expect(mockTenantRepo.findBySlug).toHaveBeenCalledWith('abc');
     });
 
-    it('should throw BadRequestException when no tenant found', async () => {
+    it('should pass through without tenant context when no tenant found', async () => {
       const request = {
         user: {},
         headers: { host: 'localhost:3000' },
       };
 
       const context = mockExecutionContext(request);
-      await expect(
-        interceptor.intercept(context as any, mockCallHandler),
-      ).rejects.toThrow(BadRequestException);
+      const result$ = await interceptor.intercept(
+        context as any,
+        mockCallHandler,
+      );
+
+      // Should return the observable directly (pass-through, no tenant context)
+      const value = await new Promise((resolve) => {
+        result$.subscribe({ next: resolve });
+      });
+      expect(value).toBe('test-response');
+
+      // Tenant context should NOT be set
+      expect(tenantContext.hasContext()).toBe(false);
     });
   });
 

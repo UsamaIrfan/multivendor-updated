@@ -1,5 +1,6 @@
 import { FeePayment } from '../../../../domain/fee-payment';
 import { FeePaymentEntity } from '../entities/fee-payment.entity';
+import { FeeChallanEntity } from '../entities/fee-challan.entity';
 
 export class FeePaymentMapper {
   static toDomain(entity: FeePaymentEntity): FeePayment {
@@ -23,6 +24,13 @@ export class FeePaymentMapper {
   static toPersistence(domain: FeePayment): FeePaymentEntity {
     const entity = new FeePaymentEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.feeChallanId) {
+      const feeChallan = new FeeChallanEntity();
+      feeChallan.id = domain.feeChallanId;
+      entity.feeChallan = feeChallan;
+    }
+
     entity.amount = domain.amount;
     entity.method = domain.method;
     entity.transactionRef = domain.transactionRef;

@@ -1,5 +1,6 @@
 import { AcademicYear } from '../../../../domain/academic-year';
 import { AcademicYearEntity } from '../entities/academic-year.entity';
+import { InstitutionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/institution.entity';
 
 export class AcademicYearMapper {
   static toDomain(entity: AcademicYearEntity): AcademicYear {
@@ -21,6 +22,13 @@ export class AcademicYearMapper {
   static toPersistence(domain: AcademicYear): AcademicYearEntity {
     const entity = new AcademicYearEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.institutionId) {
+      const institution = new InstitutionEntity();
+      institution.id = domain.institutionId;
+      entity.institution = institution;
+    }
+
     entity.name = domain.name;
     entity.startDate = domain.startDate;
     entity.endDate = domain.endDate;

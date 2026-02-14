@@ -8,8 +8,9 @@ import {
   IsString,
 } from 'class-validator';
 import { ExamTypeEnum } from '../../common/enums/exam.enum';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateExamDto {
+export class CreateExamDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   termId: number;

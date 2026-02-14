@@ -1,8 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator';
 import { EnrollmentStatusEnum } from '../../common/enums/general.enum';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateStudentEnrollmentDto {
+export class CreateStudentEnrollmentDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   studentId: number;

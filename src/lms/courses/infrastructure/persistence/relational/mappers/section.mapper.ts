@@ -1,5 +1,6 @@
 import { Section } from '../../../../domain/section';
 import { SectionEntity } from '../entities/section.entity';
+import { GradeClassEntity } from '../entities/grade-class.entity';
 
 export class SectionMapper {
   static toDomain(entity: SectionEntity): Section {
@@ -20,6 +21,13 @@ export class SectionMapper {
   static toPersistence(domain: Section): SectionEntity {
     const entity = new SectionEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.gradeClassId) {
+      const gradeClass = new GradeClassEntity();
+      gradeClass.id = domain.gradeClassId;
+      entity.gradeClass = gradeClass;
+    }
+
     entity.classTeacherId = domain.classTeacherId;
     entity.name = domain.name;
     entity.capacity = domain.capacity;

@@ -1,5 +1,6 @@
 import { AdmissionEnquiry } from '../../../../domain/admission-enquiry';
 import { AdmissionEnquiryEntity } from '../entities/admission-enquiry.entity';
+import { InstitutionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/institution.entity';
 
 export class AdmissionEnquiryMapper {
   static toDomain(entity: AdmissionEnquiryEntity): AdmissionEnquiry {
@@ -28,6 +29,13 @@ export class AdmissionEnquiryMapper {
   static toPersistence(domain: AdmissionEnquiry): AdmissionEnquiryEntity {
     const entity = new AdmissionEnquiryEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.institutionId) {
+      const institution = new InstitutionEntity();
+      institution.id = domain.institutionId;
+      entity.institution = institution;
+    }
+
     entity.studentName = domain.studentName;
     entity.guardianName = domain.guardianName;
     entity.phone = domain.phone;

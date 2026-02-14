@@ -1,5 +1,6 @@
 import { Subject } from '../../../../domain/subject';
 import { SubjectEntity } from '../entities/subject.entity';
+import { DepartmentEntity } from '../entities/department.entity';
 
 export class SubjectMapper {
   static toDomain(entity: SubjectEntity): Subject {
@@ -21,6 +22,13 @@ export class SubjectMapper {
   static toPersistence(domain: Subject): SubjectEntity {
     const entity = new SubjectEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.departmentId) {
+      const department = new DepartmentEntity();
+      department.id = domain.departmentId;
+      entity.department = department;
+    }
+
     entity.name = domain.name;
     entity.code = domain.code;
     entity.creditHours = domain.creditHours;

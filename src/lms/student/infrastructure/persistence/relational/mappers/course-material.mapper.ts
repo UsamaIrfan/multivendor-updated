@@ -1,5 +1,7 @@
 import { CourseMaterial } from '../../../../domain/course-material';
 import { CourseMaterialEntity } from '../entities/course-material.entity';
+import { SubjectEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/subject.entity';
+import { FileEntity } from '../../../../../../files/infrastructure/persistence/relational/entities/file.entity';
 
 export class CourseMaterialMapper {
   static toDomain(entity: CourseMaterialEntity): CourseMaterial {
@@ -24,6 +26,21 @@ export class CourseMaterialMapper {
   static toPersistence(domain: CourseMaterial): CourseMaterialEntity {
     const entity = new CourseMaterialEntity();
     if (domain.id) entity.id = domain.id;
+
+    if (domain.subjectId) {
+      const subject = new SubjectEntity();
+      subject.id = domain.subjectId;
+      entity.subject = subject;
+    }
+
+    if (domain.fileId) {
+      const file = new FileEntity();
+      file.id = domain.fileId;
+      entity.file = file;
+    } else {
+      entity.file = null;
+    }
+
     entity.uploadedById = domain.uploadedById;
     entity.title = domain.title;
     entity.description = domain.description;

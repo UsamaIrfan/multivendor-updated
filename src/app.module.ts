@@ -33,6 +33,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { FeesModule } from './fees/fees.module';
 import { ExamsModule } from './exams/exams.module';
 import { TenantModule } from './tenant/tenant.module';
+import { MaterialsModule } from './materials/materials.module';
 
 // <database-block>
 const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
@@ -104,6 +105,7 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     FeesModule,
     ExamsModule,
     TenantModule,
+    MaterialsModule,
   ],
 })
 export class AppModule {}

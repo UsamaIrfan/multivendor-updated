@@ -6,8 +6,9 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
-export class CreateExamResultDto {
+export class CreateExamResultDto extends TenantAwareBaseDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   examSubjectId: number;

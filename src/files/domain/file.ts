@@ -26,6 +26,11 @@ export class FileType {
       if ((fileConfig() as FileConfig).driver === FileDriver.LOCAL) {
         return (appConfig() as AppConfig).backendDomain + value;
       } else if (
+        (fileConfig() as FileConfig).driver === FileDriver.VERCEL_BLOB
+      ) {
+        // Vercel Blob URLs are already absolute public URLs
+        return value;
+      } else if (
         [FileDriver.S3_PRESIGNED, FileDriver.S3].includes(
           (fileConfig() as FileConfig).driver,
         )
