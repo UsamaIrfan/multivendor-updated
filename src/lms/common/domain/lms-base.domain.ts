@@ -9,6 +9,12 @@ export class LmsBaseDomain {
   @ApiProperty({ type: Number })
   id: number;
 
+  @ApiProperty({ type: String, format: 'uuid' })
+  tenantId: string;
+
+  @ApiPropertyOptional({ type: String, format: 'uuid' })
+  branchId: string | null;
+
   @ApiProperty()
   createdAt: Date;
 

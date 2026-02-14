@@ -12,6 +12,8 @@ export class FeePaymentMapper {
     domain.receiptNumber = entity.receiptNumber;
     domain.paidAt = entity.paidAt;
     domain.remarks = entity.remarks;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -27,6 +29,8 @@ export class FeePaymentMapper {
     entity.receiptNumber = domain.receiptNumber;
     entity.paidAt = domain.paidAt;
     entity.remarks = domain.remarks;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

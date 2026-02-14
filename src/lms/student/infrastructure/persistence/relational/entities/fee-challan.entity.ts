@@ -9,14 +9,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { StudentEntity } from './student.entity';
 import { FeeStructureEntity } from './fee-structure.entity';
 import { FeePaymentEntity } from './fee-payment.entity';
 import { PaymentStatusEnum } from '../../../../../common/enums/payment-status.enum';
 
 @Entity({ name: 'fee_challan' })
-export class FeeChallanEntity extends EntityRelationalHelper {
+export class FeeChallanEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

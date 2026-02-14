@@ -14,6 +14,8 @@ export class StaffLeaveMapper {
     domain.status = entity.status;
     domain.approvedById = entity.approvedBy?.id ?? null;
     domain.adminRemarks = entity.adminRemarks;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -33,6 +35,8 @@ export class StaffLeaveMapper {
       ? ({ id: domain.approvedById } as UserEntity)
       : null;
     entity.adminRemarks = domain.adminRemarks;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     return entity;
   }
 }

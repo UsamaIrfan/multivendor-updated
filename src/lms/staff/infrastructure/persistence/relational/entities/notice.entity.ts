@@ -8,13 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { InstitutionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/institution.entity';
 import { StaffEntity } from './staff.entity';
 import { TargetAudienceEnum } from '../../../../../common/enums/general.enum';
 
 @Entity({ name: 'notice' })
-export class NoticeEntity extends EntityRelationalHelper {
+export class NoticeEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

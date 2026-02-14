@@ -12,6 +12,8 @@ export class FeeStructureMapper {
     domain.amount = entity.amount;
     domain.frequency = entity.frequency;
     domain.description = entity.description;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -25,6 +27,8 @@ export class FeeStructureMapper {
     entity.amount = domain.amount;
     entity.frequency = domain.frequency;
     entity.description = domain.description;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

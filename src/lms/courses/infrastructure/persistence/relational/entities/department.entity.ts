@@ -9,13 +9,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { InstitutionEntity } from './institution.entity';
 import { SubjectEntity } from './subject.entity';
 
 @Entity({ name: 'department' })
 @Index(['institution', 'code'], { unique: true })
-export class DepartmentEntity extends EntityRelationalHelper {
+export class DepartmentEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

@@ -10,6 +10,8 @@ export class StudentEnrollmentMapper {
     domain.academicYearId = entity.academicYear?.id;
     domain.status = entity.status;
     domain.enrollmentDate = entity.enrollmentDate;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -21,6 +23,8 @@ export class StudentEnrollmentMapper {
     if (domain.id) entity.id = domain.id;
     entity.status = domain.status;
     entity.enrollmentDate = domain.enrollmentDate;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

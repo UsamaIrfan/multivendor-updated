@@ -20,6 +20,8 @@ export class StudentMapper {
     domain.nationality = entity.nationality;
     domain.religion = entity.religion;
     domain.admissionDate = entity.admissionDate;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -42,6 +44,8 @@ export class StudentMapper {
     entity.nationality = domain.nationality;
     entity.religion = domain.religion;
     entity.admissionDate = domain.admissionDate;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

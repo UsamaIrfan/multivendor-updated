@@ -9,19 +9,32 @@ import { Session } from '../../../../domain/session';
 
 import { SessionMapper } from '../mappers/session.mapper';
 import { User } from '../../../../../users/domain/user';
+import { TenantContextService } from '../../../../../tenant/tenant-context/tenant-context.service';
 
 @Injectable()
 export class SessionRelationalRepository implements SessionRepository {
   constructor(
     @InjectRepository(SessionEntity)
     private readonly sessionRepository: Repository<SessionEntity>,
+    private readonly tenantContext: TenantContextService,
   ) {}
+
+  private getTenantFilter(): Record<string, unknown> {
+    if (this.tenantContext.hasContext()) {
+      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const branchId = this.tenantContext.getBranchId();
+      if (branchId) filter.branchId = branchId;
+      return filter;
+    }
+    return {};
+  }
 
   async findById(id: Session['id']): Promise<NullableType<Session>> {
     const entity = await this.sessionRepository.findOne({
       where: {
         id: Number(id),
-      },
+        ...this.getTenantFilter(),
+      } as any,
     });
 
     return entity ? SessionMapper.toDomain(entity) : null;
@@ -29,9 +42,12 @@ export class SessionRelationalRepository implements SessionRepository {
 
   async create(data: Session): Promise<Session> {
     const persistenceModel = SessionMapper.toPersistence(data);
-    return this.sessionRepository.save(
-      this.sessionRepository.create(persistenceModel),
-    );
+    const created = this.sessionRepository.create(persistenceModel);
+    if (this.tenantContext.hasContext()) {
+      (created as any).tenantId = this.tenantContext.getTenantId();
+      (created as any).branchId = this.tenantContext.getBranchId() ?? null;
+    }
+    return this.sessionRepository.save(created);
   }
 
   async update(
@@ -41,7 +57,7 @@ export class SessionRelationalRepository implements SessionRepository {
     >,
   ): Promise<Session | null> {
     const entity = await this.sessionRepository.findOne({
-      where: { id: Number(id) },
+      where: { id: Number(id), ...this.getTenantFilter() } as any,
     });
 
     if (!entity) {
@@ -63,7 +79,8 @@ export class SessionRelationalRepository implements SessionRepository {
   async deleteById(id: Session['id']): Promise<void> {
     await this.sessionRepository.softDelete({
       id: Number(id),
-    });
+      ...this.getTenantFilter(),
+    } as any);
   }
 
   async deleteByUserId(conditions: { userId: User['id'] }): Promise<void> {
@@ -71,7 +88,8 @@ export class SessionRelationalRepository implements SessionRepository {
       user: {
         id: Number(conditions.userId),
       },
-    });
+      ...this.getTenantFilter(),
+    } as any);
   }
 
   async deleteByUserIdWithExclude(conditions: {
@@ -83,6 +101,7 @@ export class SessionRelationalRepository implements SessionRepository {
         id: Number(conditions.userId),
       },
       id: Not(Number(conditions.excludeSessionId)),
-    });
+      ...this.getTenantFilter(),
+    } as any);
   }
 }

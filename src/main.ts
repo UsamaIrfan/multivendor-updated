@@ -1,4 +1,9 @@
 import 'dotenv/config';
+import dns from 'node:dns';
+
+// Force IPv4 first to avoid ETIMEDOUT on IPv6-only DNS resolutions (e.g. SMTP)
+dns.setDefaultResultOrder('ipv4first');
+
 import {
   ClassSerializerInterceptor,
   ValidationPipe,
@@ -72,6 +77,14 @@ async function bootstrap() {
             Scalar.createApiReference(document.getElementById('app'), {
               url: '/docs-json',
               theme: 'alternate',
+              authentication: {
+                preferredSecurityScheme: 'bearer',
+                http: {
+                  bearer: {
+                    token: '',
+                  },
+                },
+              },
             })
           </script>
         </body>

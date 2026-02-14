@@ -14,6 +14,8 @@ export class IncomeMapper {
     domain.referenceNumber = entity.referenceNumber;
     domain.receivedFrom = entity.receivedFrom;
     domain.remarks = entity.remarks;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -34,6 +36,8 @@ export class IncomeMapper {
     entity.referenceNumber = domain.referenceNumber;
     entity.receivedFrom = domain.receivedFrom;
     entity.remarks = domain.remarks;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     return entity;
   }
 }

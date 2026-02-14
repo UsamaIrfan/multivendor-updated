@@ -16,6 +16,8 @@ export class InstitutionMapper {
     domain.website = entity.website;
     domain.logo = entity.logo;
     domain.isActive = entity.isActive;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -36,6 +38,8 @@ export class InstitutionMapper {
     entity.website = domain.website;
     entity.logo = domain.logo;
     entity.isActive = domain.isActive;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

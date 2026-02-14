@@ -7,7 +7,6 @@ import {
   IsString,
 } from 'class-validator';
 
-
 export class CreateStudentDocumentDto {
   @ApiProperty({ example: 1 })
   @IsInt()

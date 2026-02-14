@@ -6,6 +6,7 @@ import { CourseMaterialRepository } from '../../course-material.repository';
 import { CourseMaterialMapper } from '../mappers/course-material.mapper';
 import { CourseMaterial } from '../../../../domain/course-material';
 import { NullableType } from '../../../../../../utils/types/nullable.type';
+import { TenantContextService } from '../../../../../../tenant/tenant-context/tenant-context.service';
 
 @Injectable()
 export class CourseMaterialRelationalRepository
@@ -14,7 +15,18 @@ export class CourseMaterialRelationalRepository
   constructor(
     @InjectRepository(CourseMaterialEntity)
     private readonly repo: Repository<CourseMaterialEntity>,
+    private readonly tenantContext: TenantContextService,
   ) {}
+
+  private getTenantFilter(): Record<string, unknown> {
+    if (this.tenantContext.hasContext()) {
+      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const branchId = this.tenantContext.getBranchId();
+      if (branchId) filter.branchId = branchId;
+      return filter;
+    }
+    return {};
+  }
 
   async create(
     data: Omit<CourseMaterial, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
@@ -22,17 +34,21 @@ export class CourseMaterialRelationalRepository
     const persistenceModel = this.repo.create(
       CourseMaterialMapper.toPersistence(data as CourseMaterial),
     );
+    if (this.tenantContext.hasContext()) {
+      (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
+      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+    }
     const saved = await this.repo.save(persistenceModel);
     return CourseMaterialMapper.toDomain(saved);
   }
 
   async findAll(): Promise<CourseMaterial[]> {
-    const entities = await this.repo.find();
+    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
     return entities.map(CourseMaterialMapper.toDomain);
   }
 
   async findById(id: number): Promise<NullableType<CourseMaterial>> {
-    const entity = await this.repo.findOne({ where: { id } });
+    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
     return entity ? CourseMaterialMapper.toDomain(entity) : null;
   }
 
@@ -40,7 +56,7 @@ export class CourseMaterialRelationalRepository
     id: number,
     payload: Partial<CourseMaterial>,
   ): Promise<CourseMaterial | null> {
-    const entity = await this.repo.findOne({ where: { id } });
+    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
     if (!entity) return null;
     const updated = await this.repo.save(
       this.repo.create(
@@ -54,6 +70,6 @@ export class CourseMaterialRelationalRepository
   }
 
   async remove(id: number): Promise<void> {
-    await this.repo.softDelete(id);
+    await this.repo.softDelete({ id, ...this.getTenantFilter() } as any);
   }
 }

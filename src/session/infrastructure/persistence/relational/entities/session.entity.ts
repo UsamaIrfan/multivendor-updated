@@ -10,12 +10,12 @@ import {
 } from 'typeorm';
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 
-import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../utils/tenant-aware-entity-helper';
 
 @Entity({
   name: 'session',
 })
-export class SessionEntity extends EntityRelationalHelper {
+export class SessionEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id: number;
 

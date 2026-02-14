@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { StudentEntity } from './student.entity';
 import { SectionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/section.entity';
 import { AcademicYearEntity } from '../../../../../academic/infrastructure/persistence/relational/entities/academic-year.entity';
@@ -16,7 +16,7 @@ import { EnrollmentStatusEnum } from '../../../../../common/enums/general.enum';
 
 @Entity({ name: 'student_enrollment' })
 @Index(['student', 'academicYear'], { unique: true })
-export class StudentEnrollmentEntity extends EntityRelationalHelper {
+export class StudentEnrollmentEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

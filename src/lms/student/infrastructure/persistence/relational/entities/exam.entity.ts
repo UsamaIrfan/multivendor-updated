@@ -9,13 +9,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { TermEntity } from '../../../../../academic/infrastructure/persistence/relational/entities/term.entity';
 import { ExamTypeEnum } from '../../../../../common/enums/exam.enum';
+import { ExamStatusEnum } from '../../../../../common/enums/exam-status.enum';
 import { ExamSubjectEntity } from './exam-subject.entity';
 
 @Entity({ name: 'exam' })
-export class ExamEntity extends EntityRelationalHelper {
+export class ExamEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -31,6 +32,13 @@ export class ExamEntity extends EntityRelationalHelper {
     default: ExamTypeEnum.midterm,
   })
   type!: ExamTypeEnum;
+
+  @Column({
+    type: 'enum',
+    enum: ExamStatusEnum,
+    default: ExamStatusEnum.scheduled,
+  })
+  status!: ExamStatusEnum;
 
   @Index()
   @Column({ type: 'date' })

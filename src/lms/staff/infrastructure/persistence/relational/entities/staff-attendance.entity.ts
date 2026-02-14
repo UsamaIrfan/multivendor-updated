@@ -8,13 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { StaffEntity } from './staff.entity';
 import { AttendanceStatusEnum } from '../../../../../common/enums/attendance-status.enum';
 
 @Entity({ name: 'staff_attendance' })
 @Index(['staff', 'date'], { unique: true })
-export class StaffAttendanceEntity extends EntityRelationalHelper {
+export class StaffAttendanceEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

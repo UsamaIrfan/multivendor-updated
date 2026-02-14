@@ -9,13 +9,19 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from '../../roles/roles.decorator';
+import { RolesGuard } from '../../roles/roles.guard';
+import { RoleEnum } from '../../roles/roles.enum';
 import { AcademicService } from './academic.service';
 import { CreateAcademicYearDto } from './dto/create-academic-year.dto';
 import { UpdateAcademicYearDto } from './dto/update-academic-year.dto';
@@ -28,11 +34,14 @@ import { Term } from './domain/term';
 //  Academic Years
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Academic Years')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'lms/academic-years', version: '1' })
 export class AcademicYearController {
   constructor(private readonly service: AcademicService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: AcademicYear })
   create(@Body() dto: CreateAcademicYearDto) {
@@ -40,6 +49,7 @@ export class AcademicYearController {
   }
 
   @Get()
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [AcademicYear] })
   findAll() {
@@ -47,6 +57,7 @@ export class AcademicYearController {
   }
 
   @Get(':id')
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: AcademicYear })
@@ -55,6 +66,7 @@ export class AcademicYearController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: AcademicYear })
@@ -66,6 +78,7 @@ export class AcademicYearController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -77,11 +90,14 @@ export class AcademicYearController {
 //  Terms
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Terms')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'lms/terms', version: '1' })
 export class TermController {
   constructor(private readonly service: AcademicService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Term })
   create(@Body() dto: CreateTermDto) {
@@ -89,6 +105,7 @@ export class TermController {
   }
 
   @Get()
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Term] })
   findAll() {
@@ -96,6 +113,7 @@ export class TermController {
   }
 
   @Get(':id')
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Term })
@@ -104,6 +122,7 @@ export class TermController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Term })
@@ -112,6 +131,7 @@ export class TermController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {

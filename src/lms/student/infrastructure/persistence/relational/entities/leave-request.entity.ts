@@ -7,13 +7,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { StudentEntity } from './student.entity';
 import { UserEntity } from '../../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { LeaveStatusEnum } from '../../../../../common/enums/leave-status.enum';
 
 @Entity({ name: 'student_leave_request' })
-export class LeaveRequestEntity extends EntityRelationalHelper {
+export class LeaveRequestEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

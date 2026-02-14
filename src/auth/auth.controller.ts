@@ -24,6 +24,7 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { NullableType } from '../utils/types/nullable.type';
 import { User } from '../users/domain/user';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { AuthSelectTenantDto } from './dto/auth-select-tenant.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -148,5 +149,31 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(@Request() request): Promise<void> {
     return this.service.softDelete(request.user);
+  }
+
+  @ApiBearerAuth()
+  @Post('tenant/select')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOkResponse({
+    type: LoginResponseDto,
+    description: 'Select a tenant and receive a new JWT with tenant context',
+  })
+  @HttpCode(HttpStatus.OK)
+  public selectTenant(
+    @Request() request,
+    @Body() dto: AuthSelectTenantDto,
+  ): Promise<LoginResponseDto> {
+    return this.service.selectTenant(request.user, dto.tenantId);
+  }
+
+  @ApiBearerAuth()
+  @Get('tenants')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOkResponse({
+    description: 'List of tenants the authenticated user belongs to',
+  })
+  @HttpCode(HttpStatus.OK)
+  public getTenants(@Request() request) {
+    return this.service.getUserTenants(request.user.id);
   }
 }

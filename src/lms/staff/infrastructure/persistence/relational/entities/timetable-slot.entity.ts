@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { SectionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/section.entity';
 import { SubjectEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/subject.entity';
 import { StaffEntity } from './staff.entity';
@@ -16,7 +16,7 @@ import { DayOfWeekEnum } from '../../../../../common/enums/general.enum';
 
 @Entity({ name: 'timetable_slot' })
 @Index(['section', 'dayOfWeek', 'startTime'], { unique: true })
-export class TimetableSlotEntity extends EntityRelationalHelper {
+export class TimetableSlotEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

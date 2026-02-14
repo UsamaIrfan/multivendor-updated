@@ -11,6 +11,10 @@ export class ExamResultMapper {
     domain.grade = entity.grade;
     domain.isAbsent = entity.isAbsent;
     domain.remarks = entity.remarks;
+    domain.percentage = entity.percentage;
+    domain.rank = entity.rank;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -24,6 +28,10 @@ export class ExamResultMapper {
     entity.grade = domain.grade;
     entity.isAbsent = domain.isAbsent;
     entity.remarks = domain.remarks;
+    entity.percentage = domain.percentage ?? null;
+    entity.rank = domain.rank ?? null;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

@@ -18,6 +18,8 @@ export class StaffMapper {
     domain.employmentType = entity.employmentType;
     domain.emergencyContact = entity.emergencyContact;
     domain.address = entity.address;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -42,6 +44,8 @@ export class StaffMapper {
     entity.employmentType = domain.employmentType;
     entity.emergencyContact = domain.emergencyContact;
     entity.address = domain.address;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     return entity;
   }
 }

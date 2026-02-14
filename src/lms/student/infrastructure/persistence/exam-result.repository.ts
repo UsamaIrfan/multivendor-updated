@@ -11,4 +11,11 @@ export abstract class ExamResultRepository {
     payload: DeepPartial<ExamResult>,
   ): Promise<ExamResult | null>;
   abstract remove(id: number): Promise<void>;
+  abstract findByExamSubjectId(examSubjectId: number): Promise<ExamResult[]>;
+  abstract findByStudentId(studentId: number): Promise<ExamResult[]>;
+  abstract findByExamSubjectIdAndStudentId(
+    examSubjectId: number,
+    studentId: number,
+  ): Promise<NullableType<ExamResult>>;
+  abstract bulkCreate(data: DeepPartial<ExamResult>[]): Promise<ExamResult[]>;
 }

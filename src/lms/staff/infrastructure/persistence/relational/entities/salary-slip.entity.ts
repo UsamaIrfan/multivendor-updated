@@ -8,13 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { StaffEntity } from './staff.entity';
 import { SalaryStatusEnum } from '../../../../../common/enums/general.enum';
 
 @Entity({ name: 'salary_slip' })
 @Index(['staff', 'month', 'year'], { unique: true })
-export class SalarySlipEntity extends EntityRelationalHelper {
+export class SalarySlipEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

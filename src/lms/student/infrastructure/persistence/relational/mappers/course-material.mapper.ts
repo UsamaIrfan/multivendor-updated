@@ -13,6 +13,8 @@ export class CourseMaterialMapper {
     domain.fileId = entity.file?.id ?? null;
     domain.externalUrl = entity.externalUrl;
     domain.isActive = entity.isActive;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -28,6 +30,8 @@ export class CourseMaterialMapper {
     entity.type = domain.type;
     entity.externalUrl = domain.externalUrl;
     entity.isActive = domain.isActive;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

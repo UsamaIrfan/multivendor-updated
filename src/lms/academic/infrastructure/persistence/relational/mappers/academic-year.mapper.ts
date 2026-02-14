@@ -10,6 +10,8 @@ export class AcademicYearMapper {
     domain.startDate = entity.startDate;
     domain.endDate = entity.endDate;
     domain.isCurrent = entity.isCurrent;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -23,6 +25,8 @@ export class AcademicYearMapper {
     entity.startDate = domain.startDate;
     entity.endDate = domain.endDate;
     entity.isCurrent = domain.isCurrent;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

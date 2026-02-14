@@ -8,12 +8,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { InstitutionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/institution.entity';
 import { FeePaymentEntity } from '../../../../../student/infrastructure/persistence/relational/entities/fee-payment.entity';
 
 @Entity({ name: 'income' })
-export class IncomeEntity extends EntityRelationalHelper {
+export class IncomeEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

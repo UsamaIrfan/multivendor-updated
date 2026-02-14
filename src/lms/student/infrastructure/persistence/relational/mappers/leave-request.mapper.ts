@@ -12,6 +12,8 @@ export class LeaveRequestMapper {
     domain.status = entity.status;
     domain.approvedById = entity.approvedBy?.id ?? null;
     domain.adminRemarks = entity.adminRemarks;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -26,6 +28,8 @@ export class LeaveRequestMapper {
     entity.reason = domain.reason;
     entity.status = domain.status;
     entity.adminRemarks = domain.adminRemarks;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

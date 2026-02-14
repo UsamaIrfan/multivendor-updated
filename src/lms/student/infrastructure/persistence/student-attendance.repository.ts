@@ -3,7 +3,9 @@ import { NullableType } from '../../../../utils/types/nullable.type';
 import { StudentAttendance } from '../../domain/student-attendance';
 
 export abstract class StudentAttendanceRepository {
-  abstract create(data: DeepPartial<StudentAttendance>): Promise<StudentAttendance>;
+  abstract create(
+    data: DeepPartial<StudentAttendance>,
+  ): Promise<StudentAttendance>;
   abstract findAll(): Promise<StudentAttendance[]>;
   abstract findById(id: number): Promise<NullableType<StudentAttendance>>;
   abstract update(

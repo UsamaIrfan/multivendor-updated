@@ -8,13 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { InstitutionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/institution.entity';
 import { SalarySlipEntity } from '../../../../../staff/infrastructure/persistence/relational/entities/salary-slip.entity';
 import { ExpenseStatusEnum } from '../../../../../common/enums/general.enum';
 
 @Entity({ name: 'expense' })
-export class ExpenseEntity extends EntityRelationalHelper {
+export class ExpenseEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

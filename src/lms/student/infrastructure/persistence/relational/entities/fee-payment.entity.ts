@@ -7,12 +7,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { FeeChallanEntity } from './fee-challan.entity';
 import { PaymentMethodEnum } from '../../../../../common/enums/payment-status.enum';
 
 @Entity({ name: 'fee_payment' })
-export class FeePaymentEntity extends EntityRelationalHelper {
+export class FeePaymentEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

@@ -9,6 +9,8 @@ export class SectionMapper {
     domain.classTeacherId = entity.classTeacherId;
     domain.name = entity.name;
     domain.capacity = entity.capacity;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -21,6 +23,8 @@ export class SectionMapper {
     entity.classTeacherId = domain.classTeacherId;
     entity.name = domain.name;
     entity.capacity = domain.capacity;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

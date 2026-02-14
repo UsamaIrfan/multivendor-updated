@@ -13,6 +13,8 @@ export class NoticeMapper {
     domain.isPublished = entity.isPublished;
     domain.publishDate = entity.publishDate;
     domain.expiryDate = entity.expiryDate;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -32,6 +34,8 @@ export class NoticeMapper {
     entity.isPublished = domain.isPublished;
     entity.publishDate = domain.publishDate;
     entity.expiryDate = domain.expiryDate;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     return entity;
   }
 }

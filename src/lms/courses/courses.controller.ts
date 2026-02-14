@@ -9,13 +9,19 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from '../../roles/roles.decorator';
+import { RolesGuard } from '../../roles/roles.guard';
+import { RoleEnum } from '../../roles/roles.enum';
 import { CoursesService } from './courses.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
@@ -37,11 +43,14 @@ import { Subject } from './domain/subject';
 //  Institution
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Institutions')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'lms/institutions', version: '1' })
 export class InstitutionController {
   constructor(private readonly service: CoursesService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Institution })
   create(@Body() dto: CreateInstitutionDto) {
@@ -49,6 +58,7 @@ export class InstitutionController {
   }
 
   @Get()
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Institution] })
   findAll() {
@@ -56,6 +66,7 @@ export class InstitutionController {
   }
 
   @Get(':id')
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Institution })
@@ -64,6 +75,7 @@ export class InstitutionController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Institution })
@@ -75,6 +87,7 @@ export class InstitutionController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -86,11 +99,14 @@ export class InstitutionController {
 //  Departments
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Departments')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'lms/departments', version: '1' })
 export class DepartmentController {
   constructor(private readonly service: CoursesService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Department })
   create(@Body() dto: CreateDepartmentDto) {
@@ -98,6 +114,7 @@ export class DepartmentController {
   }
 
   @Get()
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Department] })
   findAll() {
@@ -105,6 +122,7 @@ export class DepartmentController {
   }
 
   @Get(':id')
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Department })
@@ -113,6 +131,7 @@ export class DepartmentController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Department })
@@ -124,6 +143,7 @@ export class DepartmentController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -135,11 +155,14 @@ export class DepartmentController {
 //  Grade Classes
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Grade Classes')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'lms/grade-classes', version: '1' })
 export class GradeClassController {
   constructor(private readonly service: CoursesService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: GradeClass })
   create(@Body() dto: CreateGradeClassDto) {
@@ -147,6 +170,7 @@ export class GradeClassController {
   }
 
   @Get()
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [GradeClass] })
   findAll() {
@@ -154,6 +178,7 @@ export class GradeClassController {
   }
 
   @Get(':id')
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: GradeClass })
@@ -162,6 +187,7 @@ export class GradeClassController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: GradeClass })
@@ -173,6 +199,7 @@ export class GradeClassController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -184,11 +211,14 @@ export class GradeClassController {
 //  Sections
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Sections')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'lms/sections', version: '1' })
 export class SectionController {
   constructor(private readonly service: CoursesService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Section })
   create(@Body() dto: CreateSectionDto) {
@@ -196,6 +226,7 @@ export class SectionController {
   }
 
   @Get()
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Section] })
   findAll() {
@@ -203,6 +234,7 @@ export class SectionController {
   }
 
   @Get(':id')
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Section })
@@ -211,6 +243,7 @@ export class SectionController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Section })
@@ -219,6 +252,7 @@ export class SectionController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -230,11 +264,14 @@ export class SectionController {
 //  Subjects
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Subjects')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'lms/subjects', version: '1' })
 export class SubjectController {
   constructor(private readonly service: CoursesService) {}
 
   @Post()
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Subject })
   create(@Body() dto: CreateSubjectDto) {
@@ -242,6 +279,7 @@ export class SubjectController {
   }
 
   @Get()
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Subject] })
   findAll() {
@@ -249,6 +287,7 @@ export class SubjectController {
   }
 
   @Get(':id')
+  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Subject })
@@ -257,6 +296,7 @@ export class SubjectController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Subject })
@@ -265,6 +305,7 @@ export class SubjectController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {

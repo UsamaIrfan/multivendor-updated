@@ -11,7 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { UserEntity } from '../../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { InstitutionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/institution.entity';
 import {
@@ -26,7 +26,7 @@ import { FeeChallanEntity } from './fee-challan.entity';
 import { ExamResultEntity } from './exam-result.entity';
 
 @Entity({ name: 'student' })
-export class StudentEntity extends EntityRelationalHelper {
+export class StudentEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

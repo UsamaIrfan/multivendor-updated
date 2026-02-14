@@ -11,7 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { UserEntity } from '../../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { InstitutionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/institution.entity';
 import { DepartmentEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/department.entity';
@@ -21,7 +21,7 @@ import { StaffLeaveEntity } from './staff-leave.entity';
 import { SalarySlipEntity } from './salary-slip.entity';
 
 @Entity({ name: 'staff' })
-export class StaffEntity extends EntityRelationalHelper {
+export class StaffEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

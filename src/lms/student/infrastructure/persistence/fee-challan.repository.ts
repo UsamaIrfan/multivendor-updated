@@ -11,4 +11,17 @@ export abstract class FeeChallanRepository {
     payload: DeepPartial<FeeChallan>,
   ): Promise<FeeChallan | null>;
   abstract remove(id: number): Promise<void>;
+
+  // ── Extended methods for Fee Management ──
+  abstract findByChallanNumber(
+    challanNumber: string,
+  ): Promise<NullableType<FeeChallan>>;
+  abstract findByStudentId(studentId: number): Promise<FeeChallan[]>;
+  abstract findByStudentAndStructureAndInstallment(
+    studentId: number,
+    feeStructureId: number,
+    installmentIndex: number,
+  ): Promise<NullableType<FeeChallan>>;
+  abstract findPendingByClassId(classId: number): Promise<FeeChallan[]>;
+  abstract getLastChallanNumberForYear(year: number): Promise<string | null>;
 }

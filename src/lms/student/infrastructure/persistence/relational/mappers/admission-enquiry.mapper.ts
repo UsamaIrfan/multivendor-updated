@@ -17,6 +17,8 @@ export class AdmissionEnquiryMapper {
     domain.notes = entity.notes;
     domain.followUpDate = entity.followUpDate;
     domain.convertedStudentId = entity.convertedStudentId;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -37,6 +39,8 @@ export class AdmissionEnquiryMapper {
     entity.notes = domain.notes;
     entity.followUpDate = domain.followUpDate;
     entity.convertedStudentId = domain.convertedStudentId;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

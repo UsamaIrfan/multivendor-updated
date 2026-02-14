@@ -9,14 +9,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { ExamEntity } from './exam.entity';
 import { SubjectEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/subject.entity';
 import { ExamResultEntity } from './exam-result.entity';
 
 @Entity({ name: 'exam_subject' })
 @Index(['exam', 'subject'], { unique: true })
-export class ExamSubjectEntity extends EntityRelationalHelper {
+export class ExamSubjectEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

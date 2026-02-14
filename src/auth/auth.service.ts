@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -28,6 +29,8 @@ import { Session } from '../session/domain/session';
 import { SessionService } from '../session/session.service';
 import { StatusEnum } from '../statuses/statuses.enum';
 import { User } from '../users/domain/user';
+import { TenantUserRepository } from '../tenant/infrastructure/persistence/tenant-user.repository';
+import { TenantRepository } from '../tenant/infrastructure/persistence/tenant.repository';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +40,8 @@ export class AuthService {
     private sessionService: SessionService,
     private mailService: MailService,
     private configService: ConfigService<AllConfigType>,
+    private tenantUserRepository: TenantUserRepository,
+    private tenantRepository: TenantRepository,
   ) {}
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseDto> {
@@ -91,6 +96,8 @@ export class AuthService {
     const session = await this.sessionService.create({
       user,
       hash,
+      tenantId: '00000000-0000-0000-0000-000000000001',
+      branchId: null,
     });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
@@ -172,6 +179,8 @@ export class AuthService {
     const session = await this.sessionService.create({
       user,
       hash,
+      tenantId: '00000000-0000-0000-0000-000000000001',
+      branchId: null,
     });
 
     const {
@@ -544,11 +553,85 @@ export class AuthService {
     return this.sessionService.deleteById(data.sessionId);
   }
 
+  /**
+   * Select/switch tenant context. Issues a new JWT with tenantId claim.
+   */
+  async selectTenant(
+    userPayload: JwtPayloadType,
+    tenantId: string,
+  ): Promise<LoginResponseDto> {
+    // Verify tenant exists and is active
+    const tenant = await this.tenantRepository.findById(tenantId);
+    if (!tenant || !tenant.isActive) {
+      throw new ForbiddenException('Tenant not found or inactive');
+    }
+
+    // Verify user belongs to tenant
+    const tenantUser = await this.tenantUserRepository.findByTenantAndUser(
+      tenantId,
+      Number(userPayload.id),
+    );
+    if (!tenantUser || !tenantUser.isActive) {
+      throw new ForbiddenException('User does not have access to this tenant');
+    }
+
+    // Get user
+    const user = await this.usersService.findById(userPayload.id);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    // Create new session with tenant context
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+
+    const session = await this.sessionService.create({
+      user,
+      hash,
+      tenantId,
+      branchId: null,
+    });
+
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      role: user.role,
+      sessionId: session.id,
+      hash,
+      tenantId,
+    });
+
+    return {
+      refreshToken,
+      token,
+      tokenExpires,
+      user,
+    };
+  }
+
+  /**
+   * Get list of tenants the user belongs to.
+   */
+  async getUserTenants(userId: number) {
+    const tenantUsers = await this.tenantUserRepository.findAllByUser(userId);
+    const tenantIds = tenantUsers
+      .filter((tu) => tu.isActive)
+      .map((tu) => tu.tenantId);
+
+    const tenants = await Promise.all(
+      tenantIds.map((id) => this.tenantRepository.findById(id)),
+    );
+
+    return tenants.filter(Boolean);
+  }
+
   private async getTokensData(data: {
     id: User['id'];
     role: User['role'];
     sessionId: Session['id'];
     hash: Session['hash'];
+    tenantId?: string;
   }) {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
       infer: true,
@@ -562,6 +645,7 @@ export class AuthService {
           id: data.id,
           role: data.role,
           sessionId: data.sessionId,
+          ...(data.tenantId && { tenantId: data.tenantId }),
         },
         {
           secret: this.configService.getOrThrow('auth.secret', { infer: true }),

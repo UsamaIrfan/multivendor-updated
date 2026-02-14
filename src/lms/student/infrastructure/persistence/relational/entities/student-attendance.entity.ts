@@ -8,14 +8,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { StudentEntity } from './student.entity';
 import { SectionEntity } from '../../../../../courses/infrastructure/persistence/relational/entities/section.entity';
 import { AttendanceStatusEnum } from '../../../../../common/enums/attendance-status.enum';
 
 @Entity({ name: 'student_attendance' })
 @Index(['student', 'date'], { unique: true })
-export class StudentAttendanceEntity extends EntityRelationalHelper {
+export class StudentAttendanceEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

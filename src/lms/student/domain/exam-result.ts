@@ -19,4 +19,10 @@ export class ExamResult extends LmsBaseDomain {
 
   @ApiPropertyOptional({ type: String })
   remarks!: string | null;
+
+  @ApiPropertyOptional({ type: Number })
+  percentage!: number | null;
+
+  @ApiPropertyOptional({ type: Number })
+  rank!: number | null;
 }

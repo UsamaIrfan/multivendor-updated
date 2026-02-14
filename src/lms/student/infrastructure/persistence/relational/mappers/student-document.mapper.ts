@@ -10,6 +10,8 @@ export class StudentDocumentMapper {
     domain.fileId = entity.file?.id ?? null;
     domain.isVerified = entity.isVerified;
     domain.remarks = entity.remarks;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -22,6 +24,8 @@ export class StudentDocumentMapper {
     entity.documentType = domain.documentType;
     entity.isVerified = domain.isVerified;
     entity.remarks = domain.remarks;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

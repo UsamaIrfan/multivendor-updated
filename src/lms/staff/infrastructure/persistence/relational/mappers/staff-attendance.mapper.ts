@@ -11,6 +11,8 @@ export class StaffAttendanceMapper {
     domain.checkIn = entity.checkIn;
     domain.checkOut = entity.checkOut;
     domain.remarks = entity.remarks;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -26,6 +28,8 @@ export class StaffAttendanceMapper {
     entity.checkIn = domain.checkIn;
     entity.checkOut = domain.checkOut;
     entity.remarks = domain.remarks;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     return entity;
   }
 }

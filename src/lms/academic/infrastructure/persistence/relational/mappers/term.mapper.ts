@@ -9,6 +9,8 @@ export class TermMapper {
     domain.name = entity.name;
     domain.startDate = entity.startDate;
     domain.endDate = entity.endDate;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -21,6 +23,8 @@ export class TermMapper {
     entity.name = domain.name;
     entity.startDate = domain.startDate;
     entity.endDate = domain.endDate;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

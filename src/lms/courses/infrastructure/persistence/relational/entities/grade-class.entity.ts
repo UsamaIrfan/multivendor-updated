@@ -9,13 +9,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EntityRelationalHelper } from '../../../../../../utils/relational-entity-helper';
+import { TenantAwareEntityHelper } from '../../../../../../utils/tenant-aware-entity-helper';
 import { InstitutionEntity } from './institution.entity';
 import { SectionEntity } from './section.entity';
 
 @Entity({ name: 'grade_class' })
 @Index(['institution', 'name'], { unique: true })
-export class GradeClassEntity extends EntityRelationalHelper {
+export class GradeClassEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 

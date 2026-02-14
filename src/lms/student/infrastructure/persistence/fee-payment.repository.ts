@@ -11,4 +11,7 @@ export abstract class FeePaymentRepository {
     payload: DeepPartial<FeePayment>,
   ): Promise<FeePayment | null>;
   abstract remove(id: number): Promise<void>;
+
+  // ── Extended methods for Fee Management ──
+  abstract findByChallanId(challanId: number): Promise<FeePayment[]>;
 }

@@ -12,6 +12,8 @@ export class TimetableSlotMapper {
     domain.startTime = entity.startTime;
     domain.endTime = entity.endTime;
     domain.room = entity.room;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -28,6 +30,8 @@ export class TimetableSlotMapper {
     entity.startTime = domain.startTime;
     entity.endTime = domain.endTime;
     entity.room = domain.room;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     return entity;
   }
 }

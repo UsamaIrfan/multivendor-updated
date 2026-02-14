@@ -10,6 +10,8 @@ export class ExamSubjectMapper {
     domain.examDate = entity.examDate;
     domain.totalMarks = entity.totalMarks;
     domain.passingMarks = entity.passingMarks;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -22,6 +24,8 @@ export class ExamSubjectMapper {
     entity.examDate = domain.examDate;
     entity.totalMarks = domain.totalMarks;
     entity.passingMarks = domain.passingMarks;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;

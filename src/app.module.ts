@@ -28,6 +28,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './database/mongoose-config.service';
 import { DatabaseConfig } from './database/config/database-config.type';
 import { LmsModule } from './lms/lms.module';
+import { StudentRegistrationModule } from './student-registration/student-registration.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { FeesModule } from './fees/fees.module';
+import { ExamsModule } from './exams/exams.module';
+import { TenantModule } from './tenant/tenant.module';
 
 // <database-block>
 const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
@@ -94,6 +99,11 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     MailerModule,
     HomeModule,
     LmsModule,
+    StudentRegistrationModule,
+    AttendanceModule,
+    FeesModule,
+    ExamsModule,
+    TenantModule,
   ],
 })
 export class AppModule {}

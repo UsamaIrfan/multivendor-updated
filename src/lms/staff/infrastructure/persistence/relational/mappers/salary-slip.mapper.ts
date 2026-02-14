@@ -17,6 +17,8 @@ export class SalarySlipMapper {
     domain.status = entity.status;
     domain.paidAt = entity.paidAt;
     domain.remarks = entity.remarks;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -38,6 +40,8 @@ export class SalarySlipMapper {
     entity.status = domain.status;
     entity.paidAt = domain.paidAt;
     entity.remarks = domain.remarks;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     return entity;
   }
 }

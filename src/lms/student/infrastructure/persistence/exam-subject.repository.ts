@@ -11,4 +11,5 @@ export abstract class ExamSubjectRepository {
     payload: DeepPartial<ExamSubject>,
   ): Promise<ExamSubject | null>;
   abstract remove(id: number): Promise<void>;
+  abstract findByExamId(examId: number): Promise<ExamSubject[]>;
 }

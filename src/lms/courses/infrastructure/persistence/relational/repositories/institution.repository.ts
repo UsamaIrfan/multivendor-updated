@@ -6,13 +6,25 @@ import { InstitutionRepository } from '../../institution.repository';
 import { InstitutionMapper } from '../mappers/institution.mapper';
 import { Institution } from '../../../../domain/institution';
 import { NullableType } from '../../../../../../utils/types/nullable.type';
+import { TenantContextService } from '../../../../../../tenant/tenant-context/tenant-context.service';
 
 @Injectable()
 export class InstitutionRelationalRepository implements InstitutionRepository {
   constructor(
     @InjectRepository(InstitutionEntity)
     private readonly repo: Repository<InstitutionEntity>,
+    private readonly tenantContext: TenantContextService,
   ) {}
+
+  private getTenantFilter(): Record<string, unknown> {
+    if (this.tenantContext.hasContext()) {
+      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const branchId = this.tenantContext.getBranchId();
+      if (branchId) filter.branchId = branchId;
+      return filter;
+    }
+    return {};
+  }
 
   async create(
     data: Omit<Institution, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
@@ -20,17 +32,21 @@ export class InstitutionRelationalRepository implements InstitutionRepository {
     const persistenceModel = this.repo.create(
       InstitutionMapper.toPersistence(data as Institution),
     );
+    if (this.tenantContext.hasContext()) {
+      (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
+      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+    }
     const saved = await this.repo.save(persistenceModel);
     return InstitutionMapper.toDomain(saved);
   }
 
   async findAll(): Promise<Institution[]> {
-    const entities = await this.repo.find();
+    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
     return entities.map(InstitutionMapper.toDomain);
   }
 
   async findById(id: number): Promise<NullableType<Institution>> {
-    const entity = await this.repo.findOne({ where: { id } });
+    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
     return entity ? InstitutionMapper.toDomain(entity) : null;
   }
 
@@ -38,7 +54,7 @@ export class InstitutionRelationalRepository implements InstitutionRepository {
     id: number,
     payload: Partial<Institution>,
   ): Promise<Institution | null> {
-    const entity = await this.repo.findOne({ where: { id } });
+    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
     if (!entity) return null;
 
     const updated = await this.repo.save(
@@ -53,6 +69,6 @@ export class InstitutionRelationalRepository implements InstitutionRepository {
   }
 
   async remove(id: number): Promise<void> {
-    await this.repo.softDelete(id);
+    await this.repo.softDelete({ id, ...this.getTenantFilter() } as any);
   }
 }

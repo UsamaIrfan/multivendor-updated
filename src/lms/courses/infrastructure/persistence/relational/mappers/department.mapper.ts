@@ -9,6 +9,8 @@ export class DepartmentMapper {
     domain.name = entity.name;
     domain.code = entity.code;
     domain.description = entity.description;
+    domain.tenantId = entity.tenantId;
+    domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
@@ -21,6 +23,8 @@ export class DepartmentMapper {
     entity.name = domain.name;
     entity.code = domain.code;
     entity.description = domain.description;
+    entity.tenantId = domain.tenantId;
+    entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     entity.deletedAt = domain.deletedAt;
