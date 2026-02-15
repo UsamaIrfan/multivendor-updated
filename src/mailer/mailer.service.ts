@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import fs from 'node:fs/promises';
 import { ConfigService } from '@nestjs/config';
 import nodemailer from 'nodemailer';
@@ -7,6 +7,7 @@ import { AllConfigType } from '../config/config.type';
 
 @Injectable()
 export class MailerService {
+  private readonly logger = new Logger(MailerService.name);
   private readonly transporter: nodemailer.Transporter;
   constructor(private readonly configService: ConfigService<AllConfigType>) {
     this.transporter = nodemailer.createTransport({
@@ -32,13 +33,14 @@ export class MailerService {
   }): Promise<void> {
     let html: string | undefined;
     if (templatePath) {
+      this.logger.debug(`Reading template: ${templatePath}`);
       const template = await fs.readFile(templatePath, 'utf-8');
       html = Handlebars.compile(template, {
         strict: true,
       })(context);
     }
 
-    await this.transporter.sendMail({
+    const info = await this.transporter.sendMail({
       ...mailOptions,
       from: mailOptions.from
         ? mailOptions.from
@@ -49,5 +51,9 @@ export class MailerService {
           })}>`,
       html: mailOptions.html ? mailOptions.html : html,
     });
+
+    this.logger.log(
+      `Email sent to ${String(mailOptions.to)} [${info.messageId}]`,
+    );
   }
 }
