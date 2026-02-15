@@ -38,6 +38,11 @@ import { StaffManagementModule } from './staff-management/staff-management.modul
 import { StaffAttendanceModule } from './staff-attendance/staff-attendance.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { NoticesModule } from './notices/notices.module';
+import { TimetablesModule } from './timetables/timetables.module';
+import { PortalsModule } from './portals/portals.module';
+import { IncomeModule } from './income/income.module';
+import { ExpensesModule } from './expenses/expenses.module';
+import { FinancialDashboardModule } from './financial-dashboard/financial-dashboard.module';
 
 // <database-block>
 const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
@@ -114,6 +119,11 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     StaffAttendanceModule,
     PayrollModule,
     NoticesModule,
+    TimetablesModule,
+    PortalsModule,
+    IncomeModule,
+    ExpensesModule,
+    FinancialDashboardModule,
   ],
 })
 export class AppModule {}

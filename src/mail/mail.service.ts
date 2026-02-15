@@ -43,11 +43,7 @@ export class MailService {
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
       templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
-          infer: true,
-        }),
-        'src',
-        'mail',
+        __dirname,
         'mail-templates',
         'activation.hbs',
       ),
@@ -96,11 +92,7 @@ export class MailService {
       subject: resetPasswordTitle,
       text: `${url.toString()} ${resetPasswordTitle}`,
       templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
-          infer: true,
-        }),
-        'src',
-        'mail',
+        __dirname,
         'mail-templates',
         'reset-password.hbs',
       ),
@@ -147,11 +139,7 @@ export class MailService {
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
       templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
-          infer: true,
-        }),
-        'src',
-        'mail',
+        __dirname,
         'mail-templates',
         'confirm-new-email.hbs',
       ),
