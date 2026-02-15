@@ -18,7 +18,7 @@ describe('LMS Staff Module (e2e)', () => {
   describe('Notice CRUD', () => {
     let noticeId: number;
 
-    it('POST /api/v1/lms/notices - should create a notice', () => {
+    it('should create a notice (POST /api/v1/lms/notices)', () => {
       return request(app)
         .post('/api/v1/lms/notices')
         .auth(apiToken, { type: 'bearer' })
@@ -35,7 +35,7 @@ describe('LMS Staff Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/notices - should return all notices', () => {
+    it('should return all notices (GET /api/v1/lms/notices)', () => {
       return request(app)
         .get('/api/v1/lms/notices')
         .auth(apiToken, { type: 'bearer' })
@@ -45,7 +45,7 @@ describe('LMS Staff Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/notices/:id - should return one notice', () => {
+    it('should return one notice (GET /api/v1/lms/notices/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/notices/${noticeId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -55,7 +55,7 @@ describe('LMS Staff Module (e2e)', () => {
         });
     });
 
-    it('PATCH /api/v1/lms/notices/:id - should update a notice', () => {
+    it('should update a notice (PATCH /api/v1/lms/notices/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/notices/${noticeId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -63,14 +63,14 @@ describe('LMS Staff Module (e2e)', () => {
         .expect(200);
     });
 
-    it('GET /api/v1/lms/notices/999999 - should return 404', () => {
+    it('should return 404 (GET /api/v1/lms/notices/999999)', () => {
       return request(app)
         .get('/api/v1/lms/notices/999999')
         .auth(apiToken, { type: 'bearer' })
         .expect(404);
     });
 
-    it('DELETE /api/v1/lms/notices/:id - should delete a notice', () => {
+    it('should delete a notice (DELETE /api/v1/lms/notices/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/notices/${noticeId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -82,7 +82,7 @@ describe('LMS Staff Module (e2e)', () => {
   describe('Salary Slip CRUD', () => {
     let salarySlipId: number;
 
-    it('POST /api/v1/lms/salary-slips - should create a salary slip', () => {
+    it('should create a salary slip (POST /api/v1/lms/salary-slips)', () => {
       return request(app)
         .post('/api/v1/lms/salary-slips')
         .auth(apiToken, { type: 'bearer' })
@@ -101,7 +101,7 @@ describe('LMS Staff Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/salary-slips - should return all salary slips', () => {
+    it('should return all salary slips (GET /api/v1/lms/salary-slips)', () => {
       return request(app)
         .get('/api/v1/lms/salary-slips')
         .auth(apiToken, { type: 'bearer' })
@@ -111,14 +111,14 @@ describe('LMS Staff Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/salary-slips/:id - should return one salary slip', () => {
+    it('should return one salary slip (GET /api/v1/lms/salary-slips/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/salary-slips/${salarySlipId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/salary-slips/:id - should delete a salary slip', () => {
+    it('should delete a salary slip (DELETE /api/v1/lms/salary-slips/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/salary-slips/${salarySlipId}`)
         .auth(apiToken, { type: 'bearer' })

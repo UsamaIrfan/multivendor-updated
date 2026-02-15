@@ -329,7 +329,13 @@ export class LeaveRequestController {
   constructor(private readonly service: StudentService) {}
 
   @Post()
-  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student, RoleEnum.parent)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.staff,
+    RoleEnum.teacher,
+    RoleEnum.student,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Leave request created' })
   create(@Body() dto: CreateLeaveRequestDto) {
@@ -345,7 +351,13 @@ export class LeaveRequestController {
   }
 
   @Get(':id')
-  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student, RoleEnum.parent)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.staff,
+    RoleEnum.teacher,
+    RoleEnum.student,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -666,7 +678,13 @@ export class ExamResultController {
   }
 
   @Get(':id')
-  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student, RoleEnum.parent)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.staff,
+    RoleEnum.teacher,
+    RoleEnum.student,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {

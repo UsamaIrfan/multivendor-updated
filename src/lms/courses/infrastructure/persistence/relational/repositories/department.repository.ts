@@ -18,7 +18,9 @@ export class DepartmentRelationalRepository implements DepartmentRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -34,14 +36,18 @@ export class DepartmentRelationalRepository implements DepartmentRepository {
     );
     if (this.tenantContext.hasContext()) {
       (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return DepartmentMapper.toDomain(saved);
   }
 
   async findAll(): Promise<Department[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any, relations: ['institution'] });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+      relations: ['institution'],
+    });
     return entities.map(DepartmentMapper.toDomain);
   }
 

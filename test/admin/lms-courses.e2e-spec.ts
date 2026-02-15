@@ -18,7 +18,7 @@ describe('LMS Courses Module (e2e)', () => {
   describe('Institution CRUD', () => {
     let institutionId: number;
 
-    it('POST /api/v1/lms/institutions - should create an institution', () => {
+    it('should create an institution (POST /api/v1/lms/institutions)', () => {
       return request(app)
         .post('/api/v1/lms/institutions')
         .auth(apiToken, { type: 'bearer' })
@@ -30,7 +30,7 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/institutions - should return all institutions', () => {
+    it('should return all institutions (GET /api/v1/lms/institutions)', () => {
       return request(app)
         .get('/api/v1/lms/institutions')
         .auth(apiToken, { type: 'bearer' })
@@ -40,7 +40,7 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/institutions/:id - should return one institution', async () => {
+    it('should return one institution (GET /api/v1/lms/institutions/:id)', async () => {
       return request(app)
         .get(`/api/v1/lms/institutions/${institutionId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -50,7 +50,7 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('PATCH /api/v1/lms/institutions/:id - should update an institution', () => {
+    it('should update an institution (PATCH /api/v1/lms/institutions/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/institutions/${institutionId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -61,14 +61,14 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/institutions/999999 - should return 404 for non-existent', () => {
+    it('should return 404 for non-existent (GET /api/v1/lms/institutions/999999)', () => {
       return request(app)
         .get('/api/v1/lms/institutions/999999')
         .auth(apiToken, { type: 'bearer' })
         .expect(404);
     });
 
-    it('DELETE /api/v1/lms/institutions/:id - should delete an institution', () => {
+    it('should delete an institution (DELETE /api/v1/lms/institutions/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/institutions/${institutionId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -89,7 +89,7 @@ describe('LMS Courses Module (e2e)', () => {
       institutionId = res.body.id;
     });
 
-    it('POST /api/v1/lms/departments - should create a department', () => {
+    it('should create a department (POST /api/v1/lms/departments)', () => {
       return request(app)
         .post('/api/v1/lms/departments')
         .auth(apiToken, { type: 'bearer' })
@@ -101,7 +101,7 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/departments - should return all departments', () => {
+    it('should return all departments (GET /api/v1/lms/departments)', () => {
       return request(app)
         .get('/api/v1/lms/departments')
         .auth(apiToken, { type: 'bearer' })
@@ -111,14 +111,14 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/departments/:id - should return one department', () => {
+    it('should return one department (GET /api/v1/lms/departments/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/departments/${departmentId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('PATCH /api/v1/lms/departments/:id - should update a department', () => {
+    it('should update a department (PATCH /api/v1/lms/departments/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/departments/${departmentId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -126,7 +126,7 @@ describe('LMS Courses Module (e2e)', () => {
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/departments/:id - should delete a department', () => {
+    it('should delete a department (DELETE /api/v1/lms/departments/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/departments/${departmentId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -153,7 +153,7 @@ describe('LMS Courses Module (e2e)', () => {
       institutionId = res.body.id;
     });
 
-    it('POST /api/v1/lms/grade-classes - should create a grade class', () => {
+    it('should create a grade class (POST /api/v1/lms/grade-classes)', () => {
       return request(app)
         .post('/api/v1/lms/grade-classes')
         .auth(apiToken, { type: 'bearer' })
@@ -165,7 +165,7 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/grade-classes - should return all grade classes', () => {
+    it('should return all grade classes (GET /api/v1/lms/grade-classes)', () => {
       return request(app)
         .get('/api/v1/lms/grade-classes')
         .auth(apiToken, { type: 'bearer' })
@@ -175,14 +175,14 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/grade-classes/:id - should return one grade class', () => {
+    it('should return one grade class (GET /api/v1/lms/grade-classes/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/grade-classes/${gradeClassId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('PATCH /api/v1/lms/grade-classes/:id - should update a grade class', () => {
+    it('should update a grade class (PATCH /api/v1/lms/grade-classes/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/grade-classes/${gradeClassId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -190,7 +190,7 @@ describe('LMS Courses Module (e2e)', () => {
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/grade-classes/:id - should delete a grade class', () => {
+    it('should delete a grade class (DELETE /api/v1/lms/grade-classes/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/grade-classes/${gradeClassId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -224,7 +224,7 @@ describe('LMS Courses Module (e2e)', () => {
       departmentId = deptRes.body.id;
     });
 
-    it('POST /api/v1/lms/subjects - should create a subject', () => {
+    it('should create a subject (POST /api/v1/lms/subjects)', () => {
       return request(app)
         .post('/api/v1/lms/subjects')
         .auth(apiToken, { type: 'bearer' })
@@ -236,7 +236,7 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/subjects - should return all subjects', () => {
+    it('should return all subjects (GET /api/v1/lms/subjects)', () => {
       return request(app)
         .get('/api/v1/lms/subjects')
         .auth(apiToken, { type: 'bearer' })
@@ -246,14 +246,14 @@ describe('LMS Courses Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/subjects/:id - should return one subject', () => {
+    it('should return one subject (GET /api/v1/lms/subjects/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/subjects/${subjectId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('PATCH /api/v1/lms/subjects/:id - should update a subject', () => {
+    it('should update a subject (PATCH /api/v1/lms/subjects/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/subjects/${subjectId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -261,7 +261,7 @@ describe('LMS Courses Module (e2e)', () => {
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/subjects/:id - should delete a subject', () => {
+    it('should delete a subject (DELETE /api/v1/lms/subjects/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/subjects/${subjectId}`)
         .auth(apiToken, { type: 'bearer' })

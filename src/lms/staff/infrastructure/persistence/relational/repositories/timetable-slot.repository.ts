@@ -21,7 +21,9 @@ export class TimetableSlotRelationalRepository
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -42,14 +44,18 @@ export class TimetableSlotRelationalRepository
   }
 
   async findAll(): Promise<TimetableSlot[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(TimetableSlotMapper.toDomain);
   }
 
   async findById(
     id: TimetableSlot['id'],
   ): Promise<NullableType<TimetableSlot>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? TimetableSlotMapper.toDomain(entity) : null;
   }
 
@@ -58,7 +64,9 @@ export class TimetableSlotRelationalRepository
     data: DeepPartial<TimetableSlot>,
   ): Promise<TimetableSlot | null> {
     await this.repo.update(id, data as any);
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? TimetableSlotMapper.toDomain(entity) : null;
   }
 

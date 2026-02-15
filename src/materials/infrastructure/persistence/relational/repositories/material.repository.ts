@@ -39,8 +39,7 @@ export class MaterialRelationalRepository implements CourseMaterialRepository {
     );
     if (this.tenantContext.hasContext()) {
       persistenceModel.tenantId = this.tenantContext.getTenantId();
-      persistenceModel.branchId =
-        this.tenantContext.getBranchId() ?? null;
+      persistenceModel.branchId = this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return MaterialMapper.toDomain(saved);
@@ -60,7 +59,9 @@ export class MaterialRelationalRepository implements CourseMaterialRepository {
     return entity ? MaterialMapper.toDomain(entity) : null;
   }
 
-  async findByFilters(filters: MaterialFilterOptions): Promise<CourseMaterial[]> {
+  async findByFilters(
+    filters: MaterialFilterOptions,
+  ): Promise<CourseMaterial[]> {
     const where: any = { tenantId: filters.tenantId };
 
     // Branch filtering: include tenant-wide (null) + branch-specific materials

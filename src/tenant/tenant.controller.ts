@@ -73,10 +73,7 @@ export class TenantController {
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Tenant })
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateTenantDto,
-  ) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateTenantDto) {
     return this.service.updateTenant(id, dto);
   }
 
@@ -130,10 +127,7 @@ export class BranchController {
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Branch })
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateBranchDto,
-  ) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateBranchDto) {
     return this.service.updateBranch(id, dto);
   }
 

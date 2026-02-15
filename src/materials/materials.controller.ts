@@ -55,12 +55,7 @@ export class MaterialsController {
   }
 
   @Get()
-  @Roles(
-    RoleEnum.admin,
-    RoleEnum.teacher,
-    RoleEnum.staff,
-    RoleEnum.student,
-  )
+  @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [CourseMaterial] })
   findAll(@Query() query: QueryMaterialDto) {
@@ -76,12 +71,7 @@ export class MaterialsController {
   }
 
   @Get(':id')
-  @Roles(
-    RoleEnum.admin,
-    RoleEnum.teacher,
-    RoleEnum.staff,
-    RoleEnum.student,
-  )
+  @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: CourseMaterial })
@@ -90,12 +80,7 @@ export class MaterialsController {
   }
 
   @Get(':id/download')
-  @Roles(
-    RoleEnum.admin,
-    RoleEnum.teacher,
-    RoleEnum.staff,
-    RoleEnum.student,
-  )
+  @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: CourseMaterial })
@@ -144,12 +129,7 @@ export class AssignmentsController {
   }
 
   @Get()
-  @Roles(
-    RoleEnum.admin,
-    RoleEnum.teacher,
-    RoleEnum.staff,
-    RoleEnum.student,
-  )
+  @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Assignment] })
   findAll() {
@@ -157,12 +137,7 @@ export class AssignmentsController {
   }
 
   @Get(':id')
-  @Roles(
-    RoleEnum.admin,
-    RoleEnum.teacher,
-    RoleEnum.staff,
-    RoleEnum.student,
-  )
+  @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Assignment })
@@ -223,11 +198,7 @@ export class SubmissionsController {
   constructor(private readonly service: MaterialsService) {}
 
   @Get(':id')
-  @Roles(
-    RoleEnum.admin,
-    RoleEnum.teacher,
-    RoleEnum.student,
-  )
+  @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.student)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: AssignmentSubmission })

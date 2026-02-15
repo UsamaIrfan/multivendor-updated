@@ -18,7 +18,9 @@ export class InstitutionRelationalRepository implements InstitutionRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -37,12 +39,16 @@ export class InstitutionRelationalRepository implements InstitutionRepository {
   }
 
   async findAll(): Promise<Institution[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(InstitutionMapper.toDomain);
   }
 
   async findById(id: number): Promise<NullableType<Institution>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? InstitutionMapper.toDomain(entity) : null;
   }
 
@@ -50,7 +56,9 @@ export class InstitutionRelationalRepository implements InstitutionRepository {
     id: number,
     payload: Partial<Institution>,
   ): Promise<Institution | null> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     if (!entity) return null;
 
     const updated = await this.repo.save(

@@ -13,6 +13,7 @@ describe('Attendance Management (E2E)', () => {
   let userToken: string;
   let testInstitutionId: number;
   let testStudentId: number;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let testSectionId: number;
   let testLeaveId: number;
   let testStaffLeaveId: number;

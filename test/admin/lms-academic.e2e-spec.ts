@@ -18,7 +18,7 @@ describe('LMS Academic Module (e2e)', () => {
   describe('Academic Year CRUD', () => {
     let academicYearId: number;
 
-    it('POST /api/v1/lms/academic-years - should create an academic year', () => {
+    it('should create an academic year (POST /api/v1/lms/academic-years)', () => {
       return request(app)
         .post('/api/v1/lms/academic-years')
         .auth(apiToken, { type: 'bearer' })
@@ -36,7 +36,7 @@ describe('LMS Academic Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/academic-years - should return all academic years', () => {
+    it('should return all academic years (GET /api/v1/lms/academic-years)', () => {
       return request(app)
         .get('/api/v1/lms/academic-years')
         .auth(apiToken, { type: 'bearer' })
@@ -46,7 +46,7 @@ describe('LMS Academic Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/academic-years/:id - should return one academic year', () => {
+    it('should return one academic year (GET /api/v1/lms/academic-years/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/academic-years/${academicYearId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -56,7 +56,7 @@ describe('LMS Academic Module (e2e)', () => {
         });
     });
 
-    it('PATCH /api/v1/lms/academic-years/:id - should update an academic year', () => {
+    it('should update an academic year (PATCH /api/v1/lms/academic-years/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/academic-years/${academicYearId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -64,14 +64,14 @@ describe('LMS Academic Module (e2e)', () => {
         .expect(200);
     });
 
-    it('GET /api/v1/lms/academic-years/999999 - should return 404', () => {
+    it('should return 404 (GET /api/v1/lms/academic-years/999999)', () => {
       return request(app)
         .get('/api/v1/lms/academic-years/999999')
         .auth(apiToken, { type: 'bearer' })
         .expect(404);
     });
 
-    it('DELETE /api/v1/lms/academic-years/:id - should delete an academic year', () => {
+    it('should delete an academic year (DELETE /api/v1/lms/academic-years/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/academic-years/${academicYearId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -98,7 +98,7 @@ describe('LMS Academic Module (e2e)', () => {
       academicYearId = res.body.id;
     });
 
-    it('POST /api/v1/lms/terms - should create a term', () => {
+    it('should create a term (POST /api/v1/lms/terms)', () => {
       return request(app)
         .post('/api/v1/lms/terms')
         .auth(apiToken, { type: 'bearer' })
@@ -115,7 +115,7 @@ describe('LMS Academic Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/terms - should return all terms', () => {
+    it('should return all terms (GET /api/v1/lms/terms)', () => {
       return request(app)
         .get('/api/v1/lms/terms')
         .auth(apiToken, { type: 'bearer' })
@@ -125,14 +125,14 @@ describe('LMS Academic Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/terms/:id - should return one term', () => {
+    it('should return one term (GET /api/v1/lms/terms/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/terms/${termId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('PATCH /api/v1/lms/terms/:id - should update a term', () => {
+    it('should update a term (PATCH /api/v1/lms/terms/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/terms/${termId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -140,7 +140,7 @@ describe('LMS Academic Module (e2e)', () => {
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/terms/:id - should delete a term', () => {
+    it('should delete a term (DELETE /api/v1/lms/terms/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/terms/${termId}`)
         .auth(apiToken, { type: 'bearer' })

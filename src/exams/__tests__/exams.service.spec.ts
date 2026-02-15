@@ -226,10 +226,12 @@ describe('ExamsService', () => {
         totalMarks: 100,
         passingMarks: 35,
       });
-      examResultRepo.create.mockImplementation(async (data) => ({
-        id: Math.floor(Math.random() * 1000),
-        ...data,
-      }));
+      examResultRepo.create.mockImplementation((data) =>
+        Promise.resolve({
+          id: Math.floor(Math.random() * 1000),
+          ...data,
+        }),
+      );
 
       const result = await service.enterMarks({
         examSubjectId: 1,

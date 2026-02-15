@@ -11,7 +11,9 @@ import { TenantContextService } from '../tenant/tenant-context/tenant-context.se
  * Wraps a TypeORM repository and injects WHERE tenant_id = :tenantId
  * on all find operations.
  */
-export class TenantAwareRepository<Entity extends { tenantId: string; branchId: string | null }> {
+export class TenantAwareRepository<
+  Entity extends { tenantId: string; branchId: string | null },
+> {
   constructor(
     protected readonly repo: Repository<Entity>,
     protected readonly tenantContext: TenantContextService,
@@ -46,9 +48,7 @@ export class TenantAwareRepository<Entity extends { tenantId: string; branchId: 
   ): Promise<Entity[]> {
     return this.repo.find({
       ...options,
-      where: this.applyTenantFilter(
-        options?.where as FindOptionsWhere<Entity>,
-      ),
+      where: this.applyTenantFilter(options?.where as FindOptionsWhere<Entity>),
     });
   }
 
@@ -60,9 +60,7 @@ export class TenantAwareRepository<Entity extends { tenantId: string; branchId: 
   ): Promise<Entity | null> {
     return this.repo.findOne({
       ...options,
-      where: this.applyTenantFilter(
-        options.where as FindOptionsWhere<Entity>,
-      ),
+      where: this.applyTenantFilter(options.where as FindOptionsWhere<Entity>),
     });
   }
 

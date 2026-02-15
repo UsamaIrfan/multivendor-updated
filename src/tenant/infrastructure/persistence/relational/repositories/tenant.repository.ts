@@ -15,9 +15,7 @@ export class TenantRelationalRepository implements TenantRepository {
     private readonly repo: Repository<TenantEntity>,
   ) {}
 
-  async create(
-    data: DeepPartial<Tenant>,
-  ): Promise<Tenant> {
+  async create(data: DeepPartial<Tenant>): Promise<Tenant> {
     const persistenceModel = this.repo.create(
       TenantMapper.toPersistence(data as Tenant),
     );

@@ -12,11 +12,7 @@ import { TenantUserRelationalRepository } from './repositories/tenant-user.repos
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      TenantEntity,
-      BranchEntity,
-      TenantUserEntity,
-    ]),
+    TypeOrmModule.forFeature([TenantEntity, BranchEntity, TenantUserEntity]),
   ],
   providers: [
     {

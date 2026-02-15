@@ -20,7 +20,9 @@ export class AssignmentSubmissionMapper {
     return domain;
   }
 
-  static toPersistence(domain: AssignmentSubmission): AssignmentSubmissionEntity {
+  static toPersistence(
+    domain: AssignmentSubmission,
+  ): AssignmentSubmissionEntity {
     const entity = new AssignmentSubmissionEntity();
     if (domain.id) entity.id = domain.id;
     entity.assignmentId = domain.assignmentId;

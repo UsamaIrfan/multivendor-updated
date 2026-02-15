@@ -1,16 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Min,
-} from 'class-validator';
+import { IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { TenantAwareBaseDto } from '../../lms/common/dto/tenant-aware-base.dto';
 
 export class SubmitAssignmentDto extends TenantAwareBaseDto {
-  @ApiProperty({ example: 1, description: 'Student ID submitting the assignment' })
+  @ApiProperty({
+    example: 1,
+    description: 'Student ID submitting the assignment',
+  })
   @IsInt()
   studentId!: number;
 

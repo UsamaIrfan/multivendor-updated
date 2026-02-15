@@ -17,9 +17,7 @@ export class DownloadRecordRelationalRepository
     private readonly tenantContext: TenantContextService,
   ) {}
 
-  async create(
-    data: Omit<DownloadRecord, 'id'>,
-  ): Promise<DownloadRecord> {
+  async create(data: Omit<DownloadRecord, 'id'>): Promise<DownloadRecord> {
     const persistenceModel = this.repo.create(
       DownloadRecordMapper.toPersistence(data as DownloadRecord),
     );

@@ -15,7 +15,9 @@ export abstract class CourseMaterialRepository {
   abstract create(data: DeepPartial<CourseMaterial>): Promise<CourseMaterial>;
   abstract findAll(): Promise<CourseMaterial[]>;
   abstract findById(id: number): Promise<NullableType<CourseMaterial>>;
-  abstract findByFilters(filters: MaterialFilterOptions): Promise<CourseMaterial[]>;
+  abstract findByFilters(
+    filters: MaterialFilterOptions,
+  ): Promise<CourseMaterial[]>;
   abstract update(
     id: number,
     payload: DeepPartial<CourseMaterial>,

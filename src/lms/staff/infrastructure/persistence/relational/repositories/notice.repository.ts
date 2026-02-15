@@ -19,7 +19,9 @@ export class NoticeRelationalRepository implements NoticeRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -38,12 +40,16 @@ export class NoticeRelationalRepository implements NoticeRepository {
   }
 
   async findAll(): Promise<Notice[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(NoticeMapper.toDomain);
   }
 
   async findById(id: Notice['id']): Promise<NullableType<Notice>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? NoticeMapper.toDomain(entity) : null;
   }
 
@@ -52,7 +58,9 @@ export class NoticeRelationalRepository implements NoticeRepository {
     data: DeepPartial<Notice>,
   ): Promise<Notice | null> {
     await this.repo.update(id, data as any);
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? NoticeMapper.toDomain(entity) : null;
   }
 

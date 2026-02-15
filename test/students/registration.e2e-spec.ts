@@ -12,6 +12,7 @@ describe('Student Registration (E2E)', () => {
   let adminToken: string;
   let userToken: string;
   let createdStudentId: number;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let createdStudentGeneratedId: string;
   let createdUserId: number | string;
 
@@ -495,6 +496,7 @@ describe('Student Registration (E2E)', () => {
 
   // ─── POST /api/v1/student-registration/:id/guardians ──
   describe('POST /api/v1/student-registration/:id/guardians', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let guardianId: number;
 
     it('should add a guardian to a student', async () => {

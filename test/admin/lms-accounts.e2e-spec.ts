@@ -18,7 +18,7 @@ describe('LMS Accounts Module (e2e)', () => {
   describe('Income CRUD', () => {
     let incomeId: number;
 
-    it('POST /api/v1/lms/incomes - should create an income', () => {
+    it('should create an income (POST /api/v1/lms/incomes)', () => {
       return request(app)
         .post('/api/v1/lms/incomes')
         .auth(apiToken, { type: 'bearer' })
@@ -36,7 +36,7 @@ describe('LMS Accounts Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/incomes - should return all incomes', () => {
+    it('should return all incomes (GET /api/v1/lms/incomes)', () => {
       return request(app)
         .get('/api/v1/lms/incomes')
         .auth(apiToken, { type: 'bearer' })
@@ -46,7 +46,7 @@ describe('LMS Accounts Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/incomes/:id - should return one income', () => {
+    it('should return one income (GET /api/v1/lms/incomes/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/incomes/${incomeId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -56,7 +56,7 @@ describe('LMS Accounts Module (e2e)', () => {
         });
     });
 
-    it('PATCH /api/v1/lms/incomes/:id - should update an income', () => {
+    it('should update an income (PATCH /api/v1/lms/incomes/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/incomes/${incomeId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -64,14 +64,14 @@ describe('LMS Accounts Module (e2e)', () => {
         .expect(200);
     });
 
-    it('GET /api/v1/lms/incomes/999999 - should return 404', () => {
+    it('should return 404 (GET /api/v1/lms/incomes/999999)', () => {
       return request(app)
         .get('/api/v1/lms/incomes/999999')
         .auth(apiToken, { type: 'bearer' })
         .expect(404);
     });
 
-    it('DELETE /api/v1/lms/incomes/:id - should delete an income', () => {
+    it('should delete an income (DELETE /api/v1/lms/incomes/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/incomes/${incomeId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -83,7 +83,7 @@ describe('LMS Accounts Module (e2e)', () => {
   describe('Expense CRUD', () => {
     let expenseId: number;
 
-    it('POST /api/v1/lms/expenses - should create an expense', () => {
+    it('should create an expense (POST /api/v1/lms/expenses)', () => {
       return request(app)
         .post('/api/v1/lms/expenses')
         .auth(apiToken, { type: 'bearer' })
@@ -101,7 +101,7 @@ describe('LMS Accounts Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/expenses - should return all expenses', () => {
+    it('should return all expenses (GET /api/v1/lms/expenses)', () => {
       return request(app)
         .get('/api/v1/lms/expenses')
         .auth(apiToken, { type: 'bearer' })
@@ -111,7 +111,7 @@ describe('LMS Accounts Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/expenses/:id - should return one expense', () => {
+    it('should return one expense (GET /api/v1/lms/expenses/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/expenses/${expenseId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -121,7 +121,7 @@ describe('LMS Accounts Module (e2e)', () => {
         });
     });
 
-    it('PATCH /api/v1/lms/expenses/:id - should update an expense', () => {
+    it('should update an expense (PATCH /api/v1/lms/expenses/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/expenses/${expenseId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -129,14 +129,14 @@ describe('LMS Accounts Module (e2e)', () => {
         .expect(200);
     });
 
-    it('GET /api/v1/lms/expenses/999999 - should return 404', () => {
+    it('should return 404 (GET /api/v1/lms/expenses/999999)', () => {
       return request(app)
         .get('/api/v1/lms/expenses/999999')
         .auth(apiToken, { type: 'bearer' })
         .expect(404);
     });
 
-    it('DELETE /api/v1/lms/expenses/:id - should delete an expense', () => {
+    it('should delete an expense (DELETE /api/v1/lms/expenses/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/expenses/${expenseId}`)
         .auth(apiToken, { type: 'bearer' })

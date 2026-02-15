@@ -236,15 +236,23 @@ export class AddMultiTenancy1771000000000 implements MigrationInterface {
     for (const table of tables) {
       await queryRunner.query(`DROP INDEX IF EXISTS "IDX_${table}_branchId"`);
       await queryRunner.query(`DROP INDEX IF EXISTS "IDX_${table}_tenantId"`);
-      await queryRunner.query(`ALTER TABLE "${table}" DROP COLUMN IF EXISTS "branchId"`);
-      await queryRunner.query(`ALTER TABLE "${table}" DROP COLUMN IF EXISTS "tenantId"`);
+      await queryRunner.query(
+        `ALTER TABLE "${table}" DROP COLUMN IF EXISTS "branchId"`,
+      );
+      await queryRunner.query(
+        `ALTER TABLE "${table}" DROP COLUMN IF EXISTS "tenantId"`,
+      );
     }
 
     // Remove from session
     await queryRunner.query(`DROP INDEX IF EXISTS "IDX_session_branchId"`);
     await queryRunner.query(`DROP INDEX IF EXISTS "IDX_session_tenantId"`);
-    await queryRunner.query(`ALTER TABLE "session" DROP COLUMN IF EXISTS "branchId"`);
-    await queryRunner.query(`ALTER TABLE "session" DROP COLUMN IF EXISTS "tenantId"`);
+    await queryRunner.query(
+      `ALTER TABLE "session" DROP COLUMN IF EXISTS "branchId"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "session" DROP COLUMN IF EXISTS "tenantId"`,
+    );
 
     // Drop tenant tables
     await queryRunner.query(`DROP TABLE IF EXISTS "tenant_user"`);

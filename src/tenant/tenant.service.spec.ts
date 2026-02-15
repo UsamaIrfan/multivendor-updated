@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { TenantService } from './tenant.service';
 import { TenantRepository } from './infrastructure/persistence/tenant.repository';
 import { BranchRepository } from './infrastructure/persistence/branch.repository';
@@ -271,9 +268,9 @@ describe('TenantService', () => {
 
       it('should throw NotFoundException if not assigned', async () => {
         tenantUserRepo.findByTenantAndUser.mockResolvedValue(null);
-        await expect(
-          service.removeUserFromTenant('uuid-1', 1),
-        ).rejects.toThrow(NotFoundException);
+        await expect(service.removeUserFromTenant('uuid-1', 1)).rejects.toThrow(
+          NotFoundException,
+        );
       });
     });
   });

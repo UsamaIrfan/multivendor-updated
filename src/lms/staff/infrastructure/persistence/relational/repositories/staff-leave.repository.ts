@@ -19,7 +19,9 @@ export class StaffLeaveRelationalRepository implements StaffLeaveRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -38,12 +40,16 @@ export class StaffLeaveRelationalRepository implements StaffLeaveRepository {
   }
 
   async findAll(): Promise<StaffLeave[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(StaffLeaveMapper.toDomain);
   }
 
   async findById(id: StaffLeave['id']): Promise<NullableType<StaffLeave>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? StaffLeaveMapper.toDomain(entity) : null;
   }
 
@@ -52,7 +58,9 @@ export class StaffLeaveRelationalRepository implements StaffLeaveRepository {
     data: DeepPartial<StaffLeave>,
   ): Promise<StaffLeave | null> {
     await this.repo.update(id, data as any);
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? StaffLeaveMapper.toDomain(entity) : null;
   }
 

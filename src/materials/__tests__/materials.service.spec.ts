@@ -1,9 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  BadRequestException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { MaterialsService } from '../materials.service';
 import { CourseMaterialRepository } from '../infrastructure/persistence/course-material.repository';
 import { AssignmentRepository } from '../infrastructure/persistence/assignment.repository';
@@ -71,11 +67,14 @@ describe('MaterialsService', () => {
   let service: MaterialsService;
   let materialRepo: ReturnType<typeof createMockCourseMaterialRepository>;
   let assignmentRepo: ReturnType<typeof createMockAssignmentRepository>;
-  let submissionRepo: ReturnType<typeof createMockAssignmentSubmissionRepository>;
+  let submissionRepo: ReturnType<
+    typeof createMockAssignmentSubmissionRepository
+  >;
   let downloadRepo: ReturnType<typeof createMockDownloadRecordRepository>;
   let tenantContext: ReturnType<typeof createMockTenantContext>;
 
   const TENANT_A = 'tenant-a-uuid';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const TENANT_B = 'tenant-b-uuid';
   const BRANCH_A = 'branch-a-uuid';
   const DEFAULT_QUOTA = 10 * 1024 * 1024 * 1024; // 10 GB
@@ -189,9 +188,9 @@ describe('MaterialsService', () => {
         fileSize: 1 * 1024 * 1024 * 1024, // 1 GB
       };
 
-      await expect(
-        service.uploadMaterial(largeFileDto as any),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.uploadMaterial(largeFileDto as any)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should allow upload when storage is within quota', async () => {
@@ -593,9 +592,7 @@ describe('MaterialsService', () => {
 
       const result = await service.submitAssignment(1, submitDto as any);
 
-      expect(result.filePath).toMatch(
-        new RegExp(`^${TENANT_A}/submissions/`),
-      );
+      expect(result.filePath).toMatch(new RegExp(`^${TENANT_A}/submissions/`));
     });
   });
 

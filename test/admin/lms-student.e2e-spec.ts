@@ -18,7 +18,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Student CRUD', () => {
     let studentId: number;
 
-    it('POST /api/v1/lms/students - should create a student', () => {
+    it('should create a student (POST /api/v1/lms/students)', () => {
       return request(app)
         .post('/api/v1/lms/students')
         .auth(apiToken, { type: 'bearer' })
@@ -36,7 +36,7 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/students - should return all students', () => {
+    it('should return all students (GET /api/v1/lms/students)', () => {
       return request(app)
         .get('/api/v1/lms/students')
         .auth(apiToken, { type: 'bearer' })
@@ -46,7 +46,7 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/students/:id - should return one student', () => {
+    it('should return one student (GET /api/v1/lms/students/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/students/${studentId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -56,7 +56,7 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('PATCH /api/v1/lms/students/:id - should update a student', () => {
+    it('should update a student (PATCH /api/v1/lms/students/:id)', () => {
       return request(app)
         .patch(`/api/v1/lms/students/${studentId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -64,14 +64,14 @@ describe('LMS Student Module (e2e)', () => {
         .expect(200);
     });
 
-    it('GET /api/v1/lms/students/999999 - should return 404', () => {
+    it('should return 404 (GET /api/v1/lms/students/999999)', () => {
       return request(app)
         .get('/api/v1/lms/students/999999')
         .auth(apiToken, { type: 'bearer' })
         .expect(404);
     });
 
-    it('DELETE /api/v1/lms/students/:id - should delete a student', () => {
+    it('should delete a student (DELETE /api/v1/lms/students/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/students/${studentId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -83,7 +83,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Admission Enquiry CRUD', () => {
     let enquiryId: number;
 
-    it('POST /api/v1/lms/admission-enquiries - should create', () => {
+    it('should create (POST /api/v1/lms/admission-enquiries)', () => {
       return request(app)
         .post('/api/v1/lms/admission-enquiries')
         .auth(apiToken, { type: 'bearer' })
@@ -101,7 +101,7 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/admission-enquiries - should return all', () => {
+    it('should return all (GET /api/v1/lms/admission-enquiries)', () => {
       return request(app)
         .get('/api/v1/lms/admission-enquiries')
         .auth(apiToken, { type: 'bearer' })
@@ -111,21 +111,21 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/admission-enquiries/:id - should return one', () => {
+    it('should return one (GET /api/v1/lms/admission-enquiries/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/admission-enquiries/${enquiryId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('GET /api/v1/lms/admission-enquiries/999999 - 404', () => {
+    it('should return 404 for non-existent enquiry (GET /api/v1/lms/admission-enquiries/999999)', () => {
       return request(app)
         .get('/api/v1/lms/admission-enquiries/999999')
         .auth(apiToken, { type: 'bearer' })
         .expect(404);
     });
 
-    it('DELETE /api/v1/lms/admission-enquiries/:id - should delete', () => {
+    it('should delete (DELETE /api/v1/lms/admission-enquiries/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/admission-enquiries/${enquiryId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -137,7 +137,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Leave Request CRUD', () => {
     let leaveRequestId: number;
 
-    it('POST /api/v1/lms/leave-requests - should create', () => {
+    it('should create (POST /api/v1/lms/leave-requests)', () => {
       return request(app)
         .post('/api/v1/lms/leave-requests')
         .auth(apiToken, { type: 'bearer' })
@@ -155,7 +155,7 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/leave-requests - should return all', () => {
+    it('should return all (GET /api/v1/lms/leave-requests)', () => {
       return request(app)
         .get('/api/v1/lms/leave-requests')
         .auth(apiToken, { type: 'bearer' })
@@ -165,14 +165,14 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/leave-requests/:id - should return one', () => {
+    it('should return one (GET /api/v1/lms/leave-requests/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/leave-requests/${leaveRequestId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/leave-requests/:id - should delete', () => {
+    it('should delete (DELETE /api/v1/lms/leave-requests/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/leave-requests/${leaveRequestId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -184,7 +184,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Fee Structure CRUD', () => {
     let feeStructureId: number;
 
-    it('POST /api/v1/lms/fee-structures - should create', () => {
+    it('should create (POST /api/v1/lms/fee-structures)', () => {
       return request(app)
         .post('/api/v1/lms/fee-structures')
         .auth(apiToken, { type: 'bearer' })
@@ -200,7 +200,7 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/fee-structures - should return all', () => {
+    it('should return all (GET /api/v1/lms/fee-structures)', () => {
       return request(app)
         .get('/api/v1/lms/fee-structures')
         .auth(apiToken, { type: 'bearer' })
@@ -210,14 +210,14 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/fee-structures/:id - should return one', () => {
+    it('should return one (GET /api/v1/lms/fee-structures/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/fee-structures/${feeStructureId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/fee-structures/:id - should delete', () => {
+    it('should delete (DELETE /api/v1/lms/fee-structures/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/fee-structures/${feeStructureId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -229,7 +229,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Fee Challan CRUD', () => {
     let feeChallanId: number;
 
-    it('POST /api/v1/lms/fee-challans - should create', () => {
+    it('should create (POST /api/v1/lms/fee-challans)', () => {
       return request(app)
         .post('/api/v1/lms/fee-challans')
         .auth(apiToken, { type: 'bearer' })
@@ -246,21 +246,21 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/fee-challans - should return all', () => {
+    it('should return all (GET /api/v1/lms/fee-challans)', () => {
       return request(app)
         .get('/api/v1/lms/fee-challans')
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('GET /api/v1/lms/fee-challans/:id - should return one', () => {
+    it('should return one (GET /api/v1/lms/fee-challans/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/fee-challans/${feeChallanId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/fee-challans/:id - should delete', () => {
+    it('should delete (DELETE /api/v1/lms/fee-challans/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/fee-challans/${feeChallanId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -272,7 +272,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Fee Payment CRUD', () => {
     let feePaymentId: number;
 
-    it('POST /api/v1/lms/fee-payments - should create', () => {
+    it('should create (POST /api/v1/lms/fee-payments)', () => {
       return request(app)
         .post('/api/v1/lms/fee-payments')
         .auth(apiToken, { type: 'bearer' })
@@ -289,21 +289,21 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/fee-payments - should return all', () => {
+    it('should return all (GET /api/v1/lms/fee-payments)', () => {
       return request(app)
         .get('/api/v1/lms/fee-payments')
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('GET /api/v1/lms/fee-payments/:id - should return one', () => {
+    it('should return one (GET /api/v1/lms/fee-payments/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/fee-payments/${feePaymentId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/fee-payments/:id - should delete', () => {
+    it('should delete (DELETE /api/v1/lms/fee-payments/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/fee-payments/${feePaymentId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -315,7 +315,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Exam CRUD', () => {
     let examId: number;
 
-    it('POST /api/v1/lms/exams - should create', () => {
+    it('should create (POST /api/v1/lms/exams)', () => {
       return request(app)
         .post('/api/v1/lms/exams')
         .auth(apiToken, { type: 'bearer' })
@@ -331,21 +331,21 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/exams - should return all', () => {
+    it('should return all (GET /api/v1/lms/exams)', () => {
       return request(app)
         .get('/api/v1/lms/exams')
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('GET /api/v1/lms/exams/:id - should return one', () => {
+    it('should return one (GET /api/v1/lms/exams/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/exams/${examId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/exams/:id - should delete', () => {
+    it('should delete (DELETE /api/v1/lms/exams/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/exams/${examId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -357,7 +357,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Exam Result CRUD', () => {
     let examResultId: number;
 
-    it('POST /api/v1/lms/exam-results - should create', () => {
+    it('should create (POST /api/v1/lms/exam-results)', () => {
       return request(app)
         .post('/api/v1/lms/exam-results')
         .auth(apiToken, { type: 'bearer' })
@@ -376,21 +376,21 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/exam-results - should return all', () => {
+    it('should return all (GET /api/v1/lms/exam-results)', () => {
       return request(app)
         .get('/api/v1/lms/exam-results')
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('GET /api/v1/lms/exam-results/:id - should return one', () => {
+    it('should return one (GET /api/v1/lms/exam-results/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/exam-results/${examResultId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/exam-results/:id - should delete', () => {
+    it('should delete (DELETE /api/v1/lms/exam-results/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/exam-results/${examResultId}`)
         .auth(apiToken, { type: 'bearer' })
@@ -402,7 +402,7 @@ describe('LMS Student Module (e2e)', () => {
   describe('Course Material CRUD', () => {
     let courseMaterialId: number;
 
-    it('POST /api/v1/lms/course-materials - should create', () => {
+    it('should create (POST /api/v1/lms/course-materials)', () => {
       return request(app)
         .post('/api/v1/lms/course-materials')
         .auth(apiToken, { type: 'bearer' })
@@ -418,21 +418,21 @@ describe('LMS Student Module (e2e)', () => {
         });
     });
 
-    it('GET /api/v1/lms/course-materials - should return all', () => {
+    it('should return all (GET /api/v1/lms/course-materials)', () => {
       return request(app)
         .get('/api/v1/lms/course-materials')
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('GET /api/v1/lms/course-materials/:id - should return one', () => {
+    it('should return one (GET /api/v1/lms/course-materials/:id)', () => {
       return request(app)
         .get(`/api/v1/lms/course-materials/${courseMaterialId}`)
         .auth(apiToken, { type: 'bearer' })
         .expect(200);
     });
 
-    it('DELETE /api/v1/lms/course-materials/:id - should delete', () => {
+    it('should delete (DELETE /api/v1/lms/course-materials/:id)', () => {
       return request(app)
         .delete(`/api/v1/lms/course-materials/${courseMaterialId}`)
         .auth(apiToken, { type: 'bearer' })

@@ -17,6 +17,7 @@ describe('Fee Management (e2e)', () => {
   let challanId: number;
   let challanNumber: string;
   let paymentId: number;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let concessionId: number;
   let receiptId: number;
 
@@ -136,7 +137,7 @@ describe('Fee Management (e2e)', () => {
       challanNumber = res.body.challanNumber;
     });
 
-    it('should apply concession if applicable', async () => {
+    it('should apply concession if applicable', () => {
       // First create a concession, then generate a challan
       // Concession test will be standalone — here we just verify
       // discount field is present

@@ -18,7 +18,9 @@ export class StudentRelationalRepository implements StudentRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -34,24 +36,31 @@ export class StudentRelationalRepository implements StudentRepository {
     );
     if (this.tenantContext.hasContext()) {
       (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return StudentMapper.toDomain(saved);
   }
 
   async findAll(): Promise<Student[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(StudentMapper.toDomain);
   }
 
   async findById(id: number): Promise<NullableType<Student>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? StudentMapper.toDomain(entity) : null;
   }
 
   async update(id: number, payload: Partial<Student>): Promise<Student | null> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     if (!entity) return null;
     const updated = await this.repo.save(
       this.repo.create(

@@ -55,10 +55,7 @@ export class BranchRelationalRepository implements BranchRepository {
     return entity ? BranchMapper.toDomain(entity) : null;
   }
 
-  async update(
-    id: string,
-    payload: Partial<Branch>,
-  ): Promise<Branch | null> {
+  async update(id: string, payload: Partial<Branch>): Promise<Branch | null> {
     const entity = await this.repo.findOne({
       where: { id },
       relations: ['tenant'],

@@ -22,16 +22,25 @@ export class CourseMaterial extends LmsBaseDomain {
   @ApiProperty({ enum: CourseMaterialTypeEnum })
   type!: CourseMaterialTypeEnum;
 
-  @ApiPropertyOptional({ type: String, description: 'S3 path: tenant_id/materials/filename' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'S3 path: tenant_id/materials/filename',
+  })
   filePath!: string | null;
 
-  @ApiProperty({ type: Number, description: 'File size in bytes for quota tracking' })
+  @ApiProperty({
+    type: Number,
+    description: 'File size in bytes for quota tracking',
+  })
   fileSize!: number;
 
   @ApiPropertyOptional({ type: String })
   externalUrl!: string | null;
 
-  @ApiProperty({ type: Number, description: 'Content version (incremented on file changes)' })
+  @ApiProperty({
+    type: Number,
+    description: 'Content version (incremented on file changes)',
+  })
   version!: number;
 
   @ApiProperty({ type: Number, description: 'Total download count' })

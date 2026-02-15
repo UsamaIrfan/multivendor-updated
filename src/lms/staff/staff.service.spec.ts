@@ -69,6 +69,7 @@ describe('StaffService', () => {
   ) {
     describe(entityName, () => {
       describe('create', () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should create a ${entityName.toLowerCase()}`, async () => {
           getRepo().create.mockResolvedValue(mockEntity);
           const result = await methods.create(mockEntity);
@@ -77,6 +78,7 @@ describe('StaffService', () => {
       });
 
       describe('findAll', () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should return all ${entityName.toLowerCase()} records`, async () => {
           getRepo().findAll.mockResolvedValue([mockEntity]);
           expect(await methods.findAll()).toEqual([mockEntity]);
@@ -84,6 +86,7 @@ describe('StaffService', () => {
       });
 
       describe('findOne', () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should return a ${entityName.toLowerCase()} by id`, async () => {
           getRepo().findById.mockResolvedValue(mockEntity);
           expect(await methods.findOne(1)).toEqual(mockEntity);
@@ -96,6 +99,7 @@ describe('StaffService', () => {
       });
 
       describe('update', () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should update a ${entityName.toLowerCase()}`, async () => {
           getRepo().findById.mockResolvedValue(mockEntity);
           getRepo().update.mockResolvedValue({ ...mockEntity, updated: true });
@@ -112,6 +116,7 @@ describe('StaffService', () => {
       });
 
       describe('remove', () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should remove a ${entityName.toLowerCase()}`, async () => {
           getRepo().findById.mockResolvedValue(mockEntity);
           getRepo().remove.mockResolvedValue(undefined);

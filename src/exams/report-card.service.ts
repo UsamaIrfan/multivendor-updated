@@ -24,7 +24,7 @@ export class ReportCardService {
    * Generate a simple PDF report card.
    * Returns a Buffer containing the PDF data.
    */
-  async generatePdf(data: ReportCardData): Promise<Buffer> {
+  generatePdf(data: ReportCardData): Buffer {
     // Build a minimal PDF manually (PDF 1.4 spec)
     // This avoids needing an external PDF library for basic report cards.
     const lines: string[] = [];
@@ -115,7 +115,6 @@ function createSimplePdf(text: string): Buffer {
   const stream = streamLines.join('\n');
 
   // Build PDF objects
-  const objects: string[] = [];
   const offsets: number[] = [];
   let output = '%PDF-1.4\n';
 

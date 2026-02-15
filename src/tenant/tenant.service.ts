@@ -140,10 +140,7 @@ export class TenantService {
     return this.tenantUserRepository.findAllByTenant(tenantId);
   }
 
-  async removeUserFromTenant(
-    tenantId: string,
-    userId: number,
-  ): Promise<void> {
+  async removeUserFromTenant(tenantId: string, userId: number): Promise<void> {
     const tenantUser = await this.tenantUserRepository.findByTenantAndUser(
       tenantId,
       userId,

@@ -19,7 +19,9 @@ export class FeeChallanRelationalRepository implements FeeChallanRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -35,19 +37,24 @@ export class FeeChallanRelationalRepository implements FeeChallanRepository {
     );
     if (this.tenantContext.hasContext()) {
       (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return FeeChallanMapper.toDomain(saved);
   }
 
   async findAll(): Promise<FeeChallan[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(FeeChallanMapper.toDomain);
   }
 
   async findById(id: number): Promise<NullableType<FeeChallan>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? FeeChallanMapper.toDomain(entity) : null;
   }
 
@@ -55,7 +62,9 @@ export class FeeChallanRelationalRepository implements FeeChallanRepository {
     id: number,
     payload: Partial<FeeChallan>,
   ): Promise<FeeChallan | null> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     if (!entity) return null;
     const updated = await this.repo.save(
       this.repo.create(
@@ -77,7 +86,9 @@ export class FeeChallanRelationalRepository implements FeeChallanRepository {
   async findByChallanNumber(
     challanNumber: string,
   ): Promise<NullableType<FeeChallan>> {
-    const entity = await this.repo.findOne({ where: { challanNumber, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { challanNumber, ...this.getTenantFilter() } as any,
+    });
     return entity ? FeeChallanMapper.toDomain(entity) : null;
   }
 
@@ -122,9 +133,13 @@ export class FeeChallanRelationalRepository implements FeeChallanRepository {
       });
     const tenantFilter = this.getTenantFilter();
     if (tenantFilter.tenantId) {
-      qb.andWhere('challan.tenantId = :tenantId', { tenantId: tenantFilter.tenantId });
+      qb.andWhere('challan.tenantId = :tenantId', {
+        tenantId: tenantFilter.tenantId,
+      });
       if (tenantFilter.branchId) {
-        qb.andWhere('challan.branchId = :branchId', { branchId: tenantFilter.branchId });
+        qb.andWhere('challan.branchId = :branchId', {
+          branchId: tenantFilter.branchId,
+        });
       }
     }
     const entities = await qb.getMany();
@@ -141,9 +156,13 @@ export class FeeChallanRelationalRepository implements FeeChallanRepository {
       .orderBy('challan."challanNumber"', 'DESC');
     const tenantFilter = this.getTenantFilter();
     if (tenantFilter.tenantId) {
-      qb.andWhere('challan.tenantId = :tenantId', { tenantId: tenantFilter.tenantId });
+      qb.andWhere('challan.tenantId = :tenantId', {
+        tenantId: tenantFilter.tenantId,
+      });
       if (tenantFilter.branchId) {
-        qb.andWhere('challan.branchId = :branchId', { branchId: tenantFilter.branchId });
+        qb.andWhere('challan.branchId = :branchId', {
+          branchId: tenantFilter.branchId,
+        });
       }
     }
     const entity = await qb.getOne();

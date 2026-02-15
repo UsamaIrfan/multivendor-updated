@@ -20,6 +20,10 @@ import {
       useClass: TenantInterceptor,
     },
   ],
-  exports: [TenantService, TenantContextModule, TenantRelationalPersistenceModule],
+  exports: [
+    TenantService,
+    TenantContextModule,
+    TenantRelationalPersistenceModule,
+  ],
 })
 export class TenantModule {}

@@ -12,7 +12,10 @@ export class AssignmentSubmission extends LmsBaseDomain {
   @ApiProperty({ type: Number })
   studentId!: number;
 
-  @ApiPropertyOptional({ type: String, description: 'S3 path: tenant_id/submissions/filename' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'S3 path: tenant_id/submissions/filename',
+  })
   filePath!: string | null;
 
   @ApiProperty({ type: Number, description: 'File size in bytes' })

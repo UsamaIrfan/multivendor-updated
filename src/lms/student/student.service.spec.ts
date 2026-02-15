@@ -100,10 +100,12 @@ describe('StudentService', () => {
       update: (id: number, dto: any) => Promise<any>;
       remove: (id: number) => Promise<any>;
     },
-    notFoundMessage: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _notFoundMessage: string,
   ) {
     describe(entityName, () => {
       describe(`create${entityName}`, () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should create a ${entityName.toLowerCase()}`, async () => {
           getRepo().create.mockResolvedValue(mockEntity);
           const result = await serviceMethods.create(mockEntity);
@@ -113,6 +115,7 @@ describe('StudentService', () => {
       });
 
       describe(`findAll${entityName}s`, () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should return all ${entityName.toLowerCase()}s`, async () => {
           getRepo().findAll.mockResolvedValue([mockEntity]);
           const result = await serviceMethods.findAll();
@@ -121,6 +124,7 @@ describe('StudentService', () => {
       });
 
       describe(`findOne${entityName}`, () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should return a ${entityName.toLowerCase()} by id`, async () => {
           getRepo().findById.mockResolvedValue(mockEntity);
           const result = await serviceMethods.findOne(1);
@@ -136,6 +140,7 @@ describe('StudentService', () => {
       });
 
       describe(`update${entityName}`, () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should update a ${entityName.toLowerCase()}`, async () => {
           getRepo().findById.mockResolvedValue(mockEntity);
           getRepo().update.mockResolvedValue({ ...mockEntity, updated: true });
@@ -152,6 +157,7 @@ describe('StudentService', () => {
       });
 
       describe(`remove${entityName}`, () => {
+        // eslint-disable-next-line no-restricted-syntax
         it(`should remove a ${entityName.toLowerCase()}`, async () => {
           getRepo().findById.mockResolvedValue(mockEntity);
           getRepo().remove.mockResolvedValue(undefined);

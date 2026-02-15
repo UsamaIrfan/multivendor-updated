@@ -215,7 +215,13 @@ export class NoticeController {
   }
 
   @Get()
-  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student, RoleEnum.parent)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.staff,
+    RoleEnum.teacher,
+    RoleEnum.student,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all notices' })
   findAll() {
@@ -223,7 +229,13 @@ export class NoticeController {
   }
 
   @Get(':id')
-  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student, RoleEnum.parent)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.staff,
+    RoleEnum.teacher,
+    RoleEnum.student,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -266,7 +278,13 @@ export class TimetableSlotController {
   }
 
   @Get()
-  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student, RoleEnum.parent)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.staff,
+    RoleEnum.teacher,
+    RoleEnum.student,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all timetable slots' })
   findAll() {
@@ -274,7 +292,13 @@ export class TimetableSlotController {
   }
 
   @Get(':id')
-  @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.student, RoleEnum.parent)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.staff,
+    RoleEnum.teacher,
+    RoleEnum.student,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {

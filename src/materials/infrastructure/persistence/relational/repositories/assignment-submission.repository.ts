@@ -31,15 +31,17 @@ export class AssignmentSubmissionRelationalRepository
   }
 
   async create(
-    data: Omit<AssignmentSubmission, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+    data: Omit<
+      AssignmentSubmission,
+      'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
+    >,
   ): Promise<AssignmentSubmission> {
     const persistenceModel = this.repo.create(
       AssignmentSubmissionMapper.toPersistence(data as AssignmentSubmission),
     );
     if (this.tenantContext.hasContext()) {
       persistenceModel.tenantId = this.tenantContext.getTenantId();
-      persistenceModel.branchId =
-        this.tenantContext.getBranchId() ?? null;
+      persistenceModel.branchId = this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return AssignmentSubmissionMapper.toDomain(saved);

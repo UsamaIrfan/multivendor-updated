@@ -84,9 +84,7 @@ export class TenantInterceptor implements NestInterceptor {
    * Tries to resolve a tenant ID. Returns null if none can be determined
    * (e.g. public/auth routes with no header or JWT claim).
    */
-  private async resolveTenantIdOptional(
-    request: any,
-  ): Promise<string | null> {
+  private async resolveTenantIdOptional(request: any): Promise<string | null> {
     // 1) JWT claim
     if (request.user?.tenantId) {
       return request.user.tenantId;

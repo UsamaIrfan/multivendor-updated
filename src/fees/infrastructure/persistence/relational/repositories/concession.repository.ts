@@ -18,7 +18,9 @@ export class ConcessionRelationalRepository implements ConcessionRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -34,14 +36,18 @@ export class ConcessionRelationalRepository implements ConcessionRepository {
     );
     if (this.tenantContext.hasContext()) {
       (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return ConcessionMapper.toDomain(saved);
   }
 
   async findAll(): Promise<Concession[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any, relations: ['student'] });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+      relations: ['student'],
+    });
     return entities.map(ConcessionMapper.toDomain);
   }
 
@@ -57,7 +63,9 @@ export class ConcessionRelationalRepository implements ConcessionRepository {
     id: number,
     payload: Partial<Concession>,
   ): Promise<Concession | null> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     if (!entity) return null;
     const updated = await this.repo.save(
       this.repo.create(

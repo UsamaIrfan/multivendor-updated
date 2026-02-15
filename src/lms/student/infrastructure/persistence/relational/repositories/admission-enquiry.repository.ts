@@ -20,7 +20,9 @@ export class AdmissionEnquiryRelationalRepository
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -39,19 +41,24 @@ export class AdmissionEnquiryRelationalRepository
     );
     if (this.tenantContext.hasContext()) {
       (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return AdmissionEnquiryMapper.toDomain(saved);
   }
 
   async findAll(): Promise<AdmissionEnquiry[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(AdmissionEnquiryMapper.toDomain);
   }
 
   async findById(id: number): Promise<NullableType<AdmissionEnquiry>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? AdmissionEnquiryMapper.toDomain(entity) : null;
   }
 
@@ -59,7 +66,9 @@ export class AdmissionEnquiryRelationalRepository
     id: number,
     payload: Partial<AdmissionEnquiry>,
   ): Promise<AdmissionEnquiry | null> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     if (!entity) return null;
     const updated = await this.repo.save(
       this.repo.create(

@@ -18,7 +18,9 @@ export class SectionRelationalRepository implements SectionRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -34,14 +36,18 @@ export class SectionRelationalRepository implements SectionRepository {
     );
     if (this.tenantContext.hasContext()) {
       (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return SectionMapper.toDomain(saved);
   }
 
   async findAll(): Promise<Section[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any, relations: ['gradeClass'] });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+      relations: ['gradeClass'],
+    });
     return entities.map(SectionMapper.toDomain);
   }
 

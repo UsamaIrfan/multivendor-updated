@@ -36,8 +36,7 @@ export class AssignmentRelationalRepository implements AssignmentRepository {
     );
     if (this.tenantContext.hasContext()) {
       persistenceModel.tenantId = this.tenantContext.getTenantId();
-      persistenceModel.branchId =
-        this.tenantContext.getBranchId() ?? null;
+      persistenceModel.branchId = this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return AssignmentMapper.toDomain(saved);

@@ -19,7 +19,9 @@ export class ExamRelationalRepository implements ExamRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -35,24 +37,31 @@ export class ExamRelationalRepository implements ExamRepository {
     );
     if (this.tenantContext.hasContext()) {
       (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return ExamMapper.toDomain(saved);
   }
 
   async findAll(): Promise<Exam[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(ExamMapper.toDomain);
   }
 
   async findById(id: number): Promise<NullableType<Exam>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? ExamMapper.toDomain(entity) : null;
   }
 
   async update(id: number, payload: Partial<Exam>): Promise<Exam | null> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     if (!entity) return null;
     const updated = await this.repo.save(
       this.repo.create(
@@ -77,7 +86,9 @@ export class ExamRelationalRepository implements ExamRepository {
   }
 
   async findByStatus(status: ExamStatusEnum): Promise<Exam[]> {
-    const entities = await this.repo.find({ where: { status, ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { status, ...this.getTenantFilter() } as any,
+    });
     return entities.map(ExamMapper.toDomain);
   }
 }

@@ -123,9 +123,8 @@ export class MaterialsService {
 
   async getStorageQuota(): Promise<StorageQuotaDto> {
     const tenantId = this.tenantContext.getTenantId();
-    const usedBytes = await this.materialRepository.calculateUsedStorage(
-      tenantId,
-    );
+    const usedBytes =
+      await this.materialRepository.calculateUsedStorage(tenantId);
 
     const quotaBytes = DEFAULT_STORAGE_QUOTA;
     const availableBytes = Math.max(0, quotaBytes - usedBytes);

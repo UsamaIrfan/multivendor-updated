@@ -11,6 +11,7 @@ describe('Course Materials Management (E2E)', () => {
   const app = APP_URL;
   let adminTokenTenantA: string;
   let adminTokenTenantB: string;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let userToken: string;
   let tenantAId: string;
   let tenantBId: string;
@@ -229,9 +230,7 @@ describe('Course Materials Management (E2E)', () => {
         })
         .expect(201);
 
-      expect(res.body.filePath).toMatch(
-        new RegExp(`^${tenantAId}/materials/`),
-      );
+      expect(res.body.filePath).toMatch(new RegExp(`^${tenantAId}/materials/`));
       createdTenantWideMaterialId = res.body.id;
     });
 
@@ -384,9 +383,7 @@ describe('Course Materials Management (E2E)', () => {
       expect(Array.isArray(res.body)).toBe(true);
       if (res.body.length > 0) {
         expect(
-          res.body.some((m: any) =>
-            m.title.toLowerCase().includes('algebra'),
-          ),
+          res.body.some((m: any) => m.title.toLowerCase().includes('algebra')),
         ).toBe(true);
       }
     });

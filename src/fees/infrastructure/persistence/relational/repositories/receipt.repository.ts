@@ -18,7 +18,9 @@ export class ReceiptRelationalRepository implements ReceiptRepository {
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -34,14 +36,18 @@ export class ReceiptRelationalRepository implements ReceiptRepository {
     );
     if (this.tenantContext.hasContext()) {
       (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId = this.tenantContext.getBranchId() ?? null;
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(persistenceModel);
     return ReceiptMapper.toDomain(saved);
   }
 
   async findAll(): Promise<Receipt[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any, relations: ['payment'] });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+      relations: ['payment'],
+    });
     return entities.map(ReceiptMapper.toDomain);
   }
 
@@ -54,7 +60,9 @@ export class ReceiptRelationalRepository implements ReceiptRepository {
   }
 
   async update(id: number, payload: Partial<Receipt>): Promise<Receipt | null> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     if (!entity) return null;
     const updated = await this.repo.save(
       this.repo.create(
@@ -81,9 +89,13 @@ export class ReceiptRelationalRepository implements ReceiptRepository {
       .orderBy('receipt.receiptNumber', 'DESC');
     const tenantFilter = this.getTenantFilter();
     if (tenantFilter.tenantId) {
-      qb.andWhere('receipt.tenantId = :tenantId', { tenantId: tenantFilter.tenantId });
+      qb.andWhere('receipt.tenantId = :tenantId', {
+        tenantId: tenantFilter.tenantId,
+      });
       if (tenantFilter.branchId) {
-        qb.andWhere('receipt.branchId = :branchId', { branchId: tenantFilter.branchId });
+        qb.andWhere('receipt.branchId = :branchId', {
+          branchId: tenantFilter.branchId,
+        });
       }
     }
     const last = await qb.getOne();

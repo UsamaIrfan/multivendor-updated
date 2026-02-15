@@ -21,7 +21,9 @@ export class StaffAttendanceRelationalRepository
 
   private getTenantFilter(): Record<string, unknown> {
     if (this.tenantContext.hasContext()) {
-      const filter: Record<string, unknown> = { tenantId: this.tenantContext.getTenantId() };
+      const filter: Record<string, unknown> = {
+        tenantId: this.tenantContext.getTenantId(),
+      };
       const branchId = this.tenantContext.getBranchId();
       if (branchId) filter.branchId = branchId;
       return filter;
@@ -42,14 +44,18 @@ export class StaffAttendanceRelationalRepository
   }
 
   async findAll(): Promise<StaffAttendance[]> {
-    const entities = await this.repo.find({ where: { ...this.getTenantFilter() } as any });
+    const entities = await this.repo.find({
+      where: { ...this.getTenantFilter() } as any,
+    });
     return entities.map(StaffAttendanceMapper.toDomain);
   }
 
   async findById(
     id: StaffAttendance['id'],
   ): Promise<NullableType<StaffAttendance>> {
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? StaffAttendanceMapper.toDomain(entity) : null;
   }
 
@@ -58,7 +64,9 @@ export class StaffAttendanceRelationalRepository
     data: DeepPartial<StaffAttendance>,
   ): Promise<StaffAttendance | null> {
     await this.repo.update(id, data as any);
-    const entity = await this.repo.findOne({ where: { id, ...this.getTenantFilter() } as any });
+    const entity = await this.repo.findOne({
+      where: { id, ...this.getTenantFilter() } as any,
+    });
     return entity ? StaffAttendanceMapper.toDomain(entity) : null;
   }
 
