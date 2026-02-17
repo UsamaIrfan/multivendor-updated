@@ -4,17 +4,21 @@ export default defineConfig({
   api: {
     output: {
       mode: 'tags-split',
-      target: 'src/generated/api',
-      schemas: 'src/generated/model',
+      target: '../client/src/services/api/generated/endpoints',
+      schemas: '../client/src/services/api/generated/models',
       client: 'react-query',
       httpClient: 'fetch',
       baseUrl: 'http://localhost:3000',
       override: {
-        mutator: undefined,
+        mutator: {
+          path: '../client/src/services/api/generated/custom-fetch.ts',
+          name: 'customFetch',
+        },
         query: {
           useQuery: true,
           useSuspenseQuery: false,
-          useInfinite: false,
+          useInfinite: true,
+          useInfiniteQueryParam: 'page'
         },
       },
     },

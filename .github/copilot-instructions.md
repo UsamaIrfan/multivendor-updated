@@ -157,6 +157,7 @@ Feature modules import these persistence modules to get repo access:
 
 - Create DTOs extend `TenantAwareBaseDto` (provides `tenantId` + optional `branchId`).
 - Use `class-validator` decorators: `@IsNotEmpty`, `@IsString`, `@IsInt`, `@IsEnum`, `@IsOptional`, `@IsDateString`, etc.
+- **Query DTOs with `@IsInt()` MUST add `@Type(() => Number)` from `class-transformer`** — HTTP query params arrive as strings; without `@Type`, `@IsInt()` rejects them with 422. Apply to every numeric field in query/filter DTOs (`page`, `limit`, `threshold`, entity IDs, etc.).
 - Use `@ApiProperty` / `@ApiPropertyOptional` on every field.
 - Update DTOs use `PartialType(CreateDto)` from `@nestjs/swagger`.
 - Naming: `create-<entity>.dto.ts`, `update-<entity>.dto.ts`, `query-<entity>.dto.ts`.
@@ -244,6 +245,12 @@ Additional enum outside `lms/common/enums/`:
 | 21 | `StaffManagementModule` | `./staff-management` |
 | 22 | `StaffAttendanceModule` | `./staff-attendance` |
 | 23 | `PayrollModule` | `./payroll` |
+| 24 | `NoticesModule` | `./notices` |
+| 25 | `TimetablesModule` | `./timetables` |
+| 26 | `PortalsModule` | `./portals` |
+| 27 | `IncomeModule` | `./income` |
+| 28 | `ExpensesModule` | `./expenses` |
+| 29 | `FinancialDashboardModule` | `./financial-dashboard` |
 
 ---
 
@@ -500,6 +507,9 @@ Polymorphic attendance for both students and staff via `attendableType` ('studen
 | 1770930398142 | `LmsSchema` | Core LMS tables (courses, students, academic, staff, accounts, exams, fees) |
 | 1771000000000 | `AddMultiTenancy` | Add tenantId/branchId columns, tenant/branch/tenant_user tables |
 | 1771200000000 | `AddNewModuleTables` | 15 tables for new modules: staff_mgmt, staff_branch_assignment, staff_attendance_record, staff_leave_application, staff_leave_balance, grading_scale, fee_concession, fee_receipt, material, assignment, assignment_submission, download_record, salary_structure, payroll_slip, student_guardian |
+| 1771300000000 | `AddTimetableAndIncomeTables` | Timetable and income tables |
+| 1771400000000 | `AddBranchExpenseTable` | Branch-scoped expense table |
+| 1771500000000 | `AddExamStatusAndNoticesTable` | Add `exam_status_enum` + `status` column to `exam` table; create `notices` table (UUID PK, tenant-aware) for `NoticesModule` |
 
 **Important**: When creating new entities, always create a migration. Use manual SQL in migration `up()`/`down()` methods (CREATE TABLE, DROP TABLE). Include:
 - All columns with correct types matching entity decorators
@@ -519,6 +529,7 @@ Polymorphic attendance for both students and staff via `attendableType` ('studen
 | `course_material_type_enum` | document, video, assignment, link, presentation |
 | `concession_type_enum` | scholarship, sibling, staff_child, merit, financial_aid |
 | `salary_status_enum` | draft, processed, paid, held |
+| `exam_status_enum` | draft, scheduled, in_progress, completed, results_published |
 
 ---
 
@@ -790,3 +801,4 @@ describe('SomeService', () => {
 9. **Always use mappers in repos** — never pass raw domain data to `repo.create()` or `repo.update()`. TypeORM ManyToOne relations need `{ relation: { id: value } }`, not flat `{ relationId: value }`.
 10. **Include `id` in `select` arrays** — when using `repo.findOne({ select: [...] })`, always include the PK column. TypeORM's internal `distinctAlias` query wrapper references it.
 11. **Always create migrations for new entities** — TypeORM entity auto-discovery doesn't create tables. Manual SQL migration required.
+12. **Query DTO `@IsInt()` needs `@Type(() => Number)`** — HTTP query/path params arrive as strings. Without `@Type(() => Number)` from `class-transformer`, `@IsInt()` will reject them with a 422 validation error. Always pair `@IsInt()` with `@Type(() => Number)` in query DTOs.

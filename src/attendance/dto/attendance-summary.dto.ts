@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsDateString, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class AttendanceSummaryQueryDto {
@@ -7,6 +8,7 @@ export class AttendanceSummaryQueryDto {
   attendableType: 'student' | 'staff';
 
   @ApiProperty({ example: 1 })
+  @Type(() => Number)
   @IsInt()
   attendableId: number;
 
@@ -27,6 +29,7 @@ export class AttendanceSummaryQueryDto {
 export class AlertsQueryDto {
   @ApiPropertyOptional({ example: 75, default: 75 })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   threshold?: number;
 
@@ -52,6 +55,7 @@ export class DetailedReportQueryDto {
   attendableType: 'student' | 'staff';
 
   @ApiProperty({ example: 1 })
+  @Type(() => Number)
   @IsInt()
   attendableId: number;
 

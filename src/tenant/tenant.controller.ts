@@ -105,7 +105,15 @@ export class BranchController {
   }
 
   @Get('tenant/:tenantId')
-  @Roles(RoleEnum.admin, RoleEnum.staff)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.user,
+    RoleEnum.student,
+    RoleEnum.teacher,
+    RoleEnum.staff,
+    RoleEnum.accountant,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'tenantId', type: String })
   @ApiOkResponse({ type: [Branch] })
@@ -114,7 +122,15 @@ export class BranchController {
   }
 
   @Get(':id')
-  @Roles(RoleEnum.admin, RoleEnum.staff)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.user,
+    RoleEnum.student,
+    RoleEnum.teacher,
+    RoleEnum.staff,
+    RoleEnum.accountant,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Branch })
@@ -159,7 +175,15 @@ export class TenantUserController {
   }
 
   @Get('user/:userId')
-  @Roles(RoleEnum.admin)
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.user,
+    RoleEnum.student,
+    RoleEnum.teacher,
+    RoleEnum.staff,
+    RoleEnum.accountant,
+    RoleEnum.parent,
+  )
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'userId', type: Number })
   @ApiOkResponse({ type: [TenantUser] })

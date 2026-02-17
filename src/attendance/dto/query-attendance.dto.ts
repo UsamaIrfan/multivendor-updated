@@ -1,4 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsDateString,
   IsEnum,
@@ -26,6 +27,7 @@ export class QueryAttendanceDto {
 
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   attendableId?: number;
 
@@ -36,16 +38,19 @@ export class QueryAttendanceDto {
 
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   sectionId?: number;
 
   @ApiPropertyOptional({ example: 1, default: 1 })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   page?: number;
 
   @ApiPropertyOptional({ example: 10, default: 10 })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   limit?: number;
 }

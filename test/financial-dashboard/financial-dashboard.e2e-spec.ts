@@ -1,9 +1,5 @@
 import request from 'supertest';
-import {
-  APP_URL,
-  ADMIN_EMAIL,
-  ADMIN_PASSWORD,
-} from '../utils/constants';
+import { APP_URL, ADMIN_EMAIL, ADMIN_PASSWORD } from '../utils/constants';
 
 describe('Financial Dashboard (E2E)', () => {
   const app = APP_URL;

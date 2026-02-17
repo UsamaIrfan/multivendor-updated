@@ -6,7 +6,6 @@ describe('Portals (e2e)', () => {
   let adminTokenA: string;
   let tenantAId: string;
   let branchA1Id: string;
-  let branchA2Id: string;
 
   beforeAll(async () => {
     // Log in as admin
@@ -15,7 +14,7 @@ describe('Portals (e2e)', () => {
       .send({ email: ADMIN_EMAIL, password: ADMIN_PASSWORD })
       .expect(200);
 
-    const refreshToken = loginRes.body.refreshToken;
+    // const refreshToken = loginRes.body.refreshToken;
     tenantAId = loginRes.body.user?.tenantId || 'default-tenant';
 
     // Try to select tenant

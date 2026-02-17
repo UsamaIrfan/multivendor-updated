@@ -81,8 +81,12 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "student"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_student_guardian_tenantId" ON "student_guardian" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_student_guardian_branchId" ON "student_guardian" ("branchId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_student_guardian_tenantId" ON "student_guardian" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_student_guardian_branchId" ON "student_guardian" ("branchId")`,
+    );
 
     // ─── 2. staff_mgmt ─────────────────────────────────────
     await queryRunner.query(`
@@ -116,10 +120,18 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "department"("id") ON DELETE SET NULL
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_mgmt_tenantId" ON "staff_mgmt" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_mgmt_branchId" ON "staff_mgmt" ("branchId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_mgmt_staffId" ON "staff_mgmt" ("staffId")`);
-    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_staff_mgmt_tenant_staffId" ON "staff_mgmt" ("tenantId", "staffId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_mgmt_tenantId" ON "staff_mgmt" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_mgmt_branchId" ON "staff_mgmt" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_mgmt_staffId" ON "staff_mgmt" ("staffId")`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_staff_mgmt_tenant_staffId" ON "staff_mgmt" ("tenantId", "staffId")`,
+    );
 
     // ─── 3. staff_branch_assignment ─────────────────────────
     await queryRunner.query(`
@@ -137,9 +149,15 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "staff_mgmt"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_branch_assignment_tenantId" ON "staff_branch_assignment" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_branch_assignment_branchId" ON "staff_branch_assignment" ("branchId")`);
-    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_staff_branch_assignment_unique" ON "staff_branch_assignment" ("tenantId", "staffEntityId", "branchId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_branch_assignment_tenantId" ON "staff_branch_assignment" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_branch_assignment_branchId" ON "staff_branch_assignment" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_staff_branch_assignment_unique" ON "staff_branch_assignment" ("tenantId", "staffEntityId", "branchId")`,
+    );
 
     // ─── 4. staff_attendance_record ─────────────────────────
     await queryRunner.query(`
@@ -161,11 +179,21 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "staff_mgmt"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_attendance_record_tenantId" ON "staff_attendance_record" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_attendance_record_branchId" ON "staff_attendance_record" ("branchId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_attendance_record_staffId" ON "staff_attendance_record" ("staffId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_attendance_record_date" ON "staff_attendance_record" ("date")`);
-    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_staff_attendance_record_unique" ON "staff_attendance_record" ("tenantId", "staffId", "date")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_attendance_record_tenantId" ON "staff_attendance_record" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_attendance_record_branchId" ON "staff_attendance_record" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_attendance_record_staffId" ON "staff_attendance_record" ("staffId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_attendance_record_date" ON "staff_attendance_record" ("date")`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_staff_attendance_record_unique" ON "staff_attendance_record" ("tenantId", "staffId", "date")`,
+    );
 
     // ─── 5. staff_leave_application ─────────────────────────
     await queryRunner.query(`
@@ -191,9 +219,15 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "user"("id") ON DELETE SET NULL
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_leave_application_tenantId" ON "staff_leave_application" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_leave_application_branchId" ON "staff_leave_application" ("branchId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_leave_application_staffId" ON "staff_leave_application" ("staffId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_leave_application_tenantId" ON "staff_leave_application" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_leave_application_branchId" ON "staff_leave_application" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_leave_application_staffId" ON "staff_leave_application" ("staffId")`,
+    );
 
     // ─── 6. staff_leave_balance ─────────────────────────────
     await queryRunner.query(`
@@ -214,10 +248,18 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "staff_mgmt"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_leave_balance_tenantId" ON "staff_leave_balance" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_leave_balance_branchId" ON "staff_leave_balance" ("branchId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_staff_leave_balance_staffId" ON "staff_leave_balance" ("staffId")`);
-    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_staff_leave_balance_unique" ON "staff_leave_balance" ("tenantId", "staffId", "leaveType", "year")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_leave_balance_tenantId" ON "staff_leave_balance" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_leave_balance_branchId" ON "staff_leave_balance" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_staff_leave_balance_staffId" ON "staff_leave_balance" ("staffId")`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_staff_leave_balance_unique" ON "staff_leave_balance" ("tenantId", "staffId", "leaveType", "year")`,
+    );
 
     // ─── 7. grading_scale ───────────────────────────────────
     await queryRunner.query(`
@@ -233,8 +275,12 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
         CONSTRAINT "PK_grading_scale" PRIMARY KEY ("id")
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_grading_scale_tenantId" ON "grading_scale" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_grading_scale_branchId" ON "grading_scale" ("branchId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_grading_scale_tenantId" ON "grading_scale" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_grading_scale_branchId" ON "grading_scale" ("branchId")`,
+    );
 
     // ─── 8. fee_concession ──────────────────────────────────
     await queryRunner.query(`
@@ -258,8 +304,12 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "student"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_fee_concession_tenantId" ON "fee_concession" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_fee_concession_branchId" ON "fee_concession" ("branchId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_fee_concession_tenantId" ON "fee_concession" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_fee_concession_branchId" ON "fee_concession" ("branchId")`,
+    );
 
     // ─── 9. fee_receipt ─────────────────────────────────────
     await queryRunner.query(`
@@ -282,9 +332,15 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "fee_payment"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_fee_receipt_tenantId" ON "fee_receipt" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_fee_receipt_branchId" ON "fee_receipt" ("branchId")`);
-    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_fee_receipt_receiptNumber" ON "fee_receipt" ("receiptNumber")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_fee_receipt_tenantId" ON "fee_receipt" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_fee_receipt_branchId" ON "fee_receipt" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_fee_receipt_receiptNumber" ON "fee_receipt" ("receiptNumber")`,
+    );
 
     // ─── 10. material ───────────────────────────────────────
     await queryRunner.query(`
@@ -311,9 +367,15 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "subject"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_material_tenantId" ON "material" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_material_branchId" ON "material" ("branchId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_material_tenant_subject" ON "material" ("tenantId", "subjectId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_material_tenantId" ON "material" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_material_branchId" ON "material" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_material_tenant_subject" ON "material" ("tenantId", "subjectId")`,
+    );
 
     // ─── 11. assignment ─────────────────────────────────────
     await queryRunner.query(`
@@ -335,9 +397,15 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "subject"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_assignment_tenantId" ON "assignment" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_assignment_branchId" ON "assignment" ("branchId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_assignment_tenant_subject" ON "assignment" ("tenantId", "subjectId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_assignment_tenantId" ON "assignment" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_assignment_branchId" ON "assignment" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_assignment_tenant_subject" ON "assignment" ("tenantId", "subjectId")`,
+    );
 
     // ─── 12. assignment_submission ──────────────────────────
     await queryRunner.query(`
@@ -360,10 +428,18 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "assignment"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_assignment_submission_tenantId" ON "assignment_submission" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_assignment_submission_branchId" ON "assignment_submission" ("branchId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_assignment_submission_tenant_assignment" ON "assignment_submission" ("tenantId", "assignmentId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_assignment_submission_tenant_student" ON "assignment_submission" ("tenantId", "studentId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_assignment_submission_tenantId" ON "assignment_submission" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_assignment_submission_branchId" ON "assignment_submission" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_assignment_submission_tenant_assignment" ON "assignment_submission" ("tenantId", "assignmentId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_assignment_submission_tenant_student" ON "assignment_submission" ("tenantId", "studentId")`,
+    );
 
     // ─── 13. download_record ────────────────────────────────
     await queryRunner.query(`
@@ -378,8 +454,12 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
           REFERENCES "material"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_download_record_tenantId" ON "download_record" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_download_record_tenant_material" ON "download_record" ("tenantId", "materialId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_download_record_tenantId" ON "download_record" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_download_record_tenant_material" ON "download_record" ("tenantId", "materialId")`,
+    );
 
     // ─── 14. salary_structure ───────────────────────────────
     await queryRunner.query(`
@@ -400,9 +480,15 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
         CONSTRAINT "PK_salary_structure" PRIMARY KEY ("id")
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_salary_structure_tenantId" ON "salary_structure" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_salary_structure_branchId" ON "salary_structure" ("branchId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_salary_structure_tenant_staff" ON "salary_structure" ("tenantId", "staffId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_salary_structure_tenantId" ON "salary_structure" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_salary_structure_branchId" ON "salary_structure" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_salary_structure_tenant_staff" ON "salary_structure" ("tenantId", "staffId")`,
+    );
 
     // ─── 15. payroll_slip ───────────────────────────────────
     await queryRunner.query(`
@@ -429,9 +515,15 @@ export class AddNewModuleTables1771200000000 implements MigrationInterface {
         CONSTRAINT "PK_payroll_slip" PRIMARY KEY ("id")
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_payroll_slip_tenantId" ON "payroll_slip" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_payroll_slip_branchId" ON "payroll_slip" ("branchId")`);
-    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_payroll_slip_unique" ON "payroll_slip" ("tenantId", "staffId", "month", "year")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_payroll_slip_tenantId" ON "payroll_slip" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_payroll_slip_branchId" ON "payroll_slip" ("branchId")`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_payroll_slip_unique" ON "payroll_slip" ("tenantId", "staffId", "month", "year")`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
