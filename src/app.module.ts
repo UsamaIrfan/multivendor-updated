@@ -43,6 +43,7 @@ import { PortalsModule } from './portals/portals.module';
 import { IncomeModule } from './income/income.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { FinancialDashboardModule } from './financial-dashboard/financial-dashboard.module';
+import { InvitationsModule } from './invitations/invitations.module';
 
 // <database-block>
 const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
@@ -124,6 +125,7 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     IncomeModule,
     ExpensesModule,
     FinancialDashboardModule,
+    InvitationsModule,
   ],
 })
 export class AppModule {}

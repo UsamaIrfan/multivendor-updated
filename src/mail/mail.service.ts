@@ -150,4 +150,64 @@ export class MailService {
       },
     });
   }
+
+  async sendInvitation(
+    mailData: MailData<{
+      hash: string;
+      tenantName: string;
+      branchName?: string;
+      roleName: string;
+    }>,
+  ): Promise<void> {
+    const i18n = I18nContext.current();
+    let invitationTitle: MaybeType<string>;
+    let text1: MaybeType<string>;
+    let text2: MaybeType<string>;
+    let text3: MaybeType<string>;
+    let text4: MaybeType<string>;
+    let text5: MaybeType<string>;
+
+    if (i18n) {
+      [invitationTitle, text1, text2, text3, text4, text5] = await Promise.all([
+        i18n.t('common.invitation'),
+        i18n.t('invitation.text1'),
+        i18n.t('invitation.text2'),
+        i18n.t('invitation.text3'),
+        i18n.t('invitation.text4'),
+        i18n.t('invitation.text5'),
+      ]);
+    }
+
+    const url = new URL(
+      this.configService.getOrThrow('app.frontendDomain', {
+        infer: true,
+      }) + '/accept-invitation',
+    );
+    url.searchParams.set('hash', mailData.data.hash);
+
+    await this.mailerService.sendMail({
+      to: mailData.to,
+      subject: invitationTitle,
+      text: `${url.toString()} ${invitationTitle}`,
+      templatePath: path.join(
+        __dirname,
+        'mail-templates',
+        'invitation.hbs',
+      ),
+      context: {
+        title: invitationTitle,
+        url: url.toString(),
+        actionTitle: invitationTitle ?? 'Accept Invitation',
+        app_name: this.configService.get('app.name', { infer: true }),
+        tenantName: mailData.data.tenantName,
+        branchName: mailData.data.branchName,
+        roleName: mailData.data.roleName,
+        text1,
+        text2,
+        text3,
+        text4,
+        text5,
+      },
+    });
+  }
 }
