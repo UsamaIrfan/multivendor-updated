@@ -3,9 +3,14 @@ import { StaffManagementRelationalPersistenceModule } from './infrastructure/per
 import { StaffManagementService } from './staff-management.service';
 import { StaffManagementController } from './staff-management.controller';
 import { TenantModule } from '../tenant/tenant.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [StaffManagementRelationalPersistenceModule, TenantModule],
+  imports: [
+    StaffManagementRelationalPersistenceModule,
+    TenantModule,
+    UsersModule,
+  ],
   controllers: [StaffManagementController],
   providers: [StaffManagementService],
   exports: [StaffManagementService],

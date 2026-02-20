@@ -2,19 +2,71 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
   IsDateString,
+  IsEmail,
   IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
   IsString,
+  MinLength,
+  ValidateIf,
 } from 'class-validator';
 import { EmploymentTypeEnum } from '../../lms/common/enums/general.enum';
 import { TenantAwareBaseDto } from '../../lms/common/dto/tenant-aware-base.dto';
 
 export class CreateStaffMgmtDto extends TenantAwareBaseDto {
-  @ApiProperty({ example: 1, description: 'User ID (OneToOne)' })
+  @ApiPropertyOptional({
+    example: 1,
+    description:
+      'User ID (OneToOne). Provide either userId OR (email + password + firstName + lastName) to auto-create a user account.',
+  })
+  @IsOptional()
   @IsInt()
-  userId: number;
+  userId?: number;
+
+  // ─── Auto-create user fields (used when userId is not provided) ────
+  @ApiPropertyOptional({
+    example: 'staff@example.com',
+    description: 'Email for auto-creating a user account (required if userId is not provided)',
+  })
+  @ValidateIf((o) => !o.userId)
+  @IsEmail()
+  email?: string;
+
+  @ApiPropertyOptional({
+    example: 'password123',
+    description: 'Password for the new user account (required if userId is not provided)',
+  })
+  @ValidateIf((o) => !o.userId)
+  @IsString()
+  @MinLength(6)
+  password?: string;
+
+  @ApiPropertyOptional({
+    example: 'John',
+    description: 'First name for the new user account (required if userId is not provided)',
+  })
+  @ValidateIf((o) => !o.userId)
+  @IsString()
+  firstName?: string;
+
+  @ApiPropertyOptional({
+    example: 'Doe',
+    description: 'Last name for the new user account (required if userId is not provided)',
+  })
+  @ValidateIf((o) => !o.userId)
+  @IsString()
+  lastName?: string;
+
+  @ApiPropertyOptional({
+    example: 'teacher',
+    enum: ['teacher', 'staff', 'accountant'],
+    default: 'staff',
+    description: 'Role for the auto-created user (teacher=4, staff=5, accountant=6)',
+  })
+  @IsOptional()
+  @IsEnum(['teacher', 'staff', 'accountant'])
+  userRole?: 'teacher' | 'staff' | 'accountant';
 
   @ApiProperty({ example: 1 })
   @IsInt()

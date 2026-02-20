@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsDateString, IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class IncomeReportQueryDto {
   @ApiPropertyOptional({
@@ -32,4 +33,10 @@ export class IncomeReportQueryDto {
   @IsOptional()
   @IsString()
   category?: string;
+
+  @ApiPropertyOptional({ example: 1, description: 'Page number for pagination' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page?: number;
 }

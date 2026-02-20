@@ -6,6 +6,7 @@ export class TenantUserMapper {
     const domain = new TenantUser();
     domain.id = entity.id;
     domain.tenantId = entity.tenant?.id;
+    domain.tenantName = entity.tenant?.name;
     domain.userId = entity.user?.id;
     domain.isActive = entity.isActive;
     domain.createdAt = entity.createdAt;

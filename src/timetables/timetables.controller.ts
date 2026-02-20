@@ -84,6 +84,7 @@ export class TimetablesController {
   @ApiQuery({ name: 'dayOfWeek', type: Number, required: true })
   @ApiQuery({ name: 'startTime', type: String, required: true })
   @ApiQuery({ name: 'endTime', type: String, required: true })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number for pagination' })
   @ApiOkResponse({ type: [Period] })
   checkConflicts(
     @Query('teacherId') teacherId: string,

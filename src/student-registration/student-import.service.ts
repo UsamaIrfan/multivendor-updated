@@ -94,6 +94,8 @@ export class StudentImportService {
       if (!row['password']) rowErrors.push('password is required');
       if (!row['dateOfBirth']) rowErrors.push('dateOfBirth is required');
       if (!row['gender']) rowErrors.push('gender is required');
+      else if (!['male', 'female', 'other'].includes(row['gender'].toLowerCase()))
+        rowErrors.push('gender must be one of: male, female, other');
       if (!row['guardianName']) rowErrors.push('guardianName is required');
       if (!row['guardianPhone']) rowErrors.push('guardianPhone is required');
 
@@ -109,7 +111,7 @@ export class StudentImportService {
           email: row['email'],
           password: row['password'],
           dateOfBirth: row['dateOfBirth'],
-          gender: row['gender'],
+          gender: row['gender'].toLowerCase(),
           guardianName: row['guardianName'],
           guardianPhone: row['guardianPhone'],
           guardianEmail: row['guardianEmail'] || undefined,

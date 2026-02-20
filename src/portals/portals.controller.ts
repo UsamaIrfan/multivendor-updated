@@ -40,6 +40,12 @@ export class PortalsController {
     type: String,
     description: 'Filter by specific branch',
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number for pagination',
+  })
   getStudentDashboard(
     @Request() req: any,
     @Query('branchId') branchId?: string,
@@ -56,6 +62,12 @@ export class PortalsController {
     required: false,
     type: String,
     description: 'Filter data by specific branch',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number for pagination',
   })
   getStaffDashboard(@Request() req: any, @Query('branchId') branchId?: string) {
     return this.service.getStaffDashboard(req.user.id, branchId);

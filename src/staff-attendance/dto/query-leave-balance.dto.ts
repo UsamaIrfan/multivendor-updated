@@ -20,4 +20,10 @@ export class QueryLeaveBalanceDto {
   @Type(() => Number)
   @IsInt()
   year?: number;
+
+  @ApiPropertyOptional({ example: 1, description: 'Page number for pagination' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page?: number;
 }

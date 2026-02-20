@@ -75,6 +75,12 @@ export class NoticesController {
     type: String,
     description: 'Comma-separated branch UUIDs the user belongs to',
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number for pagination',
+  })
   getMyNotices(@Request() req: any, @Query('branches') branches?: string) {
     const userBranches = branches ? branches.split(',').filter(Boolean) : [];
     const roleId = req.user?.role?.id;

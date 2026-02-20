@@ -6,6 +6,7 @@ import { StaffBranchAssignmentRepository } from '../infrastructure/persistence/s
 import { TenantContextService } from '../../tenant/tenant-context/tenant-context.service';
 import { TenantRepository } from '../../tenant/infrastructure/persistence/tenant.repository';
 import { BranchRepository } from '../../tenant/infrastructure/persistence/branch.repository';
+import { UsersService } from '../../users/users.service';
 import { CreateStaffMgmtDto } from '../dto/create-staff-mgmt.dto';
 
 // ── Mock factories ──
@@ -73,6 +74,15 @@ function createMockTenantContext(
   };
 }
 
+function createMockUsersService() {
+  return {
+    create: jest.fn(),
+    findByEmail: jest.fn(),
+    findById: jest.fn(),
+    update: jest.fn(),
+  };
+}
+
 describe('StaffManagementService', () => {
   let service: StaffManagementService;
   let staffRepo: ReturnType<typeof createMockStaffMgmtRepository>;
@@ -80,6 +90,7 @@ describe('StaffManagementService', () => {
   let tenantRepo: ReturnType<typeof createMockTenantRepository>;
   let branchRepo: ReturnType<typeof createMockBranchRepository>;
   let tenantContext: ReturnType<typeof createMockTenantContext>;
+  let usersService: ReturnType<typeof createMockUsersService>;
 
   const TENANT_A = 'tenant-a-uuid';
   const TENANT_B = 'tenant-b-uuid';
@@ -93,6 +104,7 @@ describe('StaffManagementService', () => {
     tenantRepo = createMockTenantRepository();
     branchRepo = createMockBranchRepository();
     tenantContext = createMockTenantContext(TENANT_A, BRANCH_A1);
+    usersService = createMockUsersService();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -105,6 +117,7 @@ describe('StaffManagementService', () => {
         { provide: TenantRepository, useValue: tenantRepo },
         { provide: BranchRepository, useValue: branchRepo },
         { provide: TenantContextService, useValue: tenantContext },
+        { provide: UsersService, useValue: usersService },
       ],
     }).compile();
 
@@ -216,6 +229,62 @@ describe('StaffManagementService', () => {
       expect(staffRepo.create).toHaveBeenCalledWith(
         expect.objectContaining({ primaryBranchId: BRANCH_A1 }),
       );
+    });
+
+    it('should auto-create a user when email/password/name provided instead of userId', async () => {
+      const tenant = { id: TENANT_A, slug: 'abc-edu', name: 'ABC Education' };
+      tenantRepo.findById.mockResolvedValue(tenant);
+      staffRepo.findLastByStaffIdPrefix.mockResolvedValue(null);
+
+      const createdUser = { id: 42, email: 'teacher@example.com' };
+      usersService.create.mockResolvedValue(createdUser);
+
+      staffRepo.create.mockResolvedValue({
+        id: 1,
+        staffId: 'abc-edu-STF-2026-0001',
+        userId: 42,
+        tenantId: TENANT_A,
+        primaryBranchId: BRANCH_A1,
+      });
+      assignmentRepo.create.mockResolvedValue({});
+
+      const autoCreateDto = {
+        tenantId: TENANT_A,
+        branchId: BRANCH_A1,
+        email: 'teacher@example.com',
+        password: 'secret123',
+        firstName: 'John',
+        lastName: 'Doe',
+        userRole: 'teacher' as const,
+        institutionId: 1,
+        employmentType: 'full_time' as const,
+      } as CreateStaffMgmtDto;
+
+      const result = await service.create(autoCreateDto);
+
+      expect(usersService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'teacher@example.com',
+          password: 'secret123',
+          firstName: 'John',
+          lastName: 'Doe',
+          role: { id: 4 }, // teacher
+        }),
+      );
+      expect(staffRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({ userId: 42 }),
+      );
+      expect(result.userId).toBe(42);
+    });
+
+    it('should throw 422 when neither userId nor user creation fields are provided', async () => {
+      const incompleteDto = {
+        tenantId: TENANT_A,
+        institutionId: 1,
+        employmentType: 'full_time' as const,
+      } as CreateStaffMgmtDto;
+
+      await expect(service.create(incompleteDto)).rejects.toThrow();
     });
   });
 

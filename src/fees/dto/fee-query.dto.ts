@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsInt, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class SendRemindersDto {
   @ApiPropertyOptional({ example: 1 })
@@ -28,4 +29,10 @@ export class CollectionReportQueryDto {
   @IsOptional()
   @IsInt()
   gradeClassId?: number;
+
+  @ApiPropertyOptional({ example: 1, description: 'Page number for pagination' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page?: number;
 }

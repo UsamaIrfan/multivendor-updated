@@ -25,4 +25,10 @@ export class QueryMaterialDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @ApiPropertyOptional({ example: 1, description: 'Page number for pagination' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page?: number;
 }

@@ -2,18 +2,28 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { StaffMgmtRepository } from './infrastructure/persistence/staff-mgmt.repository';
 import { StaffBranchAssignmentRepository } from './infrastructure/persistence/staff-branch-assignment.repository';
 import { TenantRepository } from '../tenant/infrastructure/persistence/tenant.repository';
 import { BranchRepository } from '../tenant/infrastructure/persistence/branch.repository';
 import { TenantContextService } from '../tenant/tenant-context/tenant-context.service';
+import { UsersService } from '../users/users.service';
 import { CreateStaffMgmtDto } from './dto/create-staff-mgmt.dto';
 import { UpdateStaffMgmtDto } from './dto/update-staff-mgmt.dto';
 import { AssignBranchDto } from './dto/assign-branch.dto';
 import { TransferBranchDto } from './dto/transfer-branch.dto';
 import { StaffMgmt } from './domain/staff-mgmt';
 import { StaffBranchAssignment } from './domain/staff-branch-assignment';
+import { RoleEnum } from '../roles/roles.enum';
+import { StatusEnum } from '../statuses/statuses.enum';
+
+const USER_ROLE_MAP: Record<string, RoleEnum> = {
+  teacher: RoleEnum.teacher,
+  staff: RoleEnum.staff,
+  accountant: RoleEnum.accountant,
+};
 
 @Injectable()
 export class StaffManagementService {
@@ -23,6 +33,7 @@ export class StaffManagementService {
     private readonly tenantRepo: TenantRepository,
     private readonly branchRepo: BranchRepository,
     private readonly tenantContext: TenantContextService,
+    private readonly usersService: UsersService,
   ) {}
 
   // ─── Create Staff ──────────────────────────────────────
@@ -31,6 +42,34 @@ export class StaffManagementService {
     const branchId =
       dto.branchId || this.tenantContext.getBranchId() || undefined;
 
+    // Resolve or auto-create the user
+    let resolvedUserId: number;
+
+    if (dto.userId) {
+      resolvedUserId = dto.userId;
+    } else if (dto.email && dto.password && dto.firstName && dto.lastName) {
+      // Auto-create a user account with the appropriate role
+      const role = USER_ROLE_MAP[dto.userRole ?? 'staff'] ?? RoleEnum.staff;
+
+      const user = await this.usersService.create({
+        email: dto.email,
+        password: dto.password,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        role: { id: role },
+        status: { id: StatusEnum.active },
+      });
+      resolvedUserId = user.id as number;
+    } else {
+      throw new UnprocessableEntityException({
+        status: 422,
+        errors: {
+          userId:
+            'Provide either userId or (email + password + firstName + lastName) to auto-create a user',
+        },
+      });
+    }
+
     // Generate tenant-scoped staff ID
     const staffId = await this.generateStaffId(tenantId);
 
@@ -38,7 +77,7 @@ export class StaffManagementService {
     const primaryBranchId = branchId;
 
     const staff = await this.staffRepo.create({
-      userId: dto.userId,
+      userId: resolvedUserId,
       institutionId: dto.institutionId,
       departmentId: dto.departmentId ?? null,
       staffId,

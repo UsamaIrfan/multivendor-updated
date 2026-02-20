@@ -10,9 +10,9 @@ import {
 @Module({
   imports: [MaterialsRelationalPersistenceModule],
   controllers: [
-    MaterialsController,
     AssignmentsController,
     SubmissionsController,
+    MaterialsController,
   ],
   providers: [MaterialsService],
   exports: [MaterialsService],

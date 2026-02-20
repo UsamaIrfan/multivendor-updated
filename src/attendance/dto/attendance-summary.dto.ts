@@ -24,6 +24,12 @@ export class AttendanceSummaryQueryDto {
   @IsOptional()
   @IsString()
   groupBy?: string;
+
+  @ApiPropertyOptional({ example: 1, description: 'Page number for pagination' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page?: number;
 }
 
 export class AlertsQueryDto {
@@ -47,6 +53,12 @@ export class AlertsQueryDto {
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  @ApiPropertyOptional({ example: 1, description: 'Page number for pagination' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page?: number;
 }
 
 export class DetailedReportQueryDto {
@@ -66,4 +78,10 @@ export class DetailedReportQueryDto {
   @ApiProperty({ example: '2025-12-31' })
   @IsDateString()
   endDate: string;
+
+  @ApiPropertyOptional({ example: 1, description: 'Page number for pagination' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page?: number;
 }

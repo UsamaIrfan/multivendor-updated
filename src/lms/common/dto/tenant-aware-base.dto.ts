@@ -1,5 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Base DTO for all tenant-aware create operations.
@@ -8,11 +11,13 @@ import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 export class TenantAwareBaseDto {
   @ApiProperty({ type: String, format: 'uuid' })
   @IsNotEmpty()
-  @IsUUID()
+  @IsString()
+  @Matches(UUID_REGEX, { message: 'tenantId must be a UUID' })
   tenantId!: string;
 
   @ApiPropertyOptional({ type: String, format: 'uuid' })
   @IsOptional()
-  @IsUUID()
+  @IsString()
+  @Matches(UUID_REGEX, { message: 'branchId must be a UUID' })
   branchId?: string | null;
 }

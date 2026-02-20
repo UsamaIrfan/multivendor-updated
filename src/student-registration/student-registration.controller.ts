@@ -23,6 +23,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from '../roles/roles.decorator';
@@ -128,6 +129,12 @@ export class StudentRegistrationController {
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'List of student documents' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number for pagination',
+  })
   findDocuments(
     @Param('id', ParseIntPipe) id: number,
     @Query('documentType') documentType?: string,

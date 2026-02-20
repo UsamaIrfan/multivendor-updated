@@ -8,4 +8,10 @@ export class QueryStaffLeaveDto {
   @Type(() => Number)
   @IsInt()
   staffId?: number;
+
+  @ApiPropertyOptional({ example: 1, description: 'Page number for pagination' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page?: number;
 }

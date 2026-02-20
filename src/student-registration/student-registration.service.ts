@@ -291,6 +291,34 @@ export class StudentRegistrationService {
       });
     }
 
+    // Auto-create a parent user account if requested
+    let parentUserId: number | null = null;
+    if (dto.createUserAccount && dto.email) {
+      if (!dto.password) {
+        throw new UnprocessableEntityException({
+          status: 422,
+          errors: {
+            password: 'Password is required when creating a parent user account',
+          },
+        });
+      }
+
+      // Split guardian name into first/last
+      const nameParts = dto.name.trim().split(/\s+/);
+      const firstName = nameParts[0];
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+      const parentUser = await this.usersService.create({
+        email: dto.email,
+        password: dto.password,
+        firstName,
+        lastName,
+        role: { id: RoleEnum.parent },
+        status: { id: StatusEnum.active },
+      });
+      parentUserId = parentUser.id as number;
+    }
+
     const guardian = await this.guardianRepository.create({
       studentId,
       name: dto.name,
@@ -298,6 +326,7 @@ export class StudentRegistrationService {
       email: dto.email ?? null,
       relation: dto.relation,
       isPrimary: dto.isPrimary ?? false,
+      ...(parentUserId ? { userId: parentUserId } : {}),
     } as any);
 
     return guardian;

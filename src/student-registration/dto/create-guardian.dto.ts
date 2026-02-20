@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MinLength,
 } from 'class-validator';
 
 export class CreateGuardianDto {
@@ -32,4 +33,24 @@ export class CreateGuardianDto {
   @IsOptional()
   @IsBoolean()
   isPrimary?: boolean;
+
+  // ─── Auto-create parent user account ───────────────────
+  @ApiPropertyOptional({
+    example: true,
+    default: false,
+    description:
+      'When true and email is provided, a User account with role "parent" will be auto-created for this guardian.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  createUserAccount?: boolean;
+
+  @ApiPropertyOptional({
+    example: 'password123',
+    description: 'Password for the parent user account (required when createUserAccount is true)',
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(6)
+  password?: string;
 }
