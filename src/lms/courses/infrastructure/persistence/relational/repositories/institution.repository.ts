@@ -34,6 +34,11 @@ export class InstitutionRelationalRepository implements InstitutionRepository {
     const persistenceModel = this.repo.create(
       InstitutionMapper.toPersistence(data as Institution),
     );
+    if (this.tenantContext.hasContext()) {
+      (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
+      (persistenceModel as any).branchId =
+        this.tenantContext.getBranchId() ?? null;
+    }
     const saved = await this.repo.save(persistenceModel);
     return InstitutionMapper.toDomain(saved);
   }

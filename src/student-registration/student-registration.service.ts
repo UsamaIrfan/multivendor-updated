@@ -4,6 +4,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { StudentRepository } from '../lms/student/infrastructure/persistence/student.repository';
 import { StudentEnrollmentRepository } from '../lms/student/infrastructure/persistence/student-enrollment.repository';
 import { StudentDocumentRepository } from '../lms/student/infrastructure/persistence/student-document.repository';
@@ -36,12 +37,15 @@ export class StudentRegistrationService {
     private readonly usersService: UsersService,
     private readonly idGenerator: StudentIdGeneratorService,
     private readonly importService: StudentImportService,
+    private readonly dataSource: DataSource,
   ) {}
 
   /**
    * Register a new student: create user account + student record.
+   * Wrapped in a transaction so a failure in student creation
+   * rolls back the user creation (no orphaned users).
    */
-  async register(dto: RegisterStudentDto) {
+  async register(dto: RegisterStudentDto, idOffset = 0) {
     // 1. Validate institution exists
     const institution = await this.institutionRepository.findById(
       dto.institutionId,
@@ -72,45 +76,58 @@ export class StudentRegistrationService {
       });
     }
 
-    // 5. Create user account with student role
-    const user = await this.usersService.create({
-      email: dto.email,
-      password: dto.password,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      role: { id: RoleEnum.student },
-      status: { id: StatusEnum.active },
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    // 6. Generate student ID
-    const studentId = await this.idGenerator.generate();
+    try {
+      // 5. Create user account with student role
+      const user = await this.usersService.create({
+        email: dto.email,
+        password: dto.password,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        role: { id: RoleEnum.student },
+        status: { id: StatusEnum.active },
+      });
 
-    // 7. Create student record
-    const student = await this.studentRepository.create({
-      userId: user.id as number,
-      institutionId: dto.institutionId,
-      rollNumber: studentId,
-      dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : null,
-      gender: dto.gender ?? null,
-      guardianName: dto.guardianName ?? null,
-      guardianPhone: dto.guardianPhone ?? null,
-      guardianEmail: dto.guardianEmail ?? null,
-      guardianRelation: dto.guardianRelation ?? null,
-      address: dto.address ?? null,
-      city: dto.city ?? null,
-      bloodGroup: dto.bloodGroup ?? null,
-      nationality: dto.nationality ?? null,
-      religion: dto.religion ?? null,
-      admissionDate: dto.admissionDate
-        ? new Date(dto.admissionDate)
-        : new Date(),
-    } as any);
+      // 6. Generate student ID
+      const studentId = await this.idGenerator.generate(idOffset);
 
-    return {
-      ...student,
-      studentId,
-      userId: user.id,
-    };
+      // 7. Create student record
+      const student = await this.studentRepository.create({
+        userId: user.id as number,
+        institutionId: dto.institutionId,
+        rollNumber: studentId,
+        dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : null,
+        gender: dto.gender ?? null,
+        guardianName: dto.guardianName ?? null,
+        guardianPhone: dto.guardianPhone ?? null,
+        guardianEmail: dto.guardianEmail ?? null,
+        guardianRelation: dto.guardianRelation ?? null,
+        address: dto.address ?? null,
+        city: dto.city ?? null,
+        bloodGroup: dto.bloodGroup ?? null,
+        nationality: dto.nationality ?? null,
+        religion: dto.religion ?? null,
+        admissionDate: dto.admissionDate
+          ? new Date(dto.admissionDate)
+          : new Date(),
+      } as any);
+
+      await queryRunner.commitTransaction();
+
+      return {
+        ...student,
+        studentId,
+        userId: user.id,
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   /**
@@ -384,21 +401,24 @@ export class StudentRegistrationService {
     for (let i = 0; i < validRows.length; i++) {
       const row = validRows[i];
       try {
-        await this.register({
-          firstName: row.firstName,
-          lastName: row.lastName,
-          email: row.email,
-          password: row.password,
-          institutionId,
-          dateOfBirth: row.dateOfBirth,
-          gender: row.gender as any,
-          guardianName: row.guardianName,
-          guardianPhone: row.guardianPhone,
-          guardianEmail: row.guardianEmail,
-          guardianRelation: row.guardianRelation,
-          address: row.address,
-          city: row.city,
-        });
+        await this.register(
+          {
+            firstName: row.firstName,
+            lastName: row.lastName,
+            email: row.email,
+            password: row.password,
+            institutionId,
+            dateOfBirth: row.dateOfBirth,
+            gender: row.gender as any,
+            guardianName: row.guardianName,
+            guardianPhone: row.guardianPhone,
+            guardianEmail: row.guardianEmail,
+            guardianRelation: row.guardianRelation,
+            address: row.address,
+            city: row.city,
+          },
+          i,
+        );
         imported++;
       } catch (err: any) {
         importErrors.push({

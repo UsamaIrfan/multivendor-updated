@@ -37,8 +37,8 @@ export class StudentEntity extends TenantAwareEntityHelper {
   @ManyToOne(() => InstitutionEntity, { onDelete: 'CASCADE' })
   institution!: InstitutionEntity;
 
-  @Index({ unique: true })
-  @Column({ unique: true })
+  @Index(['tenantId', 'rollNumber'], { unique: true })
+  @Column()
   rollNumber!: string;
 
   @Column({ type: 'date', nullable: true })

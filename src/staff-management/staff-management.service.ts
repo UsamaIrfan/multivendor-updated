@@ -273,6 +273,9 @@ export class StaffManagementService {
 
   // ─── Get My Branches ─────────────────────────────────
   async getMyBranches(userId: number): Promise<StaffBranchAssignment[]> {
+    if (!this.tenantContext.hasContext()) {
+      return [];
+    }
     const tenantId = this.tenantContext.getTenantId();
     return this.assignmentRepo.findByUserAndTenant(userId, tenantId);
   }

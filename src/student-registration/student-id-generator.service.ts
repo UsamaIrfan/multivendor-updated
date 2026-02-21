@@ -1,34 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { StudentRepository } from '../lms/student/infrastructure/persistence/student.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { StudentEntity } from '../lms/student/infrastructure/persistence/relational/entities/student.entity';
 
 @Injectable()
 export class StudentIdGeneratorService {
-  constructor(private readonly studentRepository: StudentRepository) {}
+  constructor(
+    @InjectRepository(StudentEntity)
+    private readonly studentRepo: Repository<StudentEntity>,
+  ) {}
 
   /**
    * Generates a unique student ID in format: STU-YYYY-XXXX
    * where YYYY is current year and XXXX is a zero-padded sequence.
+   *
+   * Uses a raw query to find the max sequence globally (not tenant-filtered)
+   * to prevent collisions across tenants. An optional `offset` allows
+   * bulk import to increment safely within a single batch.
    */
-  async generate(): Promise<string> {
+  async generate(offset = 0): Promise<string> {
     const year = new Date().getFullYear();
     const prefix = `STU-${year}-`;
 
-    // Get all students to find the highest sequence number for this year
-    const allStudents = await this.studentRepository.findAll();
-    let maxSequence = 0;
+    // Query max rollNumber globally (across all tenants, including soft-deleted)
+    const result = await this.studentRepo
+      .createQueryBuilder('s')
+      .select('s.rollNumber', 'rollNumber')
+      .withDeleted()
+      .where('s.rollNumber LIKE :prefix', { prefix: `${prefix}%` })
+      .orderBy(
+        "CAST(REPLACE(s.rollNumber, :prefix, '') AS INTEGER)",
+        'DESC',
+      )
+      .setParameter('prefix', prefix)
+      .limit(1)
+      .getRawOne();
 
-    for (const student of allStudents) {
-      const rollNumber = (student as any).rollNumber || '';
-      if (rollNumber.startsWith(prefix)) {
-        const seqStr = rollNumber.replace(prefix, '');
-        const seq = parseInt(seqStr, 10);
-        if (!isNaN(seq) && seq > maxSequence) {
-          maxSequence = seq;
-        }
-      }
+    let maxSequence = 0;
+    if (result?.rollNumber) {
+      const seqStr = (result.rollNumber as string).replace(prefix, '');
+      const seq = parseInt(seqStr, 10);
+      if (!isNaN(seq)) maxSequence = seq;
     }
 
-    const nextSequence = maxSequence + 1;
+    const nextSequence = maxSequence + 1 + offset;
     return `${prefix}${String(nextSequence).padStart(4, '0')}`;
   }
 }

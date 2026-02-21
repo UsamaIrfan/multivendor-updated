@@ -43,7 +43,7 @@ export class StaffMgmtRelationalRepository implements StaffMgmtRepository {
   async findAll(): Promise<StaffMgmt[]> {
     const entities = await this.repo.find({
       where: { ...this.getTenantFilter() } as any,
-      relations: ['branchAssignments'],
+      relations: ['branchAssignments', 'institution', 'department'],
     });
     return entities.map(StaffMgmtMapper.toDomain);
   }
@@ -51,6 +51,7 @@ export class StaffMgmtRelationalRepository implements StaffMgmtRepository {
   async findById(id: number): Promise<NullableType<StaffMgmt>> {
     const entity = await this.repo.findOne({
       where: { id, ...this.getTenantFilter() } as any,
+      relations: ['institution', 'department'],
     });
     return entity ? StaffMgmtMapper.toDomain(entity) : null;
   }
@@ -58,7 +59,7 @@ export class StaffMgmtRelationalRepository implements StaffMgmtRepository {
   async findByIdWithAssignments(id: number): Promise<NullableType<StaffMgmt>> {
     const entity = await this.repo.findOne({
       where: { id, ...this.getTenantFilter() } as any,
-      relations: ['branchAssignments'],
+      relations: ['branchAssignments', 'institution', 'department'],
     });
     return entity ? StaffMgmtMapper.toDomain(entity) : null;
   }
@@ -94,6 +95,9 @@ export class StaffMgmtRelationalRepository implements StaffMgmtRepository {
   }
 
   async findByBranch(branchId: string): Promise<StaffMgmt[]> {
+    if (!this.tenantContext.hasContext()) {
+      return [];
+    }
     const entities = await this.repo
       .createQueryBuilder('staff')
       .innerJoin('staff.branchAssignments', 'assignment')
@@ -102,6 +106,9 @@ export class StaffMgmtRelationalRepository implements StaffMgmtRepository {
       })
       .andWhere('assignment.branchId = :branchId', { branchId })
       .leftJoinAndSelect('staff.branchAssignments', 'allAssignments')
+      .leftJoinAndSelect('staff.user', 'user')
+      .leftJoinAndSelect('staff.institution', 'institution')
+      .leftJoinAndSelect('staff.department', 'department')
       .getMany();
     return entities.map(StaffMgmtMapper.toDomain);
   }
@@ -112,6 +119,7 @@ export class StaffMgmtRelationalRepository implements StaffMgmtRepository {
         user: { id: userId },
         ...this.getTenantFilter(),
       } as any,
+      relations: ['institution', 'department'],
     });
     return entity ? StaffMgmtMapper.toDomain(entity) : null;
   }

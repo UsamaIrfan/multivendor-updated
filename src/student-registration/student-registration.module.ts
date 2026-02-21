@@ -11,13 +11,14 @@ import { UsersModule } from '../users/users.module';
 import { StudentGuardianEntity } from './infrastructure/persistence/relational/entities/student-guardian.entity';
 import { StudentGuardianRepository } from './infrastructure/persistence/student-guardian.repository';
 import { StudentGuardianRelationalRepository } from './infrastructure/persistence/relational/repositories/student-guardian.repository';
+import { StudentEntity } from '../lms/student/infrastructure/persistence/relational/entities/student.entity';
 
 @Module({
   imports: [
     StudentRelationalPersistenceModule,
     CoursesRelationalPersistenceModule,
     UsersModule,
-    TypeOrmModule.forFeature([StudentGuardianEntity]),
+    TypeOrmModule.forFeature([StudentGuardianEntity, StudentEntity]),
   ],
   controllers: [StudentRegistrationController],
   providers: [
