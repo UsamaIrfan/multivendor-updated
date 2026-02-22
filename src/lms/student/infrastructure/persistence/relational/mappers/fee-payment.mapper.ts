@@ -37,11 +37,11 @@ export class FeePaymentMapper {
     entity.receiptNumber = domain.receiptNumber;
     entity.paidAt = domain.paidAt;
     entity.remarks = domain.remarks;
-    entity.tenantId = domain.tenantId;
-    entity.branchId = domain.branchId;
-    entity.createdAt = domain.createdAt;
-    entity.updatedAt = domain.updatedAt;
-    entity.deletedAt = domain.deletedAt;
+    if (domain.tenantId !== undefined) entity.tenantId = domain.tenantId;
+    if (domain.branchId !== undefined) entity.branchId = domain.branchId;
+    if (domain.createdAt !== undefined) entity.createdAt = domain.createdAt;
+    if (domain.updatedAt !== undefined) entity.updatedAt = domain.updatedAt;
+    if (domain.deletedAt !== undefined) entity.deletedAt = domain.deletedAt;
     return entity;
   }
 }

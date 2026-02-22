@@ -31,14 +31,12 @@ export class ReceiptRelationalRepository implements ReceiptRepository {
   async create(
     data: Omit<Receipt, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<Receipt> {
-    const persistenceModel = this.repo.create(
-      ReceiptMapper.toPersistence(data as Receipt),
-    );
+    const mapped = ReceiptMapper.toPersistence(data as Receipt);
     if (this.tenantContext.hasContext()) {
-      (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId =
-        this.tenantContext.getBranchId() ?? null;
+      mapped.tenantId = this.tenantContext.getTenantId();
+      mapped.branchId = this.tenantContext.getBranchId() ?? null;
     }
+    const persistenceModel = this.repo.create(mapped);
     const saved = await this.repo.save(persistenceModel);
     return ReceiptMapper.toDomain(saved);
   }

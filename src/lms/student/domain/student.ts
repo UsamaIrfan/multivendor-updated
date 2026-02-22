@@ -47,4 +47,14 @@ export class Student extends LmsBaseDomain {
 
   @ApiPropertyOptional({ type: Date })
   admissionDate!: Date | null;
+
+  // Populated from User relation
+  @ApiPropertyOptional({ type: String })
+  firstName?: string | null;
+
+  @ApiPropertyOptional({ type: String })
+  lastName?: string | null;
+
+  @ApiPropertyOptional({ type: String })
+  email?: string | null;
 }

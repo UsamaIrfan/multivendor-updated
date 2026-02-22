@@ -29,6 +29,9 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { StudentRegistrationService } from './student-registration.service';
 import { RegisterStudentDto } from './dto/register-student.dto';
 import { UpdateRegisteredStudentDto } from './dto/update-registered-student.dto';
@@ -41,7 +44,7 @@ import { UnprocessableEntityException } from '@nestjs/common';
 
 @ApiTags('Student Registration')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'student-registration', version: '1' })
 export class StudentRegistrationController {
   constructor(private readonly service: StudentRegistrationService) {}
@@ -49,6 +52,7 @@ export class StudentRegistrationController {
   // ─── Register new student ─────────────────────────────
   @Post()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.registration.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Student registered successfully' })
   register(@Body() dto: RegisterStudentDto) {
@@ -58,6 +62,7 @@ export class StudentRegistrationController {
   // ─── List students (paginated + filters) ──────────────
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.registration.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Paginated list of students' })
   findAll(@Query() query: QueryStudentDto) {
@@ -67,6 +72,7 @@ export class StudentRegistrationController {
   // ─── Get single student ──────────────────────────────
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.registration.read')
   @UseGuards(StudentOwnershipGuard)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
@@ -78,6 +84,7 @@ export class StudentRegistrationController {
   // ─── Update student profile ───────────────────────────
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.student)
+  @RequirePermissions('academic.registration.update')
   @UseGuards(StudentOwnershipGuard)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
@@ -92,6 +99,7 @@ export class StudentRegistrationController {
   // ─── Delete student ───────────────────────────────────
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.registration.approve')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -101,6 +109,7 @@ export class StudentRegistrationController {
   // ─── Upload document for student ──────────────────────
   @Post(':id/documents')
   @Roles(RoleEnum.admin, RoleEnum.student)
+  @RequirePermissions('academic.document.upload')
   @UseGuards(StudentOwnershipGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiParam({ name: 'id', type: Number })
@@ -115,6 +124,7 @@ export class StudentRegistrationController {
   // ─── Enroll student in class ──────────────────────────
   @Post(':id/enroll')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.enrollment.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiParam({ name: 'id', type: Number })
   @ApiCreatedResponse({ description: 'Student enrolled in class' })
@@ -125,6 +135,7 @@ export class StudentRegistrationController {
   // ─── List documents for student ───────────────────────
   @Get(':id/documents')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.document.read')
   @UseGuards(StudentOwnershipGuard)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
@@ -145,6 +156,7 @@ export class StudentRegistrationController {
   // ─── Add guardian for student ─────────────────────────
   @Post(':id/guardians')
   @Roles(RoleEnum.admin, RoleEnum.student)
+  @RequirePermissions('academic.guardian.create')
   @UseGuards(StudentOwnershipGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiParam({ name: 'id', type: Number })
@@ -159,6 +171,7 @@ export class StudentRegistrationController {
   // ─── List guardians for student ───────────────────────
   @Get(':id/guardians')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.guardian.read')
   @UseGuards(StudentOwnershipGuard)
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
@@ -170,6 +183,7 @@ export class StudentRegistrationController {
   // ─── Bulk import students from CSV ────────────────────
   @Post('import')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.registration.create')
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')

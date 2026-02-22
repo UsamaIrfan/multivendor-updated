@@ -44,6 +44,7 @@ import { IncomeModule } from './income/income.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { FinancialDashboardModule } from './financial-dashboard/financial-dashboard.module';
 import { InvitationsModule } from './invitations/invitations.module';
+import { AuthorizationModule } from './authorization/authorization.module';
 
 // <database-block>
 const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
@@ -126,6 +127,7 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig)
     ExpensesModule,
     FinancialDashboardModule,
     InvitationsModule,
+    AuthorizationModule,
   ],
 })
 export class AppModule {}

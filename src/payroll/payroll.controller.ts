@@ -26,6 +26,9 @@ import { Response } from 'express';
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { PayrollService } from './payroll.service';
 import { CreateSalaryStructureDto } from './dto/create-salary-structure.dto';
 import { UpdateSalaryStructureDto } from './dto/update-salary-structure.dto';
@@ -38,13 +41,14 @@ import { PayrollSlip } from './domain/payroll-slip';
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Payroll - Salary Structures')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'payroll/structures', version: '1' })
 export class SalaryStructureController {
   constructor(private readonly service: PayrollService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('hr.payroll.structure_create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: SalaryStructure })
   create(@Body() dto: CreateSalaryStructureDto) {
@@ -53,6 +57,7 @@ export class SalaryStructureController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.staff)
+  @RequirePermissions('hr.payroll.structure_read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [SalaryStructure] })
   findAll() {
@@ -61,6 +66,7 @@ export class SalaryStructureController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.staff)
+  @RequirePermissions('hr.payroll.structure_read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: SalaryStructure })
@@ -70,6 +76,7 @@ export class SalaryStructureController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('hr.payroll.structure_update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: SalaryStructure })
@@ -82,6 +89,7 @@ export class SalaryStructureController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.payroll.structure_delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   @ApiNoContentResponse()
@@ -95,13 +103,14 @@ export class SalaryStructureController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Payroll - Processing & Slips')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'payroll', version: '1' })
 export class PayrollController {
   constructor(private readonly service: PayrollService) {}
 
   @Post('process')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('hr.payroll.process')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Payroll processed' })
   process(@Body() dto: ProcessPayrollDto) {
@@ -110,6 +119,7 @@ export class PayrollController {
 
   @Get('slips')
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.staff)
+  @RequirePermissions('hr.payroll.slip_read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [PayrollSlip] })
   findAllSlips() {
@@ -118,6 +128,7 @@ export class PayrollController {
 
   @Get('slips/:id')
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.staff)
+  @RequirePermissions('hr.payroll.slip_read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: PayrollSlip })
@@ -127,6 +138,7 @@ export class PayrollController {
 
   @Get('slips/:id/pdf')
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.staff)
+  @RequirePermissions('hr.payroll.slip_pdf')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiProduces('application/pdf')

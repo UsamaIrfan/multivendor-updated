@@ -11,18 +11,22 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { FinancialDashboardService } from './financial-dashboard.service';
 import { FinancialDashboardQueryDto } from './dto/financial-dashboard-query.dto';
 
 @ApiTags('Financial Dashboard')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'financial-dashboard', version: '1' })
 export class FinancialDashboardController {
   constructor(private readonly dashboardService: FinancialDashboardService) {}
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.dashboard.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     description:
@@ -34,6 +38,7 @@ export class FinancialDashboardController {
 
   @Get('profit-loss')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.dashboard.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     description: 'Branch-wise Profit & Loss (optionally filter by branch)',
@@ -44,6 +49,7 @@ export class FinancialDashboardController {
 
   @Get('balance-sheet')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.dashboard.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     description: 'Consolidated balance sheet across all branches',
@@ -54,6 +60,7 @@ export class FinancialDashboardController {
 
   @Get('cash-flow')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.dashboard.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     description: 'Monthly cash flow per branch',

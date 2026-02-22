@@ -4,6 +4,7 @@ import { TenantRelationalPersistenceModule } from './infrastructure/persistence/
 import { TenantContextModule } from './tenant-context/tenant-context.module';
 import { TenantService } from './tenant.service';
 import { TenantInterceptor } from './interceptors/tenant.interceptor';
+import { RequireTenantGuard } from './guards/require-tenant.guard';
 import {
   TenantController,
   BranchController,
@@ -15,6 +16,7 @@ import {
   controllers: [TenantController, BranchController, TenantUserController],
   providers: [
     TenantService,
+    RequireTenantGuard,
     {
       provide: APP_INTERCEPTOR,
       useClass: TenantInterceptor,
@@ -22,6 +24,7 @@ import {
   ],
   exports: [
     TenantService,
+    RequireTenantGuard,
     TenantContextModule,
     TenantRelationalPersistenceModule,
   ],

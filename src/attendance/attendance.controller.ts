@@ -22,6 +22,9 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { AttendanceService } from './attendance.service';
 import { MarkAttendanceDto } from './dto/mark-attendance.dto';
 import { BulkAttendanceDto } from './dto/bulk-attendance.dto';
@@ -36,7 +39,7 @@ import {
 
 @ApiTags('Attendance')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'attendance', version: '1' })
 export class AttendanceController {
   constructor(private readonly service: AttendanceService) {}
@@ -44,6 +47,7 @@ export class AttendanceController {
   // ─── POST /mark — Individual Attendance ───────────────
   @Post('mark')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.attendance.mark')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Attendance marked successfully' })
   async mark(@Body() dto: MarkAttendanceDto) {
@@ -53,6 +57,7 @@ export class AttendanceController {
   // ─── POST /bulk — Bulk Attendance ─────────────────────
   @Post('bulk')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.attendance.mark')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Bulk attendance marked' })
   async bulk(@Body() dto: BulkAttendanceDto) {
@@ -68,6 +73,7 @@ export class AttendanceController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.attendance.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Attendance records retrieved' })
   async query(@Query() query: QueryAttendanceDto) {
@@ -83,6 +89,7 @@ export class AttendanceController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.attendance.report')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Attendance summary generated' })
   async summary(@Query() query: AttendanceSummaryQueryDto) {
@@ -98,6 +105,7 @@ export class AttendanceController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.attendance.report')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Detailed attendance report' })
   async detailed(@Query() query: DetailedReportQueryDto) {
@@ -107,6 +115,7 @@ export class AttendanceController {
   // ─── GET /alerts — Low Attendance Alerts ──────────────
   @Get('alerts')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.attendance.report')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Low attendance alerts' })
   async alerts(@Query() query: AlertsQueryDto) {
@@ -122,6 +131,7 @@ export class AttendanceController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('hr.leave.apply')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Leave application created' })
   async applyLeave(@Body() dto: ApplyLeaveDto) {
@@ -131,6 +141,7 @@ export class AttendanceController {
   // ─── PATCH /leaves/:id/approve — Approve Leave ────────
   @Patch('leaves/:id/approve')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.leave.approve')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Leave approved' })
   async approve(
@@ -165,6 +176,7 @@ export class AttendanceController {
   // ─── PATCH /leaves/:id/reject — Reject Leave ─────────
   @Patch('leaves/:id/reject')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.leave.reject')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Leave rejected' })
   async reject(

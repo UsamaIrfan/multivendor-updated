@@ -22,6 +22,9 @@ import {
 import { Roles } from '../../roles/roles.decorator';
 import { RolesGuard } from '../../roles/roles.guard';
 import { RoleEnum } from '../../roles/roles.enum';
+import { PermissionsGuard } from '../../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../../authorization/decorators/require-permissions.decorator';
 import { StaffService } from './staff.service';
 
 import { CreateStaffDto } from './dto/create-staff.dto';
@@ -42,13 +45,14 @@ import { UpdateSalarySlipDto } from './dto/update-salary-slip.dto';
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Staff')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'lms/staff', version: '1' })
 export class StaffController {
   constructor(private readonly service: StaffService) {}
 
   @Post()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.staff.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Staff created' })
   create(@Body() dto: CreateStaffDto) {
@@ -57,6 +61,7 @@ export class StaffController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.staff.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all staff' })
   findAll() {
@@ -65,6 +70,7 @@ export class StaffController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.staff.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -73,6 +79,7 @@ export class StaffController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.staff.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateStaffDto) {
@@ -81,6 +88,7 @@ export class StaffController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.staff.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -93,13 +101,14 @@ export class StaffController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Staff Attendance')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'lms/staff-attendance', version: '1' })
 export class StaffAttendanceController {
   constructor(private readonly service: StaffService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.attendance.check_in')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Staff attendance created' })
   create(@Body() dto: CreateStaffAttendanceDto) {
@@ -108,6 +117,7 @@ export class StaffAttendanceController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.attendance.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all staff attendance records' })
   findAll() {
@@ -116,6 +126,7 @@ export class StaffAttendanceController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.attendance.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -124,6 +135,7 @@ export class StaffAttendanceController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.attendance.check_in')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   update(
@@ -135,6 +147,7 @@ export class StaffAttendanceController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.attendance.check_in')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -147,13 +160,14 @@ export class StaffAttendanceController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Staff Leaves')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'lms/staff-leaves', version: '1' })
 export class StaffLeaveController {
   constructor(private readonly service: StaffService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.leave.apply')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Staff leave created' })
   create(@Body() dto: CreateStaffLeaveDto) {
@@ -162,6 +176,7 @@ export class StaffLeaveController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.leave.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all staff leaves' })
   findAll() {
@@ -170,6 +185,7 @@ export class StaffLeaveController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.leave.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -178,6 +194,7 @@ export class StaffLeaveController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.leave.approve')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   update(
@@ -189,6 +206,7 @@ export class StaffLeaveController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.leave.approve')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -201,13 +219,14 @@ export class StaffLeaveController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Notices')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'lms/notices', version: '1' })
 export class NoticeController {
   constructor(private readonly service: StaffService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('communication.notice.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Notice created' })
   create(@Body() dto: CreateNoticeDto) {
@@ -222,6 +241,7 @@ export class NoticeController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('communication.notice.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all notices' })
   findAll() {
@@ -236,6 +256,7 @@ export class NoticeController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('communication.notice.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -244,6 +265,7 @@ export class NoticeController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('communication.notice.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateNoticeDto) {
@@ -252,6 +274,7 @@ export class NoticeController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('communication.notice.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -264,13 +287,14 @@ export class NoticeController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Timetable Slots')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'lms/timetable-slots', version: '1' })
 export class TimetableSlotController {
   constructor(private readonly service: StaffService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('academic.timetable.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Timetable slot created' })
   create(@Body() dto: CreateTimetableSlotDto) {
@@ -285,6 +309,7 @@ export class TimetableSlotController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.timetable.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all timetable slots' })
   findAll() {
@@ -299,6 +324,7 @@ export class TimetableSlotController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.timetable.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -307,6 +333,7 @@ export class TimetableSlotController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('academic.timetable.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   update(
@@ -318,6 +345,7 @@ export class TimetableSlotController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.timetable.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -330,13 +358,14 @@ export class TimetableSlotController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Salary Slips')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'lms/salary-slips', version: '1' })
 export class SalarySlipController {
   constructor(private readonly service: StaffService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('hr.payroll.process')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Salary slip created' })
   create(@Body() dto: CreateSalarySlipDto) {
@@ -345,6 +374,7 @@ export class SalarySlipController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.staff)
+  @RequirePermissions('hr.payroll.slip_read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all salary slips' })
   findAll() {
@@ -353,6 +383,7 @@ export class SalarySlipController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.staff)
+  @RequirePermissions('hr.payroll.slip_read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -361,6 +392,7 @@ export class SalarySlipController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('hr.payroll.process')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   update(
@@ -372,6 +404,7 @@ export class SalarySlipController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.payroll.process')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {

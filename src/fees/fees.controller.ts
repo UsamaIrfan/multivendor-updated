@@ -25,6 +25,9 @@ import { Response } from 'express';
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { FeesService } from './fees.service';
 import { CreateFeeStructureDto } from './dto/create-fee-structure.dto';
 import {
@@ -40,7 +43,7 @@ import {
 
 @ApiTags('Fee Management')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'fees', version: '1' })
 export class FeesController {
   constructor(private readonly feesService: FeesService) {}
@@ -49,6 +52,7 @@ export class FeesController {
 
   @Post('structures')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.fee_structure.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Fee structure created' })
   createStructure(@Body() dto: CreateFeeStructureDto) {
@@ -57,6 +61,7 @@ export class FeesController {
 
   @Get('structures/:id')
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.staff)
+  @RequirePermissions('finance.fee_structure.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Fee structure details' })
@@ -68,6 +73,7 @@ export class FeesController {
 
   @Post('challans/generate')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.challan.generate')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Challan generated' })
   generateChallan(@Body() dto: GenerateChallanDto) {
@@ -76,6 +82,7 @@ export class FeesController {
 
   @Post('challans/generate-bulk')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.challan.bulk_generate')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Bulk challans generated' })
   generateBulkChallans(@Body() dto: GenerateBulkChallanDto) {
@@ -90,6 +97,7 @@ export class FeesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('finance.challan.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'challanNumber', type: String })
   @ApiOkResponse({ description: 'Challan details' })
@@ -101,6 +109,7 @@ export class FeesController {
 
   @Post('payments')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.payment.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Payment recorded' })
   recordPayment(@Body() dto: RecordPaymentDto) {
@@ -109,6 +118,7 @@ export class FeesController {
 
   @Patch('payments/:id/verify')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('finance.payment.verify')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Payment verified' })
@@ -120,6 +130,7 @@ export class FeesController {
 
   @Post('concessions')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.concession.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Concession applied' })
   applyConcession(@Body() dto: ApplyConcessionDto) {
@@ -128,6 +139,7 @@ export class FeesController {
 
   @Get('students/:id/effective-concession')
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.student, RoleEnum.parent)
+  @RequirePermissions('finance.concession.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Effective concession for student' })
@@ -139,6 +151,7 @@ export class FeesController {
 
   @Get('receipts/:id/pdf')
   @Roles(RoleEnum.admin, RoleEnum.accountant, RoleEnum.student, RoleEnum.parent)
+  @RequirePermissions('finance.receipt.pdf')
   @ApiParam({ name: 'id', type: Number })
   async getReceiptPdf(
     @Param('id', ParseIntPipe) id: number,
@@ -157,6 +170,7 @@ export class FeesController {
 
   @Get('reports/collection')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.report.collection')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Collection report' })
   getCollectionReport(@Query() query: CollectionReportQueryDto) {
@@ -165,6 +179,7 @@ export class FeesController {
 
   @Get('reports/pending')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.report.pending')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Pending fees report' })
   getPendingReport() {
@@ -173,6 +188,7 @@ export class FeesController {
 
   @Get('reports/defaulters')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.report.defaulters')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Defaulters list' })
   getDefaultersReport() {
@@ -183,6 +199,7 @@ export class FeesController {
 
   @Post('send-reminders')
   @Roles(RoleEnum.admin, RoleEnum.accountant)
+  @RequirePermissions('finance.reminder.send')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Reminders sent' })
   sendReminders(@Body() dto: SendRemindersDto) {
@@ -193,6 +210,7 @@ export class FeesController {
 
   @Get('my-challans')
   @Roles(RoleEnum.student, RoleEnum.parent, RoleEnum.user)
+  @RequirePermissions('portal.my_fees.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Own challans with payment history' })
   getMyChallans(@Request() req: any) {

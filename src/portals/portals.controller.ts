@@ -19,19 +19,23 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { PortalsService } from './portals.service';
 import { SwitchBranchDto } from './dto/switch-branch.dto';
 import { StudentDashboard, StaffDashboard } from './domain/dashboard';
 
 @ApiTags('Portals')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'portals', version: '1' })
 export class PortalsController {
   constructor(private readonly service: PortalsService) {}
 
   @Get('student/dashboard')
   @Roles(RoleEnum.admin, RoleEnum.student, RoleEnum.parent)
+  @RequirePermissions('portal.student_dashboard.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: StudentDashboard })
   @ApiQuery({
@@ -55,6 +59,7 @@ export class PortalsController {
 
   @Get('staff/dashboard')
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.accountant)
+  @RequirePermissions('portal.staff_dashboard.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: StaffDashboard })
   @ApiQuery({
@@ -82,6 +87,7 @@ export class PortalsController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('portal.branch.switch')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     description: 'Returns new branch context',

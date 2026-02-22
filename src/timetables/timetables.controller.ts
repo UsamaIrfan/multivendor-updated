@@ -24,6 +24,9 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { TimetablesService } from './timetables.service';
 import { CreateTimetableDto } from './dto/create-timetable.dto';
 import { UpdateTimetableDto } from './dto/update-timetable.dto';
@@ -33,7 +36,7 @@ import { Period } from './domain/period';
 
 @ApiTags('Timetables')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'timetables', version: '1' })
 export class TimetablesController {
   constructor(private readonly service: TimetablesService) {}
@@ -42,6 +45,7 @@ export class TimetablesController {
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('academic.timetable.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Timetable })
   create(@Body() dto: CreateTimetableDto) {
@@ -56,6 +60,7 @@ export class TimetablesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.timetable.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Timetable] })
   findAll() {
@@ -70,6 +75,7 @@ export class TimetablesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.timetable.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'branchId', type: String })
   @ApiOkResponse({ type: [Timetable] })
@@ -79,6 +85,7 @@ export class TimetablesController {
 
   @Get('conflicts')
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
+  @RequirePermissions('academic.timetable.read')
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'teacherId', type: String, required: true })
   @ApiQuery({ name: 'dayOfWeek', type: Number, required: true })
@@ -108,6 +115,7 @@ export class TimetablesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.timetable.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Timetable })
@@ -117,6 +125,7 @@ export class TimetablesController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('academic.timetable.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Timetable })
@@ -129,6 +138,7 @@ export class TimetablesController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.timetable.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: String })
   remove(@Param('id', ParseUUIDPipe) id: string) {
@@ -139,6 +149,7 @@ export class TimetablesController {
 
   @Post(':id/periods')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('academic.timetable.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiParam({ name: 'id', type: String, description: 'Timetable ID' })
   @ApiCreatedResponse({ type: Period })
@@ -155,6 +166,7 @@ export class TimetablesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.timetable.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String, description: 'Timetable ID' })
   @ApiOkResponse({ type: [Period] })
@@ -164,6 +176,7 @@ export class TimetablesController {
 
   @Delete('periods/:periodId')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.timetable.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'periodId', type: String })
   removePeriod(@Param('periodId', ParseUUIDPipe) periodId: string) {

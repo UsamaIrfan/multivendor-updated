@@ -25,6 +25,9 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { StaffManagementService } from './staff-management.service';
 import { CreateStaffMgmtDto } from './dto/create-staff-mgmt.dto';
 import { UpdateStaffMgmtDto } from './dto/update-staff-mgmt.dto';
@@ -39,7 +42,7 @@ import { StaffBranchAssignment } from './domain/staff-branch-assignment';
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Staff Management')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'staff-management', version: '1' })
 export class StaffManagementController {
   constructor(private readonly service: StaffManagementService) {}
@@ -48,6 +51,7 @@ export class StaffManagementController {
 
   @Post()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.staff.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: StaffMgmt })
   create(@Body() dto: CreateStaffMgmtDto) {
@@ -56,6 +60,7 @@ export class StaffManagementController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
+  @RequirePermissions('hr.staff.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [StaffMgmt] })
   findAll(@Query() query: QueryStaffDto) {
@@ -66,6 +71,7 @@ export class StaffManagementController {
 
   @Get('my-branches')
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher, RoleEnum.accountant)
+  @RequirePermissions('hr.branch_assignment.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [StaffBranchAssignment] })
   getMyBranches(@Request() req: any) {
@@ -74,6 +80,7 @@ export class StaffManagementController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
+  @RequirePermissions('hr.staff.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: StaffMgmt })
@@ -83,6 +90,7 @@ export class StaffManagementController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.staff.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: StaffMgmt })
@@ -95,6 +103,7 @@ export class StaffManagementController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.staff.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   @ApiNoContentResponse()
@@ -106,6 +115,7 @@ export class StaffManagementController {
 
   @Post(':id/branches')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.branch_assignment.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiParam({ name: 'id', type: Number })
   @ApiCreatedResponse({ type: StaffBranchAssignment })
@@ -118,6 +128,7 @@ export class StaffManagementController {
 
   @Get(':id/branches')
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
+  @RequirePermissions('hr.branch_assignment.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: [StaffBranchAssignment] })
@@ -127,6 +138,7 @@ export class StaffManagementController {
 
   @Post(':id/transfer-branch')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.branch_transfer.create')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: StaffMgmt })
@@ -141,6 +153,7 @@ export class StaffManagementController {
 
   @Delete('branch-assignments/:id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.branch_assignment.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   @ApiNoContentResponse()

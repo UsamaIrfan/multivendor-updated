@@ -22,6 +22,9 @@ import {
 import { Roles } from '../../roles/roles.decorator';
 import { RolesGuard } from '../../roles/roles.guard';
 import { RoleEnum } from '../../roles/roles.enum';
+import { PermissionsGuard } from '../../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../../authorization/decorators/require-permissions.decorator';
 import { AcademicService } from './academic.service';
 import { CreateAcademicYearDto } from './dto/create-academic-year.dto';
 import { UpdateAcademicYearDto } from './dto/update-academic-year.dto';
@@ -35,13 +38,14 @@ import { Term } from './domain/term';
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Academic Years')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'lms/academic-years', version: '1' })
 export class AcademicYearController {
   constructor(private readonly service: AcademicService) {}
 
   @Post()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.academic_year.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: AcademicYear })
   create(@Body() dto: CreateAcademicYearDto) {
@@ -50,6 +54,7 @@ export class AcademicYearController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
+  @RequirePermissions('academic.academic_year.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [AcademicYear] })
   findAll() {
@@ -58,6 +63,7 @@ export class AcademicYearController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
+  @RequirePermissions('academic.academic_year.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: AcademicYear })
@@ -67,6 +73,7 @@ export class AcademicYearController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.academic_year.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: AcademicYear })
@@ -79,6 +86,7 @@ export class AcademicYearController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.academic_year.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -91,13 +99,14 @@ export class AcademicYearController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('LMS - Terms')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'lms/terms', version: '1' })
 export class TermController {
   constructor(private readonly service: AcademicService) {}
 
   @Post()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.academic_term.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Term })
   create(@Body() dto: CreateTermDto) {
@@ -106,6 +115,7 @@ export class TermController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
+  @RequirePermissions('academic.academic_term.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Term] })
   findAll() {
@@ -114,6 +124,7 @@ export class TermController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff, RoleEnum.teacher)
+  @RequirePermissions('academic.academic_term.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Term })
@@ -123,6 +134,7 @@ export class TermController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.academic_term.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Term })
@@ -132,6 +144,7 @@ export class TermController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.academic_term.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {

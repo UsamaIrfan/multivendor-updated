@@ -23,6 +23,9 @@ import {
 import { RolesGuard } from '../roles/roles.guard';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { StaffAttendanceService } from './staff-attendance.service';
 import { CheckInDto } from './dto/check-in.dto';
 import { CheckOutDto } from './dto/check-out.dto';
@@ -44,13 +47,14 @@ import { StaffLeaveBalance } from './domain/staff-leave-balance';
 
 @ApiTags('Staff - Attendance')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'staff/attendance', version: '1' })
 export class StaffAttendanceCheckController {
   constructor(private readonly service: StaffAttendanceService) {}
 
   @Post('check-in')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.attendance.check_in')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: StaffAttendanceRecord })
   checkIn(@Body() dto: CheckInDto): Promise<StaffAttendanceRecord> {
@@ -59,6 +63,7 @@ export class StaffAttendanceCheckController {
 
   @Post('check-out')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.attendance.check_out')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: StaffAttendanceRecord })
   checkOut(@Body() dto: CheckOutDto): Promise<StaffAttendanceRecord> {
@@ -67,6 +72,7 @@ export class StaffAttendanceCheckController {
 
   @Get('reports')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.attendance.report')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [StaffAttendanceRecord] })
   getReports(
@@ -82,13 +88,14 @@ export class StaffAttendanceCheckController {
 
 @ApiTags('Staff - Leaves')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'staff/leaves', version: '1' })
 export class StaffLeaveController {
   constructor(private readonly service: StaffAttendanceService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.leave.apply')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: StaffLeaveApplication })
   apply(@Body() dto: ApplyStaffLeaveDto): Promise<StaffLeaveApplication> {
@@ -97,6 +104,7 @@ export class StaffLeaveController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.leave.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [StaffLeaveApplication] })
   findAll(
@@ -107,6 +115,7 @@ export class StaffLeaveController {
 
   @Get('balance')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('hr.leave.balance')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [StaffLeaveBalance] })
   getBalance(
@@ -117,6 +126,7 @@ export class StaffLeaveController {
 
   @Patch(':id/approve')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.leave.approve')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: StaffLeaveApplication })
@@ -130,6 +140,7 @@ export class StaffLeaveController {
 
   @Patch(':id/reject')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('hr.leave.reject')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: StaffLeaveApplication })

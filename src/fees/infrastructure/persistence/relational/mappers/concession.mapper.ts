@@ -32,8 +32,8 @@ export class ConcessionMapper {
     entity.reason = domain.reason;
     entity.approved = domain.approved;
     entity.approvedBy = domain.approvedBy;
-    entity.tenantId = domain.tenantId;
-    entity.branchId = domain.branchId;
+    if (domain.tenantId !== undefined) entity.tenantId = domain.tenantId;
+    if (domain.branchId !== undefined) entity.branchId = domain.branchId;
     return entity;
   }
 }

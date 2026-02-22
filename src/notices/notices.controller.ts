@@ -25,6 +25,9 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { NoticesService } from './notices.service';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
@@ -32,13 +35,14 @@ import { Notice } from './domain/notice';
 
 @ApiTags('Notices')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'notices', version: '1' })
 export class NoticesController {
   constructor(private readonly service: NoticesService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('communication.notice.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Notice })
   create(@Body() dto: CreateNoticeDto) {
@@ -53,6 +57,7 @@ export class NoticesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('communication.notice.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Notice] })
   findAll() {
@@ -67,6 +72,7 @@ export class NoticesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('communication.notice.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Notice] })
   @ApiQuery({
@@ -105,6 +111,7 @@ export class NoticesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('communication.notice.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'branchId', type: String })
   @ApiOkResponse({ type: [Notice] })
@@ -120,6 +127,7 @@ export class NoticesController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('communication.notice.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Notice })
@@ -129,6 +137,7 @@ export class NoticesController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.staff)
+  @RequirePermissions('communication.notice.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Notice })
@@ -138,6 +147,7 @@ export class NoticesController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('communication.notice.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: String })
   remove(@Param('id', ParseUUIDPipe) id: string) {

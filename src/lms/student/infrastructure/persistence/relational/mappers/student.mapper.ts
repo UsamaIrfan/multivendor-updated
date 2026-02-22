@@ -22,6 +22,9 @@ export class StudentMapper {
     domain.nationality = entity.nationality;
     domain.religion = entity.religion;
     domain.admissionDate = entity.admissionDate;
+    domain.firstName = entity.user?.firstName ?? null;
+    domain.lastName = entity.user?.lastName ?? null;
+    domain.email = entity.user?.email ?? null;
     domain.tenantId = entity.tenantId;
     domain.branchId = entity.branchId;
     domain.createdAt = entity.createdAt;

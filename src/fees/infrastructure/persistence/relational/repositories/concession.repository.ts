@@ -31,14 +31,12 @@ export class ConcessionRelationalRepository implements ConcessionRepository {
   async create(
     data: Omit<Concession, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<Concession> {
-    const persistenceModel = this.repo.create(
-      ConcessionMapper.toPersistence(data as Concession),
-    );
+    const mapped = ConcessionMapper.toPersistence(data as Concession);
     if (this.tenantContext.hasContext()) {
-      (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId =
-        this.tenantContext.getBranchId() ?? null;
+      mapped.tenantId = this.tenantContext.getTenantId();
+      mapped.branchId = this.tenantContext.getBranchId() ?? null;
     }
+    const persistenceModel = this.repo.create(mapped);
     const saved = await this.repo.save(persistenceModel);
     return ConcessionMapper.toDomain(saved);
   }

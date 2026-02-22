@@ -23,6 +23,9 @@ import { Response } from 'express';
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { ExamsService } from './exams.service';
 import { ReportCardService } from './report-card.service';
 import { CreateGradingScaleDto } from './dto/create-grading-scale.dto';
@@ -34,7 +37,7 @@ import { UpdateExamStatusDto } from './dto/update-exam-status.dto';
 
 @ApiTags('Examination & Results')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'exams', version: '1' })
 export class ExamsController {
   constructor(
@@ -46,6 +49,7 @@ export class ExamsController {
 
   @Post('grading-scales')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.grading_scale.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Grading scale created' })
   createGradingScale(@Body() dto: CreateGradingScaleDto) {
@@ -54,6 +58,7 @@ export class ExamsController {
 
   @Get('grading-scales')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.grading_scale.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List of grading scales' })
   listGradingScales() {
@@ -62,6 +67,7 @@ export class ExamsController {
 
   @Get('grading-scales/:id')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.grading_scale.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Grading scale details' })
@@ -73,6 +79,7 @@ export class ExamsController {
 
   @Post('schedules')
   @Roles(RoleEnum.admin, RoleEnum.teacher)
+  @RequirePermissions('academic.exam.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Exam schedule created' })
   createSchedule(@Body() dto: CreateExamScheduleDto) {
@@ -81,6 +88,7 @@ export class ExamsController {
 
   @Get('schedules/:id')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.exam.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Exam schedule details' })
@@ -90,6 +98,7 @@ export class ExamsController {
 
   @Patch('schedules/:id/status')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.exam.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ description: 'Exam status updated' })
@@ -104,6 +113,7 @@ export class ExamsController {
 
   @Post('marks')
   @Roles(RoleEnum.admin, RoleEnum.teacher)
+  @RequirePermissions('academic.marks.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Marks entered' })
   enterMarks(@Body() dto: EnterMarksDto) {
@@ -112,6 +122,7 @@ export class ExamsController {
 
   @Post('marks/bulk')
   @Roles(RoleEnum.admin, RoleEnum.teacher)
+  @RequirePermissions('academic.marks.bulk_import')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: 'Marks imported in bulk' })
   bulkImportMarks(@Body() dto: BulkMarksImportDto) {
@@ -120,6 +131,7 @@ export class ExamsController {
 
   @Get('marks/:examSubjectId')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.marks.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'examSubjectId', type: Number })
   @ApiOkResponse({ description: 'Marks for exam subject' })
@@ -131,6 +143,7 @@ export class ExamsController {
 
   @Patch(':examId/publish')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.exam.publish')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'examId', type: Number })
   @ApiOkResponse({ description: 'Results published' })
@@ -154,6 +167,7 @@ export class ExamsController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.marks.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'studentId', type: Number })
   @ApiOkResponse({ description: 'All results for a student' })
@@ -169,6 +183,7 @@ export class ExamsController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.marks.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'studentId', type: Number })
   @ApiParam({ name: 'examId', type: Number })
@@ -188,6 +203,7 @@ export class ExamsController {
     RoleEnum.student,
     RoleEnum.parent,
   )
+  @RequirePermissions('academic.report_card.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'studentId', type: Number })
   @ApiParam({ name: 'examId', type: Number })
@@ -232,6 +248,7 @@ export class ExamsController {
 
   @Get('analytics/exam/:examId')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.analytics.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'examId', type: Number })
   @ApiOkResponse({ description: 'Exam analytics' })
@@ -241,6 +258,7 @@ export class ExamsController {
 
   @Get('analytics/subject/:examSubjectId')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.analytics.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'examSubjectId', type: Number })
   @ApiOkResponse({ description: 'Subject analytics' })

@@ -32,14 +32,12 @@ export class FeeChallanRelationalRepository implements FeeChallanRepository {
   async create(
     data: Omit<FeeChallan, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<FeeChallan> {
-    const persistenceModel = this.repo.create(
-      FeeChallanMapper.toPersistence(data as FeeChallan),
-    );
+    const mapped = FeeChallanMapper.toPersistence(data as FeeChallan);
     if (this.tenantContext.hasContext()) {
-      (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId =
-        this.tenantContext.getBranchId() ?? null;
+      mapped.tenantId = this.tenantContext.getTenantId();
+      mapped.branchId = this.tenantContext.getBranchId() ?? null;
     }
+    const persistenceModel = this.repo.create(mapped);
     const saved = await this.repo.save(persistenceModel);
     return FeeChallanMapper.toDomain(saved);
   }

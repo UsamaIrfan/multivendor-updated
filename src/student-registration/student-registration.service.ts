@@ -155,9 +155,9 @@ export class StudentRegistrationService {
     if (query.search) {
       const term = query.search.toLowerCase();
       allStudents = allStudents.filter((s: any) => {
-        const name =
-          `${s.guardianName || ''} ${s.rollNumber || ''}`.toLowerCase();
-        return name.includes(term);
+        const searchable =
+          `${s.firstName || ''} ${s.lastName || ''} ${s.email || ''} ${s.guardianName || ''} ${s.rollNumber || ''}`.toLowerCase();
+        return searchable.includes(term);
       });
     }
 

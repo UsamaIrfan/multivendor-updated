@@ -30,8 +30,8 @@ export class ReceiptMapper {
     entity.challanNumber = domain.challanNumber;
     entity.paymentMethod = domain.paymentMethod;
     entity.issuedAt = domain.issuedAt;
-    entity.tenantId = domain.tenantId;
-    entity.branchId = domain.branchId;
+    if (domain.tenantId !== undefined) entity.tenantId = domain.tenantId;
+    if (domain.branchId !== undefined) entity.branchId = domain.branchId;
     return entity;
   }
 }

@@ -33,14 +33,12 @@ export class FeeStructureRelationalRepository
   async create(
     data: Omit<FeeStructure, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<FeeStructure> {
-    const persistenceModel = this.repo.create(
-      FeeStructureMapper.toPersistence(data as FeeStructure),
-    );
+    const mapped = FeeStructureMapper.toPersistence(data as FeeStructure);
     if (this.tenantContext.hasContext()) {
-      (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId =
-        this.tenantContext.getBranchId() ?? null;
+      mapped.tenantId = this.tenantContext.getTenantId();
+      mapped.branchId = this.tenantContext.getBranchId() ?? null;
     }
+    const persistenceModel = this.repo.create(mapped);
     const saved = await this.repo.save(persistenceModel);
     return FeeStructureMapper.toDomain(saved);
   }

@@ -31,14 +31,12 @@ export class FeePaymentRelationalRepository implements FeePaymentRepository {
   async create(
     data: Omit<FeePayment, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
   ): Promise<FeePayment> {
-    const persistenceModel = this.repo.create(
-      FeePaymentMapper.toPersistence(data as FeePayment),
-    );
+    const mapped = FeePaymentMapper.toPersistence(data as FeePayment);
     if (this.tenantContext.hasContext()) {
-      (persistenceModel as any).tenantId = this.tenantContext.getTenantId();
-      (persistenceModel as any).branchId =
-        this.tenantContext.getBranchId() ?? null;
+      mapped.tenantId = this.tenantContext.getTenantId();
+      mapped.branchId = this.tenantContext.getBranchId() ?? null;
     }
+    const persistenceModel = this.repo.create(mapped);
     const saved = await this.repo.save(persistenceModel);
     return FeePaymentMapper.toDomain(saved);
   }

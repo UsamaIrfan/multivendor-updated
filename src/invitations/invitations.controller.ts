@@ -20,6 +20,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { InvitationsService } from './invitations.service';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { AcceptInvitationDto } from './dto/accept-invitation.dto';
@@ -36,8 +38,9 @@ export class InvitationsController {
 
   @Post()
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(RoleEnum.admin)
+  @RequirePermissions('communication.invitation.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({
     description: 'Invitation sent successfully',
@@ -52,8 +55,9 @@ export class InvitationsController {
 
   @Get('tenant/:tenantId')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(RoleEnum.admin)
+  @RequirePermissions('communication.invitation.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     description: 'List all invitations for a tenant',
@@ -65,8 +69,9 @@ export class InvitationsController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(RoleEnum.admin)
+  @RequirePermissions('communication.invitation.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   async cancel(@Param('id') id: string): Promise<void> {
     return this.service.cancelInvitation(id);
@@ -74,8 +79,9 @@ export class InvitationsController {
 
   @Post(':id/resend')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(RoleEnum.admin)
+  @RequirePermissions('communication.invitation.create')
   @HttpCode(HttpStatus.NO_CONTENT)
   async resend(
     @Request() request,

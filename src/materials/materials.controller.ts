@@ -24,6 +24,9 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequireTenantGuard } from '../tenant/guards/require-tenant.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { MaterialsService } from './materials.service';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
@@ -41,13 +44,14 @@ import { StorageQuotaDto } from './dto/storage-quota.dto';
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Materials - Course Materials')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'materials', version: '1' })
 export class MaterialsController {
   constructor(private readonly service: MaterialsService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff)
+  @RequirePermissions('academic.material.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: CourseMaterial })
   create(@Body() dto: CreateMaterialDto) {
@@ -56,6 +60,7 @@ export class MaterialsController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.material.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [CourseMaterial] })
   findAll(@Query() query: QueryMaterialDto) {
@@ -64,6 +69,7 @@ export class MaterialsController {
 
   @Get('quota')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.material.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: StorageQuotaDto })
   getQuota() {
@@ -72,6 +78,7 @@ export class MaterialsController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.material.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: CourseMaterial })
@@ -81,6 +88,7 @@ export class MaterialsController {
 
   @Get(':id/download')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.material.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: CourseMaterial })
@@ -91,6 +99,7 @@ export class MaterialsController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.teacher)
+  @RequirePermissions('academic.material.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: CourseMaterial })
@@ -103,6 +112,7 @@ export class MaterialsController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.material.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -115,13 +125,14 @@ export class MaterialsController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Materials - Assignments')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'materials/assignments', version: '1' })
 export class AssignmentsController {
   constructor(private readonly service: MaterialsService) {}
 
   @Post()
   @Roles(RoleEnum.admin, RoleEnum.teacher)
+  @RequirePermissions('academic.assignment.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Assignment })
   create(@Body() dto: CreateAssignmentDto) {
@@ -130,6 +141,7 @@ export class AssignmentsController {
 
   @Get()
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.assignment.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Assignment] })
   findAll() {
@@ -138,6 +150,7 @@ export class AssignmentsController {
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.staff, RoleEnum.student)
+  @RequirePermissions('academic.assignment.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Assignment })
@@ -147,6 +160,7 @@ export class AssignmentsController {
 
   @Post(':id/submit')
   @Roles(RoleEnum.admin, RoleEnum.student)
+  @RequirePermissions('academic.assignment.submit')
   @HttpCode(HttpStatus.CREATED)
   @ApiParam({ name: 'id', type: Number })
   @ApiCreatedResponse({ type: AssignmentSubmission })
@@ -159,6 +173,7 @@ export class AssignmentsController {
 
   @Get(':id/submissions')
   @Roles(RoleEnum.admin, RoleEnum.teacher)
+  @RequirePermissions('academic.submission.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: [AssignmentSubmission] })
@@ -168,6 +183,7 @@ export class AssignmentsController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.teacher)
+  @RequirePermissions('academic.assignment.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: Assignment })
@@ -180,6 +196,7 @@ export class AssignmentsController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.assignment.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -192,13 +209,14 @@ export class AssignmentsController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Materials - Submissions')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard, RequireTenantGuard)
 @Controller({ path: 'materials/submissions', version: '1' })
 export class SubmissionsController {
   constructor(private readonly service: MaterialsService) {}
 
   @Get(':id')
   @Roles(RoleEnum.admin, RoleEnum.teacher, RoleEnum.student)
+  @RequirePermissions('academic.submission.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: AssignmentSubmission })
@@ -208,6 +226,7 @@ export class SubmissionsController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('academic.submission.grade')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {

@@ -23,6 +23,8 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RolesGuard } from '../roles/roles.guard';
 import { RoleEnum } from '../roles/roles.enum';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { TenantService } from './tenant.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
@@ -38,13 +40,14 @@ import { TenantUser } from './domain/tenant-user';
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Multi-Tenancy - Tenants')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
 @Controller({ path: 'tenants', version: '1' })
 export class TenantController {
   constructor(private readonly service: TenantService) {}
 
   @Post()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.tenant.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Tenant })
   create(@Body() dto: CreateTenantDto) {
@@ -53,6 +56,7 @@ export class TenantController {
 
   @Get()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.tenant.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: [Tenant] })
   findAll() {
@@ -61,6 +65,7 @@ export class TenantController {
 
   @Get(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.tenant.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Tenant })
@@ -70,6 +75,7 @@ export class TenantController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.tenant.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Tenant })
@@ -79,6 +85,7 @@ export class TenantController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.tenant.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: String })
   remove(@Param('id', ParseUUIDPipe) id: string) {
@@ -91,13 +98,14 @@ export class TenantController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Multi-Tenancy - Branches')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
 @Controller({ path: 'branches', version: '1' })
 export class BranchController {
   constructor(private readonly service: TenantService) {}
 
   @Post()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.branch.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Branch })
   create(@Body() dto: CreateBranchDto) {
@@ -114,6 +122,7 @@ export class BranchController {
     RoleEnum.accountant,
     RoleEnum.parent,
   )
+  @RequirePermissions('system.branch.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'tenantId', type: String })
   @ApiOkResponse({ type: [Branch] })
@@ -131,6 +140,7 @@ export class BranchController {
     RoleEnum.accountant,
     RoleEnum.parent,
   )
+  @RequirePermissions('system.branch.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Branch })
@@ -140,6 +150,7 @@ export class BranchController {
 
   @Patch(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.branch.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: Branch })
@@ -149,6 +160,7 @@ export class BranchController {
 
   @Delete(':id')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.branch.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: String })
   remove(@Param('id', ParseUUIDPipe) id: string) {
@@ -161,13 +173,14 @@ export class BranchController {
 // ═══════════════════════════════════════════════════════════
 @ApiTags('Multi-Tenancy - Tenant Users')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
 @Controller({ path: 'tenant-users', version: '1' })
 export class TenantUserController {
   constructor(private readonly service: TenantService) {}
 
   @Post()
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.tenant.update')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: TenantUser })
   assign(@Body() dto: AssignUserToTenantDto) {
@@ -184,6 +197,7 @@ export class TenantUserController {
     RoleEnum.accountant,
     RoleEnum.parent,
   )
+  @RequirePermissions('system.tenant.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'userId', type: Number })
   @ApiOkResponse({ type: [TenantUser] })
@@ -193,6 +207,7 @@ export class TenantUserController {
 
   @Get('tenant/:tenantId')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.tenant.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: 'tenantId', type: String })
   @ApiOkResponse({ type: [TenantUser] })
@@ -202,6 +217,7 @@ export class TenantUserController {
 
   @Delete(':tenantId/user/:userId')
   @Roles(RoleEnum.admin)
+  @RequirePermissions('system.tenant.update')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'tenantId', type: String })
   @ApiParam({ name: 'userId', type: Number })

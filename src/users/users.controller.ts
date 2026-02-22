@@ -24,6 +24,8 @@ import {
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard } from '../authorization/guards/permissions.guard';
+import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 
 import {
   InfinityPaginationResponse,
@@ -38,7 +40,7 @@ import { infinityPagination } from '../utils/infinity-pagination';
 
 @ApiBearerAuth()
 @Roles(RoleEnum.admin)
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
 @ApiTags('Users')
 @Controller({
   path: 'users',
@@ -54,6 +56,7 @@ export class UsersController {
     groups: ['admin'],
   })
   @Post()
+  @RequirePermissions('system.user.create')
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createProfileDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createProfileDto);
@@ -66,6 +69,7 @@ export class UsersController {
     groups: ['admin'],
   })
   @Get()
+  @RequirePermissions('system.user.read')
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query() query: QueryUserDto,
@@ -96,6 +100,7 @@ export class UsersController {
     groups: ['admin'],
   })
   @Get(':id')
+  @RequirePermissions('system.user.read')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
     name: 'id',
@@ -113,6 +118,7 @@ export class UsersController {
     groups: ['admin'],
   })
   @Patch(':id')
+  @RequirePermissions('system.user.update')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
     name: 'id',
@@ -127,6 +133,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @RequirePermissions('system.user.delete')
   @ApiParam({
     name: 'id',
     type: String,
