@@ -52,6 +52,23 @@ export class RegisterStudentDto {
   @IsEnum(GenderEnum)
   gender: GenderEnum;
 
+  // ─── Optional enrollment fields ──────────────────────
+  @ApiPropertyOptional({
+    example: 1,
+    description: 'Section ID — if provided with academicYearId, the student will be auto-enrolled',
+  })
+  @IsOptional()
+  @IsInt()
+  sectionId?: number;
+
+  @ApiPropertyOptional({
+    example: 1,
+    description: 'Academic Year ID — if provided with sectionId, the student will be auto-enrolled',
+  })
+  @IsOptional()
+  @IsInt()
+  academicYearId?: number;
+
   // ─── Guardian fields (required) ──────────────────────
   @ApiProperty({ example: 'Jane Doe' })
   @IsNotEmpty()

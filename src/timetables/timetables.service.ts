@@ -77,9 +77,8 @@ export class TimetablesService {
 
     // Verify teacher is assigned to this branch
     const assignments = await this.staffBranchRepo.findByUserAndTenant(
-      // teacherId here is the staffEntityId from the staff_branch_assignment table
-      // For simplicity, we'll verify via the branchId check
-      parseInt(dto.teacherId, 10) || 0,
+      // teacherId here is the userId (integer)
+      dto.teacherId,
       tenantId,
     );
 
@@ -151,7 +150,7 @@ export class TimetablesService {
   // ─── Conflict Detection ───────────────────────────────
 
   async checkConflicts(
-    teacherId: string,
+    teacherId: number,
     dayOfWeek: number,
     startTime: string,
     endTime: string,

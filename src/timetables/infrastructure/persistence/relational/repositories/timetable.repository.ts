@@ -29,6 +29,8 @@ export class TimetableRelationalRepository implements TimetableRepository {
     return {};
   }
 
+  private readonly relations = ['gradeClass', 'section', 'academicYear'];
+
   async create(data: DeepPartial<Timetable>): Promise<Timetable> {
     const entity = this.repo.create(
       TimetableMapper.toPersistence(data as Timetable),
@@ -39,13 +41,19 @@ export class TimetableRelationalRepository implements TimetableRepository {
         (data as any).branchId ?? this.tenantContext.getBranchId() ?? null;
     }
     const saved = await this.repo.save(entity);
-    return TimetableMapper.toDomain(saved);
+    // Re-fetch with relations to get resolved names
+    const full = await this.repo.findOne({
+      where: { id: saved.id } as any,
+      relations: this.relations,
+    });
+    return TimetableMapper.toDomain(full ?? saved);
   }
 
   async findAll(): Promise<Timetable[]> {
     const tenantFilter = this.getTenantFilter();
     const entities = await this.repo.find({
       where: tenantFilter as any,
+      relations: this.relations,
       order: { createdAt: 'DESC' },
     });
     return entities.map(TimetableMapper.toDomain);
@@ -55,6 +63,7 @@ export class TimetableRelationalRepository implements TimetableRepository {
     const tenantFilter = this.getTenantFilter();
     const entity = await this.repo.findOne({
       where: { id, ...tenantFilter } as any,
+      relations: this.relations,
     });
     return entity ? TimetableMapper.toDomain(entity) : null;
   }
@@ -67,6 +76,7 @@ export class TimetableRelationalRepository implements TimetableRepository {
     if (tenantId) where.tenantId = tenantId;
     const entities = await this.repo.find({
       where: where as any,
+      relations: this.relations,
       order: { createdAt: 'DESC' },
     });
     return entities.map(TimetableMapper.toDomain);
@@ -76,11 +86,30 @@ export class TimetableRelationalRepository implements TimetableRepository {
     id: string,
     data: DeepPartial<Timetable>,
   ): Promise<Timetable | null> {
-    await this.repo.update(id, data as any);
-    const entity = await this.repo.findOne({
+    const existing = await this.repo.findOne({
       where: { id, ...this.getTenantFilter() } as any,
     });
-    return entity ? TimetableMapper.toDomain(entity) : null;
+    if (!existing) return null;
+
+    // Apply relation fields via relation objects
+    if ((data as any).classId !== undefined)
+      existing.gradeClass = { id: (data as any).classId } as any;
+    if ((data as any).sectionId !== undefined)
+      existing.section = (data as any).sectionId
+        ? ({ id: (data as any).sectionId } as any)
+        : null;
+    if ((data as any).academicYearId !== undefined)
+      existing.academicYear = { id: (data as any).academicYearId } as any;
+
+    // Apply flat fields
+    if ((data as any).name !== undefined) existing.name = (data as any).name;
+    if ((data as any).isActive !== undefined)
+      existing.isActive = (data as any).isActive;
+    if ((data as any).branchId !== undefined)
+      existing.branchId = (data as any).branchId;
+
+    await this.repo.save(existing);
+    return this.findById(id);
   }
 
   async remove(id: string): Promise<void> {

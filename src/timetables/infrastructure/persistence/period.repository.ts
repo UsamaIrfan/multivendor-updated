@@ -4,7 +4,7 @@ import { Period } from '../../domain/period';
 
 export interface ConflictCheckOptions {
   tenantId: string;
-  teacherId: string;
+  teacherId: number;
   dayOfWeek: number;
   startTime: string;
   endTime: string;

@@ -13,6 +13,8 @@ import { InstitutionRepository } from '../../lms/courses/infrastructure/persiste
 import { StudentIdGeneratorService } from '../student-id-generator.service';
 import { StudentImportService } from '../student-import.service';
 import { StudentGuardianRepository } from '../infrastructure/persistence/student-guardian.repository';
+import { TenantContextService } from '../../tenant/tenant-context/tenant-context.service';
+import { TenantService } from '../../tenant/tenant.service';
 import { RoleEnum } from '../../roles/roles.enum';
 import { GenderEnum } from '../../lms/common/enums/general.enum';
 
@@ -31,6 +33,28 @@ function createMockUsersService() {
     create: jest.fn(),
     findByEmail: jest.fn(),
     findById: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+  };
+}
+
+function createMockTenantContext() {
+  return {
+    hasContext: jest.fn().mockReturnValue(true),
+    getTenantId: jest
+      .fn()
+      .mockReturnValue('00000000-0000-0000-0000-000000000001'),
+    getBranchId: jest
+      .fn()
+      .mockReturnValue('00000000-0000-0000-0000-000000000001'),
+  };
+}
+
+function createMockTenantService() {
+  return {
+    findById: jest.fn(),
+    findAll: jest.fn(),
+    create: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
   };
@@ -74,6 +98,11 @@ describe('StudentRegistrationService', () => {
         { provide: UsersService, useValue: usersService },
         { provide: StudentIdGeneratorService, useValue: idGenerator },
         { provide: StudentImportService, useValue: importService },
+        {
+          provide: TenantContextService,
+          useValue: createMockTenantContext(),
+        },
+        { provide: TenantService, useValue: createMockTenantService() },
       ],
     }).compile();
 

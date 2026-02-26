@@ -9,6 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class AddPeriodDto {
   @ApiProperty({ type: String, format: 'uuid' })
@@ -16,15 +17,17 @@ export class AddPeriodDto {
   @IsUUID()
   timetableId: string;
 
-  @ApiProperty({ type: String, format: 'uuid' })
+  @ApiProperty({ type: Number, example: 1 })
   @IsNotEmpty()
-  @IsUUID()
-  subjectId: string;
+  @IsInt()
+  @Type(() => Number)
+  subjectId: number;
 
-  @ApiProperty({ type: String, format: 'uuid' })
+  @ApiProperty({ type: Number, example: 1 })
   @IsNotEmpty()
-  @IsUUID()
-  teacherId: string;
+  @IsInt()
+  @Type(() => Number)
+  teacherId: number;
 
   @ApiProperty({ example: 1, description: '0=Sunday … 6=Saturday' })
   @IsInt()

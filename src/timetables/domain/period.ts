@@ -11,11 +11,11 @@ export class Period extends LmsBaseDomain {
   @ApiProperty({ type: String, format: 'uuid' })
   timetableId: string;
 
-  @ApiProperty({ type: String, format: 'uuid' })
-  subjectId: string;
+  @ApiProperty({ type: Number })
+  subjectId: number;
 
-  @ApiProperty({ type: String, format: 'uuid' })
-  teacherId: string;
+  @ApiProperty({ type: Number })
+  teacherId: number;
 
   @ApiProperty({
     example: 1,

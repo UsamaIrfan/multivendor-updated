@@ -102,10 +102,18 @@ export class AuthService {
       .update(randomStringGenerator())
       .digest('hex');
 
+    // Auto-select tenant when user belongs to exactly one
+    const tenantUsers = await this.tenantUserRepository.findAllByUser(
+      Number(user.id),
+    );
+    const activeTenantUsers = tenantUsers.filter((tu) => tu.isActive);
+    const autoTenantId =
+      activeTenantUsers.length === 1 ? activeTenantUsers[0].tenantId : null;
+
     const session = await this.sessionService.create({
       user,
       hash,
-      tenantId: '00000000-0000-0000-0000-000000000001',
+      tenantId: autoTenantId ?? '00000000-0000-0000-0000-000000000001',
       branchId: null,
     });
 
@@ -114,6 +122,7 @@ export class AuthService {
       role: user.role,
       sessionId: session.id,
       hash,
+      ...(autoTenantId && { tenantId: autoTenantId }),
     });
 
     return {
@@ -185,10 +194,18 @@ export class AuthService {
       .update(randomStringGenerator())
       .digest('hex');
 
+    // Auto-select tenant when user belongs to exactly one
+    const tenantUsers = await this.tenantUserRepository.findAllByUser(
+      Number(user.id),
+    );
+    const activeTenantUsers = tenantUsers.filter((tu) => tu.isActive);
+    const autoTenantId =
+      activeTenantUsers.length === 1 ? activeTenantUsers[0].tenantId : null;
+
     const session = await this.sessionService.create({
       user,
       hash,
-      tenantId: '00000000-0000-0000-0000-000000000001',
+      tenantId: autoTenantId ?? '00000000-0000-0000-0000-000000000001',
       branchId: null,
     });
 
@@ -201,6 +218,7 @@ export class AuthService {
       role: user.role,
       sessionId: session.id,
       hash,
+      ...(autoTenantId && { tenantId: autoTenantId }),
     });
 
     return {
@@ -545,6 +563,7 @@ export class AuthService {
       },
       sessionId: session.id,
       hash,
+      ...(session.tenantId && { tenantId: session.tenantId }),
     });
 
     return {

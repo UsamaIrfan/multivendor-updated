@@ -1,5 +1,31 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+export class DashboardStudentProfile {
+  @ApiProperty({ example: 65 })
+  id: number;
+
+  @ApiPropertyOptional({ example: 'Sheila' })
+  firstName: string | null;
+
+  @ApiPropertyOptional({ example: 'Cooper' })
+  lastName: string | null;
+
+  @ApiPropertyOptional({ example: 'STU-2026-0001' })
+  studentId: string;
+
+  @ApiPropertyOptional()
+  photo: { path?: string } | null;
+
+  @ApiPropertyOptional()
+  gradeClass: { name: string } | null;
+
+  @ApiPropertyOptional()
+  section: { name: string } | null;
+
+  @ApiPropertyOptional()
+  academicYear: { name: string } | null;
+}
+
 export class DashboardAttendanceSummary {
   @ApiProperty({ example: 90.5 })
   attendancePercentage: number;
@@ -12,6 +38,9 @@ export class DashboardAttendanceSummary {
 
   @ApiProperty({ example: 2 })
   absentDays: number;
+
+  @ApiProperty({ example: 1 })
+  lateDays: number;
 }
 
 export class DashboardFeeSummary {
@@ -26,6 +55,9 @@ export class DashboardFeeSummary {
 
   @ApiPropertyOptional({ example: '2026-03-01' })
   nextDueDate: string | null;
+
+  @ApiPropertyOptional({ example: 15000 })
+  nextDueAmount: number | null;
 }
 
 export class DashboardExamSummary {
@@ -53,6 +85,9 @@ export class StudentDashboard {
 
   @ApiProperty()
   branch: string;
+
+  @ApiPropertyOptional({ type: DashboardStudentProfile })
+  student: DashboardStudentProfile | null;
 
   @ApiProperty()
   attendance: DashboardAttendanceSummary;

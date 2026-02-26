@@ -4,7 +4,6 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { DataSource } from 'typeorm';
 import { StudentRepository } from '../lms/student/infrastructure/persistence/student.repository';
 import { StudentEnrollmentRepository } from '../lms/student/infrastructure/persistence/student-enrollment.repository';
 import { StudentDocumentRepository } from '../lms/student/infrastructure/persistence/student-document.repository';
@@ -25,6 +24,8 @@ import {
   validateGuardianInfo,
 } from './validators/student-validator';
 import { EnrollmentStatusEnum } from '../lms/common/enums/general.enum';
+import { TenantContextService } from '../tenant/tenant-context/tenant-context.service';
+import { TenantService } from '../tenant/tenant.service';
 
 @Injectable()
 export class StudentRegistrationService {
@@ -37,7 +38,8 @@ export class StudentRegistrationService {
     private readonly usersService: UsersService,
     private readonly idGenerator: StudentIdGeneratorService,
     private readonly importService: StudentImportService,
-    private readonly dataSource: DataSource,
+    private readonly tenantContext: TenantContextService,
+    private readonly tenantService: TenantService,
   ) {}
 
   /**
@@ -76,58 +78,84 @@ export class StudentRegistrationService {
       });
     }
 
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    // 5. Create user account with student role
+    const user = await this.usersService.create({
+      email: dto.email,
+      password: dto.password,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      role: { id: RoleEnum.student },
+      status: { id: StatusEnum.active },
+    });
 
-    try {
-      // 5. Create user account with student role
-      const user = await this.usersService.create({
-        email: dto.email,
-        password: dto.password,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        role: { id: RoleEnum.student },
-        status: { id: StatusEnum.active },
-      });
+    // 6 & 7. Generate student ID and create student record
+    // Retry up to 3 times if the roll number collides (unique constraint)
+    const MAX_RETRIES = 3;
+    let lastError: unknown;
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      const studentId = await this.idGenerator.generate(idOffset + attempt);
 
-      // 6. Generate student ID
-      const studentId = await this.idGenerator.generate(idOffset);
+      try {
+        const student = await this.studentRepository.create({
+          userId: user.id as number,
+          institutionId: dto.institutionId,
+          rollNumber: studentId,
+          dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : null,
+          gender: dto.gender ?? null,
+          guardianName: dto.guardianName ?? null,
+          guardianPhone: dto.guardianPhone ?? null,
+          guardianEmail: dto.guardianEmail ?? null,
+          guardianRelation: dto.guardianRelation ?? null,
+          address: dto.address ?? null,
+          city: dto.city ?? null,
+          bloodGroup: dto.bloodGroup ?? null,
+          nationality: dto.nationality ?? null,
+          religion: dto.religion ?? null,
+          admissionDate: dto.admissionDate
+            ? new Date(dto.admissionDate)
+            : new Date(),
+        } as any);
 
-      // 7. Create student record
-      const student = await this.studentRepository.create({
-        userId: user.id as number,
-        institutionId: dto.institutionId,
-        rollNumber: studentId,
-        dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : null,
-        gender: dto.gender ?? null,
-        guardianName: dto.guardianName ?? null,
-        guardianPhone: dto.guardianPhone ?? null,
-        guardianEmail: dto.guardianEmail ?? null,
-        guardianRelation: dto.guardianRelation ?? null,
-        address: dto.address ?? null,
-        city: dto.city ?? null,
-        bloodGroup: dto.bloodGroup ?? null,
-        nationality: dto.nationality ?? null,
-        religion: dto.religion ?? null,
-        admissionDate: dto.admissionDate
-          ? new Date(dto.admissionDate)
-          : new Date(),
-      } as any);
+        // 8. Assign user to the current tenant so they can log in
+        if (this.tenantContext.hasContext()) {
+          try {
+            await this.tenantService.assignUserToTenant({
+              tenantId: this.tenantContext.getTenantId(),
+              userId: user.id as number,
+            });
+          } catch {
+            // ConflictException means already assigned — safe to ignore
+          }
+        }
 
-      await queryRunner.commitTransaction();
+        // 9. Auto-enroll if sectionId + academicYearId provided
+        if (dto.sectionId && dto.academicYearId) {
+          try {
+            await this.enrollInClass(student.id as number, {
+              sectionId: dto.sectionId,
+              academicYearId: dto.academicYearId,
+            });
+          } catch {
+            // Non-critical — student is created, enrollment can be done later
+          }
+        }
 
-      return {
-        ...student,
-        studentId,
-        userId: user.id,
-      };
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
+        return {
+          ...student,
+          studentId,
+          userId: user.id,
+        };
+      } catch (error: any) {
+        // Retry only on duplicate key (PostgreSQL error code 23505)
+        if (error?.driverError?.code === '23505' || error?.code === '23505') {
+          lastError = error;
+          continue;
+        }
+        throw error;
+      }
     }
+
+    throw lastError;
   }
 
   /**
@@ -191,6 +219,7 @@ export class StudentRegistrationService {
 
   /**
    * Update a student's profile information.
+   * Handles user account fields, student profile, and enrollment changes.
    */
   async update(id: number, dto: UpdateRegisteredStudentDto) {
     const student = await this.studentRepository.findById(id);
@@ -198,7 +227,84 @@ export class StudentRegistrationService {
       throw new NotFoundException('Student not found');
     }
 
-    const updated = await this.studentRepository.update(id, dto as any);
+    // 1. Update user account fields (firstName, lastName, phone) if provided
+    if (dto.firstName || dto.lastName || dto.phone !== undefined) {
+      const userUpdate: Record<string, unknown> = {};
+      if (dto.firstName) userUpdate.firstName = dto.firstName;
+      if (dto.lastName) userUpdate.lastName = dto.lastName;
+      if (dto.phone !== undefined) userUpdate.phone = dto.phone;
+      await this.usersService.update(
+        (student as any).userId,
+        userUpdate as any,
+      );
+    }
+
+    // 2. Build student profile update (exclude user/enrollment fields)
+    const studentUpdate: Record<string, unknown> = {};
+    if (dto.gender !== undefined) studentUpdate.gender = dto.gender;
+    if (dto.dateOfBirth !== undefined)
+      studentUpdate.dateOfBirth = dto.dateOfBirth
+        ? new Date(dto.dateOfBirth)
+        : null;
+    if (dto.address !== undefined) studentUpdate.address = dto.address;
+    if (dto.city !== undefined) studentUpdate.city = dto.city;
+    if (dto.bloodGroup !== undefined) studentUpdate.bloodGroup = dto.bloodGroup;
+    if (dto.nationality !== undefined)
+      studentUpdate.nationality = dto.nationality;
+    if (dto.religion !== undefined) studentUpdate.religion = dto.religion;
+    if (dto.guardianName !== undefined)
+      studentUpdate.guardianName = dto.guardianName;
+    if (dto.guardianPhone !== undefined)
+      studentUpdate.guardianPhone = dto.guardianPhone;
+    if (dto.guardianEmail !== undefined)
+      studentUpdate.guardianEmail = dto.guardianEmail;
+    if (dto.guardianRelation !== undefined)
+      studentUpdate.guardianRelation = dto.guardianRelation;
+    if (dto.admissionDate !== undefined)
+      studentUpdate.admissionDate = dto.admissionDate
+        ? new Date(dto.admissionDate)
+        : null;
+    if (dto.institutionId !== undefined)
+      studentUpdate.institutionId = dto.institutionId;
+
+    const updated = await this.studentRepository.update(
+      id,
+      studentUpdate as any,
+    );
+
+    // 3. Handle enrollment update (section + academicYear)
+    if (dto.sectionId && dto.academicYearId) {
+      const allEnrollments = await this.enrollmentRepository.findAll();
+      const studentEnrollments = allEnrollments.filter(
+        (e: any) => e.studentId === id,
+      );
+      const activeEnrollment = studentEnrollments.find(
+        (e: any) => e.status === EnrollmentStatusEnum.active,
+      );
+
+      if (activeEnrollment) {
+        // Update existing enrollment if section or year changed
+        if (
+          activeEnrollment.sectionId !== dto.sectionId ||
+          activeEnrollment.academicYearId !== dto.academicYearId
+        ) {
+          await this.enrollmentRepository.update(activeEnrollment.id, {
+            sectionId: dto.sectionId,
+            academicYearId: dto.academicYearId,
+          } as any);
+        }
+      } else {
+        // Create new enrollment if none exists
+        await this.enrollmentRepository.create({
+          studentId: id,
+          sectionId: dto.sectionId,
+          academicYearId: dto.academicYearId,
+          status: EnrollmentStatusEnum.active,
+          enrollmentDate: new Date(),
+        } as any);
+      }
+    }
+
     return updated;
   }
 
@@ -315,7 +421,8 @@ export class StudentRegistrationService {
         throw new UnprocessableEntityException({
           status: 422,
           errors: {
-            password: 'Password is required when creating a parent user account',
+            password:
+              'Password is required when creating a parent user account',
           },
         });
       }

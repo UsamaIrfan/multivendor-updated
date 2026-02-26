@@ -27,7 +27,7 @@ export class StudentIdGeneratorService {
       .createQueryBuilder('s')
       .select('s.rollNumber', 'rollNumber')
       .withDeleted()
-      .where('s.rollNumber LIKE :prefix', { prefix: `${prefix}%` })
+      .where('s.rollNumber LIKE :likePrefix', { likePrefix: `${prefix}%` })
       .orderBy(
         "CAST(REPLACE(s.rollNumber, :prefix, '') AS INTEGER)",
         'DESC',

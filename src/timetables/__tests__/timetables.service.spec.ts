@@ -67,8 +67,8 @@ describe('TimetablesService', () => {
     id: 'tt-uuid-1',
     tenantId: 'tenant-uuid-1',
     branchId: 'branch-uuid-1',
-    classId: 'class-uuid-1',
-    academicYearId: 'ay-uuid-1',
+    classId: 1,
+    academicYearId: 1,
     name: 'Class 10-A Timetable',
     isActive: true,
     createdAt: new Date(),
@@ -80,8 +80,8 @@ describe('TimetablesService', () => {
     tenantId: 'tenant-uuid-1',
     branchId: 'branch-uuid-1',
     timetableId: 'tt-uuid-1',
-    subjectId: 'subject-uuid-1',
-    teacherId: 'teacher-uuid-1',
+    subjectId: 1,
+    teacherId: 10,
     dayOfWeek: 1,
     startTime: '08:00',
     endTime: '08:45',
@@ -124,8 +124,8 @@ describe('TimetablesService', () => {
       const result = await service.create({
         tenantId: 'tenant-uuid-1',
         branchId: 'branch-uuid-1',
-        classId: 'class-uuid-1',
-        academicYearId: 'ay-uuid-1',
+        classId: 1,
+        academicYearId: 1,
         name: 'Class 10-A Timetable',
       });
       expect(result).toEqual(mockTimetable);
@@ -133,7 +133,7 @@ describe('TimetablesService', () => {
         expect.objectContaining({
           tenantId: 'tenant-uuid-1',
           branchId: 'branch-uuid-1',
-          classId: 'class-uuid-1',
+          classId: 1,
         }),
       );
     });
@@ -143,8 +143,8 @@ describe('TimetablesService', () => {
       await service.create({
         tenantId: 'tenant-uuid-1',
         branchId: 'branch-uuid-1',
-        classId: 'class-uuid-1',
-        academicYearId: 'ay-uuid-1',
+        classId: 1,
+        academicYearId: 1,
       });
       expect(timetableRepo.create).toHaveBeenCalledWith(
         expect.objectContaining({ isActive: true }),
@@ -222,8 +222,8 @@ describe('TimetablesService', () => {
   describe('addPeriod', () => {
     const addPeriodDto = {
       timetableId: 'tt-uuid-1',
-      subjectId: 'subject-uuid-1',
-      teacherId: 'teacher-uuid-1',
+      subjectId: 1,
+      teacherId: 10,
       dayOfWeek: 1,
       startTime: '08:00',
       endTime: '08:45',
@@ -326,7 +326,7 @@ describe('TimetablesService', () => {
     it('should return conflicting periods', async () => {
       periodRepo.findConflicts.mockResolvedValue([mockPeriod]);
       const result = await service.checkConflicts(
-        'teacher-uuid-1',
+        10,
         1,
         '08:00',
         '08:45',
@@ -337,7 +337,7 @@ describe('TimetablesService', () => {
     it('should return empty array when no conflicts', async () => {
       periodRepo.findConflicts.mockResolvedValue([]);
       const result = await service.checkConflicts(
-        'teacher-uuid-1',
+        10,
         1,
         '10:00',
         '10:45',

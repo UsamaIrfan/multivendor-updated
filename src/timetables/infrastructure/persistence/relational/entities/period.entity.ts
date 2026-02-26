@@ -26,12 +26,12 @@ export class PeriodEntity extends TenantAwareEntityHelper {
   @Column({ type: 'uuid' })
   timetableId!: string;
 
-  @Column({ type: 'uuid' })
-  subjectId!: string;
+  @Column({ type: 'int' })
+  subjectId!: number;
 
   @Index()
-  @Column({ type: 'uuid' })
-  teacherId!: string;
+  @Column({ type: 'int' })
+  teacherId!: number;
 
   @Column({ type: 'int' })
   dayOfWeek!: number;

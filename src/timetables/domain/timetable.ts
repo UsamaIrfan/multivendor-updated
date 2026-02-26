@@ -12,11 +12,23 @@ export class Timetable extends LmsBaseDomain {
   })
   declare branchId: string;
 
-  @ApiProperty({ type: String, format: 'uuid' })
-  classId: string;
+  @ApiProperty({ type: Number })
+  classId: number;
 
-  @ApiProperty({ type: String, format: 'uuid' })
-  academicYearId: string;
+  @ApiPropertyOptional({ example: 'Grade 10' })
+  className?: string;
+
+  @ApiPropertyOptional({ type: Number })
+  sectionId?: number | null;
+
+  @ApiPropertyOptional({ example: 'A' })
+  sectionName?: string | null;
+
+  @ApiProperty({ type: Number })
+  academicYearId: number;
+
+  @ApiPropertyOptional({ example: '2025-2026' })
+  academicYearName?: string;
 
   @ApiPropertyOptional({ example: 'Class 10-A Timetable' })
   name: string | null;

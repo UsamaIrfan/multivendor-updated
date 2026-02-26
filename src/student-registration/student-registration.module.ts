@@ -8,6 +8,7 @@ import { StudentOwnershipGuard } from './guards/student-ownership.guard';
 import { StudentRelationalPersistenceModule } from '../lms/student/infrastructure/persistence/relational/relational-persistence.module';
 import { CoursesRelationalPersistenceModule } from '../lms/courses/infrastructure/persistence/relational/relational-persistence.module';
 import { UsersModule } from '../users/users.module';
+import { TenantModule } from '../tenant/tenant.module';
 import { StudentGuardianEntity } from './infrastructure/persistence/relational/entities/student-guardian.entity';
 import { StudentGuardianRepository } from './infrastructure/persistence/student-guardian.repository';
 import { StudentGuardianRelationalRepository } from './infrastructure/persistence/relational/repositories/student-guardian.repository';
@@ -18,6 +19,7 @@ import { StudentEntity } from '../lms/student/infrastructure/persistence/relatio
     StudentRelationalPersistenceModule,
     CoursesRelationalPersistenceModule,
     UsersModule,
+    TenantModule,
     TypeOrmModule.forFeature([StudentGuardianEntity, StudentEntity]),
   ],
   controllers: [StudentRegistrationController],

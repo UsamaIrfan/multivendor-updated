@@ -57,6 +57,13 @@ export class StudentRelationalRepository implements StudentRepository {
     return entity ? StudentMapper.toDomain(entity) : null;
   }
 
+  async findByUserId(userId: number): Promise<NullableType<Student>> {
+    const entity = await this.repo.findOne({
+      where: { user: { id: userId }, ...this.getTenantFilter() } as any,
+    });
+    return entity ? StudentMapper.toDomain(entity) : null;
+  }
+
   async update(id: number, payload: Partial<Student>): Promise<Student | null> {
     const entity = await this.repo.findOne({
       where: { id, ...this.getTenantFilter() } as any,
