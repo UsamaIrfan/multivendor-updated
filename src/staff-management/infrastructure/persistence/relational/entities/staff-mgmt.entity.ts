@@ -38,8 +38,8 @@ export class StaffMgmtEntity extends TenantAwareEntityHelper {
   @Column()
   staffId!: string; // Format: <tenant_slug>-STF-YYYY-XXXX
 
-  @Column({ type: 'uuid' })
-  primaryBranchId!: string;
+  @Column({ type: 'uuid', nullable: true })
+  primaryBranchId!: string | null;
 
   @Column({ type: String, nullable: true })
   designation!: string | null;

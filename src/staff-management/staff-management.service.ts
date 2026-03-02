@@ -73,8 +73,8 @@ export class StaffManagementService {
     // Generate tenant-scoped staff ID
     const staffId = await this.generateStaffId(tenantId);
 
-    // Determine primary branch
-    const primaryBranchId = branchId;
+    // Determine primary branch (nullable — not all staff have a branch on creation)
+    const primaryBranchId = branchId ?? null;
 
     const staff = await this.staffRepo.create({
       userId: resolvedUserId,

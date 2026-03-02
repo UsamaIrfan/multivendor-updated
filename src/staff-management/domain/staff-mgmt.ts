@@ -16,8 +16,8 @@ export class StaffMgmt extends LmsBaseDomain {
   @ApiProperty({ example: 'abc-edu-STF-2026-0001' })
   staffId!: string;
 
-  @ApiProperty({ type: String, format: 'uuid' })
-  primaryBranchId!: string;
+  @ApiPropertyOptional({ type: String, format: 'uuid', nullable: true })
+  primaryBranchId!: string | null;
 
   @ApiPropertyOptional({ example: 'Senior Teacher', nullable: true })
   designation!: string | null;

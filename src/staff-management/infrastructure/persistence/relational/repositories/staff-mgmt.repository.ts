@@ -90,6 +90,7 @@ export class StaffMgmtRelationalRepository implements StaffMgmtRepository {
       } as any,
       order: { staffId: 'DESC' },
       select: ['id', 'staffId'],
+      withDeleted: true,
     });
     return entity ? { staffId: entity.staffId } : null;
   }
