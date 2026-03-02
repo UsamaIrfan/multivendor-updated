@@ -243,6 +243,21 @@ export class SeedAuthorizationData1771800000001 implements MigrationInterface {
     `);
 
     // ──────────────────────────────────────────────────────────
+    // 1b. Ensure all LMS roles exist (seeds may not have run)
+    // ──────────────────────────────────────────────────────────
+    await queryRunner.query(`
+      INSERT INTO "role" (id, name) VALUES
+        (1, 'Admin'),
+        (2, 'User'),
+        (3, 'Student'),
+        (4, 'Teacher'),
+        (5, 'Staff'),
+        (6, 'Accountant'),
+        (7, 'Parent')
+      ON CONFLICT (id) DO NOTHING;
+    `);
+
+    // ──────────────────────────────────────────────────────────
     // 2. Build role_permission mappings
     //    Using sub-selects to reference permission IDs by code
     // ──────────────────────────────────────────────────────────
