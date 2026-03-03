@@ -34,6 +34,7 @@ import { QueryMaterialDto } from './dto/query-material.dto';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { SubmitAssignmentDto } from './dto/submit-assignment.dto';
+import { GradeSubmissionDto } from './dto/grade-submission.dto';
 import { CourseMaterial } from './domain/course-material';
 import { Assignment } from './domain/assignment';
 import { AssignmentSubmission } from './domain/assignment-submission';
@@ -181,6 +182,22 @@ export class AssignmentsController {
     return this.service.findSubmissionsByAssignment(id);
   }
 
+  @Get('student/:studentId')
+  @Roles(
+    RoleEnum.admin,
+    RoleEnum.teacher,
+    RoleEnum.staff,
+    RoleEnum.student,
+    RoleEnum.parent,
+  )
+  @RequirePermissions('academic.assignment.read')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'studentId', type: Number })
+  @ApiOkResponse({ description: 'Assignments with submission data for the student' })
+  findForStudent(@Param('studentId', ParseIntPipe) studentId: number) {
+    return this.service.findAssignmentsForStudent(studentId);
+  }
+
   @Patch(':id')
   @Roles(RoleEnum.admin, RoleEnum.teacher)
   @RequirePermissions('academic.assignment.update')
@@ -224,9 +241,24 @@ export class SubmissionsController {
     return this.service.findOneSubmission(id);
   }
 
+  @Patch(':id/grade')
+  @Roles(RoleEnum.admin, RoleEnum.teacher)
+  @RequirePermissions('academic.submission.grade')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', type: Number })
+  @ApiOkResponse({ type: AssignmentSubmission })
+  grade(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: GradeSubmissionDto,
+    @Request() req: any,
+  ) {
+    const userId = req.user?.id ?? 0;
+    return this.service.gradeSubmission(id, dto, userId);
+  }
+
   @Delete(':id')
   @Roles(RoleEnum.admin)
-  @RequirePermissions('academic.submission.grade')
+  @RequirePermissions('academic.submission.delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {

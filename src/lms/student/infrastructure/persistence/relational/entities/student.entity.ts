@@ -85,6 +85,9 @@ export class StudentEntity extends TenantAwareEntityHelper {
   @Column({ type: 'date', nullable: true })
   admissionDate!: Date | null;
 
+  @Column({ type: 'boolean', default: false })
+  isDraft!: boolean;
+
   @OneToMany(() => StudentDocumentEntity, (sd) => sd.student)
   documents!: StudentDocumentEntity[];
 

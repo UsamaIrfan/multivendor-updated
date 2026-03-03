@@ -11,6 +11,9 @@ export abstract class AssignmentSubmissionRepository {
   abstract findByAssignmentId(
     assignmentId: number,
   ): Promise<AssignmentSubmission[]>;
+  abstract findByStudentId(
+    studentId: number,
+  ): Promise<AssignmentSubmission[]>;
   abstract update(
     id: number,
     payload: DeepPartial<AssignmentSubmission>,

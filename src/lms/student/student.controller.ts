@@ -10,6 +10,7 @@ import {
   HttpStatus,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -35,6 +36,7 @@ import { CreateStudentDocumentDto } from './dto/create-student-document.dto';
 import { UpdateStudentDocumentDto } from './dto/update-student-document.dto';
 import { CreateStudentEnrollmentDto } from './dto/create-student-enrollment.dto';
 import { UpdateStudentEnrollmentDto } from './dto/update-student-enrollment.dto';
+import { QueryStudentEnrollmentDto } from './dto/query-student-enrollment.dto';
 import { CreateStudentAttendanceDto } from './dto/create-student-attendance.dto';
 import { UpdateStudentAttendanceDto } from './dto/update-student-attendance.dto';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
@@ -252,8 +254,8 @@ export class StudentEnrollmentController {
   @RequirePermissions('academic.enrollment.read')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'List all student enrollments' })
-  findAll() {
-    return this.service.findAllStudentEnrollments();
+  findAll(@Query() query: QueryStudentEnrollmentDto) {
+    return this.service.findAllStudentEnrollments(query);
   }
 
   @Get(':id')

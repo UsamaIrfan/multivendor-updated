@@ -11,6 +11,10 @@ export class AssignmentSubmissionMapper {
     domain.fileSize = Number(entity.fileSize);
     domain.remarks = entity.remarks;
     domain.marks = entity.marks;
+    domain.grade = entity.grade;
+    domain.feedback = entity.feedback;
+    domain.gradedAt = entity.gradedAt;
+    domain.gradedBy = entity.gradedBy;
     domain.submittedAt = entity.submittedAt;
     domain.tenantId = entity.tenantId;
     domain.branchId = entity.branchId;
@@ -31,6 +35,10 @@ export class AssignmentSubmissionMapper {
     entity.fileSize = domain.fileSize;
     entity.remarks = domain.remarks;
     entity.marks = domain.marks;
+    entity.grade = domain.grade;
+    entity.feedback = domain.feedback;
+    entity.gradedAt = domain.gradedAt;
+    entity.gradedBy = domain.gradedBy;
     entity.submittedAt = domain.submittedAt;
     entity.tenantId = domain.tenantId;
     entity.branchId = domain.branchId;

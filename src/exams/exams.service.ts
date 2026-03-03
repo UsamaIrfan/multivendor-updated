@@ -9,6 +9,7 @@ import { ExamSubjectRepository } from '../lms/student/infrastructure/persistence
 import { ExamResultRepository } from '../lms/student/infrastructure/persistence/exam-result.repository';
 import { GradingScaleRepository } from './infrastructure/persistence/grading-scale.repository';
 import { StudentRepository } from '../lms/student/infrastructure/persistence/student.repository';
+import { SubjectRepository } from '../lms/courses/infrastructure/persistence/subject.repository';
 import { GradeCalculatorService } from './grade-calculator.service';
 import { RankCalculatorService } from './rank-calculator.service';
 import { ExamStatusEnum } from '../lms/common/enums/exam-status.enum';
@@ -72,6 +73,7 @@ export class ExamsService {
     private readonly examResultRepo: ExamResultRepository,
     private readonly gradingScaleRepo: GradingScaleRepository,
     private readonly studentRepo: StudentRepository,
+    private readonly subjectRepo: SubjectRepository,
     private readonly gradeCalculator: GradeCalculatorService,
     private readonly rankCalculator: RankCalculatorService,
   ) {}
@@ -401,7 +403,135 @@ export class ExamsService {
   // ────────── Student Results ──────────
 
   async getStudentResults(studentId: number) {
-    return this.examResultRepo.findByStudentId(studentId);
+    // Get all exam results for this student
+    const allResults = await this.examResultRepo.findByStudentId(studentId);
+    if (allResults.length === 0) return [];
+
+    // Collect unique examSubjectIds and load exam subjects
+    const examSubjectIds = [
+      ...new Set(allResults.map((r) => r.examSubjectId)),
+    ];
+    const examSubjectMap = new Map<
+      number,
+      { examId: number; subjectId: number; totalMarks: number; passingMarks: number }
+    >();
+    const examIds = new Set<number>();
+
+    for (const esId of examSubjectIds) {
+      const es = await this.examSubjectRepo.findById(esId);
+      if (es) {
+        examSubjectMap.set(esId, es);
+        examIds.add(es.examId);
+      }
+    }
+
+    // Load all exams
+    const examMap = new Map<number, { id: number; name: string; type: string; status: string }>();
+    for (const eid of examIds) {
+      const exam = await this.examRepo.findById(eid);
+      if (exam) {
+        examMap.set(eid, exam);
+      }
+    }
+
+    // Load subject names
+    const subjectIds = [
+      ...new Set([...examSubjectMap.values()].map((es) => es.subjectId)),
+    ];
+    const subjectNameMap = new Map<number, string>();
+    for (const sid of subjectIds) {
+      const subject = await this.subjectRepo.findById(sid);
+      if (subject) {
+        subjectNameMap.set(sid, subject.name);
+      }
+    }
+
+    // Group results by examId
+    const examResultsMap = new Map<
+      number,
+      Array<{
+        result: (typeof allResults)[0];
+        examSubject: NonNullable<ReturnType<typeof examSubjectMap.get>>;
+      }>
+    >();
+
+    for (const result of allResults) {
+      const examSubject = examSubjectMap.get(result.examSubjectId);
+      if (!examSubject) continue;
+
+      const examId = examSubject.examId;
+      if (!examResultsMap.has(examId)) {
+        examResultsMap.set(examId, []);
+      }
+      examResultsMap.get(examId)!.push({ result, examSubject });
+    }
+
+    // Build aggregated per-exam results
+    const aggregated: any[] = [];
+
+    for (const [examId, entries] of examResultsMap.entries()) {
+      const exam = examMap.get(examId);
+      if (!exam) continue;
+
+      let totalMarks = 0;
+      let obtainedMarks = 0;
+      const subjects: any[] = [];
+
+      for (const { result, examSubject } of entries) {
+        const marks = result.isAbsent ? 0 : (result.marksObtained ?? 0);
+        totalMarks += examSubject.totalMarks;
+        obtainedMarks += marks;
+
+        subjects.push({
+          subjectId: examSubject.subjectId,
+          subjectName:
+            subjectNameMap.get(examSubject.subjectId) ??
+            `Subject #${examSubject.subjectId}`,
+          totalMarks: examSubject.totalMarks,
+          passingMarks: examSubject.passingMarks,
+          marksObtained: result.marksObtained,
+          percentage: result.percentage,
+          grade: result.grade,
+          isAbsent: result.isAbsent,
+          remarks: result.remarks,
+          status: result.isAbsent
+            ? 'absent'
+            : (result.marksObtained ?? 0) >= examSubject.passingMarks
+              ? 'pass'
+              : 'fail',
+        });
+      }
+
+      const percentage =
+        totalMarks > 0
+          ? Math.round((obtainedMarks / totalMarks) * 100 * 100) / 100
+          : 0;
+      const overallGrade =
+        entries[0]?.result.grade ?? '-';
+      // Rank is consistent across subjects for the same student in the same exam
+      const rank = entries[0]?.result.rank ?? null;
+
+      const isPassed = subjects.every(
+        (s: any) => s.status === 'pass' || s.status === 'absent',
+      );
+
+      aggregated.push({
+        examId,
+        examName: exam.name,
+        examType: exam.type,
+        totalMarks,
+        marksObtained: obtainedMarks,
+        percentage,
+        grade: overallGrade,
+        rank,
+        status: isPassed ? 'pass' : 'fail',
+        publishedAt:
+          exam.status === 'results_published' ? new Date().toISOString() : null,
+        subjects,
+      });
+    }
+
+    return aggregated;
   }
 
   async getStudentExamResult(studentId: number, examId: number) {
@@ -409,6 +539,13 @@ export class ExamsService {
     if (!exam) {
       throw new NotFoundException('Exam not found');
     }
+
+    // Load student name
+    const student = await this.studentRepo.findById(studentId);
+    const studentName = student
+      ? `${(student as any).user?.firstName ?? ''} ${(student as any).user?.lastName ?? ''}`.trim() ||
+        `Student #${studentId}`
+      : `Student #${studentId}`;
 
     const subjects = await this.examSubjectRepo.findByExamId(examId);
     const subjectResults: any[] = [];
@@ -418,6 +555,10 @@ export class ExamsService {
     for (const subject of subjects) {
       const results = await this.examResultRepo.findByExamSubjectId(subject.id);
       const studentResult = results.find((r) => r.studentId === studentId);
+
+      // Load subject name
+      const subjectEntity = await this.subjectRepo.findById(subject.subjectId);
+      const subjectName = subjectEntity?.name ?? `Subject #${subject.subjectId}`;
 
       if (studentResult) {
         const marks = studentResult.isAbsent
@@ -429,6 +570,7 @@ export class ExamsService {
         subjectResults.push({
           examSubjectId: subject.id,
           subjectId: subject.subjectId,
+          subjectName,
           totalMarks: subject.totalMarks,
           passingMarks: subject.passingMarks,
           marksObtained: studentResult.marksObtained,
@@ -453,25 +595,28 @@ export class ExamsService {
       })),
     );
 
-    // Use grading scale from published results (grade from first result)
-    const overallGrade =
-      subjectResults.length > 0 && subjectResults[0].grade
-        ? this.gradeCalculator.calculateGrade(percentage, [
-            {
-              minPercentage: 0,
-              maxPercentage: 100,
-              grade: subjectResults[0].grade,
-              gradePoint: 0,
-            },
-          ])
-        : { grade: '-', gradePoint: 0 };
+    // Try to use a proper grading scale for the overall grade
+    let overallGrade: { grade: string; gradePoint: number } = {
+      grade: '-',
+      gradePoint: 0,
+    };
+    const gradingScales = await this.gradingScaleRepo.findAll();
+    if (gradingScales.length > 0 && gradingScales[0].grades) {
+      overallGrade = this.gradeCalculator.calculateGrade(
+        percentage,
+        gradingScales[0].grades,
+      );
+    } else if (subjectResults.length > 0 && subjectResults[0].grade) {
+      // Fallback: use the first subject's published grade
+      overallGrade = { grade: subjectResults[0].grade, gradePoint: 0 };
+    }
 
     // Get rank from first subject result
     const rank = subjectResults.length > 0 ? subjectResults[0].rank : null;
 
     return {
-      student: { id: studentId },
-      exam: { id: examId, name: exam.name },
+      student: { id: studentId, name: studentName },
+      exam: { id: examId, name: exam.name, type: exam.type, status: exam.status },
       subjects: subjectResults,
       totalMarks,
       obtainedMarks,

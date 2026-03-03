@@ -18,6 +18,16 @@ export class ExamMapper {
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
+    if (entity.examSubjects) {
+      (domain as any).subjects = entity.examSubjects.map((es) => ({
+        id: es.id,
+        subjectId: es.subject?.id,
+        subjectName: es.subject?.name ?? '',
+        examDate: es.examDate,
+        totalMarks: es.totalMarks,
+        passingMarks: es.passingMarks,
+      }));
+    }
     return domain;
   }
 

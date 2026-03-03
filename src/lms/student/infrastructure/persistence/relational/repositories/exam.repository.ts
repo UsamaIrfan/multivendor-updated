@@ -47,6 +47,7 @@ export class ExamRelationalRepository implements ExamRepository {
   async findAll(): Promise<Exam[]> {
     const entities = await this.repo.find({
       where: { ...this.getTenantFilter() } as any,
+      relations: ['examSubjects', 'examSubjects.subject'],
     });
     return entities.map(ExamMapper.toDomain);
   }

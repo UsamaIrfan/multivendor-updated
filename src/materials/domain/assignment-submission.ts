@@ -27,6 +27,27 @@ export class AssignmentSubmission extends LmsBaseDomain {
   @ApiPropertyOptional({ type: Number })
   marks!: number | null;
 
+  @ApiPropertyOptional({ type: String, description: 'Letter grade (A/B/C)' })
+  grade!: string | null;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'Teacher feedback on the submission',
+  })
+  feedback!: string | null;
+
+  @ApiPropertyOptional({
+    type: Date,
+    description: 'When the submission was graded',
+  })
+  gradedAt!: Date | null;
+
+  @ApiPropertyOptional({
+    type: Number,
+    description: 'ID of the user who graded',
+  })
+  gradedBy!: number | null;
+
   @ApiProperty({ type: Date })
   submittedAt!: Date;
 }

@@ -18,6 +18,16 @@ export class StudentEnrollmentMapper {
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.deletedAt = entity.deletedAt;
+
+    // Include student info when relation is loaded
+    if (entity.student) {
+      const user = entity.student.user;
+      (domain as any).studentName = user
+        ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()
+        : '';
+      (domain as any).rollNumber = entity.student.rollNumber ?? '';
+    }
+
     return domain;
   }
 

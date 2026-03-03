@@ -41,6 +41,18 @@ export class AssignmentSubmissionEntity extends TenantAwareEntityHelper {
   @Column({ type: 'int', nullable: true })
   marks!: number | null;
 
+  @Column({ type: String, nullable: true })
+  grade!: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  feedback!: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  gradedAt!: Date | null;
+
+  @Column({ type: 'int', nullable: true })
+  gradedBy!: number | null;
+
   @Column({ type: 'timestamp', default: () => 'NOW()' })
   submittedAt!: Date;
 

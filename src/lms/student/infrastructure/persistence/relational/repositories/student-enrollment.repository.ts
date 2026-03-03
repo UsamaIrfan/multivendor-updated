@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StudentEnrollmentEntity } from '../entities/student-enrollment.entity';
-import { StudentEnrollmentRepository } from '../../student-enrollment.repository';
+import {
+  StudentEnrollmentRepository,
+  EnrollmentFilter,
+} from '../../student-enrollment.repository';
 import { StudentEnrollmentMapper } from '../mappers/student-enrollment.mapper';
 import { StudentEnrollment } from '../../../../domain/student-enrollment';
 import { NullableType } from '../../../../../../utils/types/nullable.type';
@@ -48,9 +51,17 @@ export class StudentEnrollmentRelationalRepository
     return StudentEnrollmentMapper.toDomain(saved);
   }
 
-  async findAll(): Promise<StudentEnrollment[]> {
+  async findAll(filter?: EnrollmentFilter): Promise<StudentEnrollment[]> {
+    const where: Record<string, unknown> = { ...this.getTenantFilter() };
+    if (filter?.sectionId) {
+      where.section = { id: filter.sectionId };
+    }
+    if (filter?.status) {
+      where.status = filter.status;
+    }
     const entities = await this.repo.find({
-      where: { ...this.getTenantFilter() } as any,
+      where: where as any,
+      relations: ['student', 'student.user'],
     });
     return entities.map(StudentEnrollmentMapper.toDomain);
   }
@@ -58,6 +69,20 @@ export class StudentEnrollmentRelationalRepository
   async findById(id: number): Promise<NullableType<StudentEnrollment>> {
     const entity = await this.repo.findOne({
       where: { id, ...this.getTenantFilter() } as any,
+    });
+    return entity ? StudentEnrollmentMapper.toDomain(entity) : null;
+  }
+
+  async findByStudentAndYear(
+    studentId: number,
+    academicYearId: number,
+  ): Promise<StudentEnrollment | null> {
+    const entity = await this.repo.findOne({
+      where: {
+        student: { id: studentId },
+        academicYear: { id: academicYearId },
+        ...this.getTenantFilter(),
+      } as any,
     });
     return entity ? StudentEnrollmentMapper.toDomain(entity) : null;
   }

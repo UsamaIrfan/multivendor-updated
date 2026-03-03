@@ -70,6 +70,15 @@ export class AssignmentSubmissionRelationalRepository
     return entities.map(AssignmentSubmissionMapper.toDomain);
   }
 
+  async findByStudentId(
+    studentId: number,
+  ): Promise<AssignmentSubmission[]> {
+    const entities = await this.repo.find({
+      where: { studentId, ...this.getTenantFilter() } as any,
+    });
+    return entities.map(AssignmentSubmissionMapper.toDomain);
+  }
+
   async update(
     id: number,
     payload: Partial<AssignmentSubmission>,

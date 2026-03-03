@@ -219,10 +219,10 @@ export class ExamsController {
     );
 
     const pdfBuffer = await this.reportCardService.generatePdf({
-      studentName: `Student #${studentId}`,
+      studentName: result.student.name ?? `Student #${studentId}`,
       examName: result.exam.name,
       subjects: result.subjects.map((s: any) => ({
-        subjectName: `Subject #${s.subjectId}`,
+        subjectName: s.subjectName ?? `Subject #${s.subjectId}`,
         totalMarks: s.totalMarks,
         marksObtained: s.marksObtained,
         grade: s.grade,

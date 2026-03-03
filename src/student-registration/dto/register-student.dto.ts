@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsDateString,
   IsEmail,
   IsEnum,
@@ -8,6 +9,7 @@ import {
   IsOptional,
   IsString,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 import {
   GenderEnum,
@@ -15,6 +17,15 @@ import {
 } from '../../lms/common/enums/general.enum';
 
 export class RegisterStudentDto {
+  // ─── Draft flag ──────────────────────────────────────
+  @ApiPropertyOptional({
+    example: false,
+    description: 'When true, only firstName, email & institutionId are required',
+  })
+  @IsOptional()
+  @IsBoolean()
+  isDraft?: boolean;
+
   // ─── User account fields ─────────────────────────────
   @ApiProperty({ example: 'John' })
   @IsNotEmpty()
@@ -32,6 +43,7 @@ export class RegisterStudentDto {
   email: string;
 
   @ApiProperty({ example: 'Secret123!' })
+  @ValidateIf((o) => !o.isDraft)
   @IsNotEmpty()
   @IsString()
   @MinLength(6)
@@ -43,11 +55,13 @@ export class RegisterStudentDto {
   institutionId: number;
 
   @ApiProperty({ example: '2012-05-15' })
+  @ValidateIf((o) => !o.isDraft)
   @IsNotEmpty()
   @IsDateString()
   dateOfBirth: string;
 
   @ApiProperty({ enum: GenderEnum, example: 'male' })
+  @ValidateIf((o) => !o.isDraft)
   @IsNotEmpty()
   @IsEnum(GenderEnum)
   gender: GenderEnum;
@@ -69,13 +83,15 @@ export class RegisterStudentDto {
   @IsInt()
   academicYearId?: number;
 
-  // ─── Guardian fields (required) ──────────────────────
+  // ─── Guardian fields (required unless draft) ─────────
   @ApiProperty({ example: 'Jane Doe' })
+  @ValidateIf((o) => !o.isDraft)
   @IsNotEmpty()
   @IsString()
   guardianName: string;
 
   @ApiProperty({ example: '+1555000001' })
+  @ValidateIf((o) => !o.isDraft)
   @IsNotEmpty()
   @IsString()
   guardianPhone: string;

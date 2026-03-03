@@ -48,6 +48,8 @@ export class StudentRegistrationService {
    * rolls back the user creation (no orphaned users).
    */
   async register(dto: RegisterStudentDto, idOffset = 0) {
+    const isDraft = dto.isDraft === true;
+
     // 1. Validate institution exists
     const institution = await this.institutionRepository.findById(
       dto.institutionId,
@@ -56,16 +58,18 @@ export class StudentRegistrationService {
       throw new NotFoundException('Institution not found');
     }
 
-    // 2. Validate age >= 5
-    if (dto.dateOfBirth) {
+    // 2. Validate age >= 5 (skip for drafts)
+    if (!isDraft && dto.dateOfBirth) {
       validateStudentAge(dto.dateOfBirth);
     }
 
-    // 3. Validate guardian info
-    validateGuardianInfo({
-      guardianName: dto.guardianName,
-      guardianPhone: dto.guardianPhone,
-    });
+    // 3. Validate guardian info (skip for drafts)
+    if (!isDraft) {
+      validateGuardianInfo({
+        guardianName: dto.guardianName,
+        guardianPhone: dto.guardianPhone,
+      });
+    }
 
     // 4. Check duplicate email
     const existingUser = await this.usersService.findByEmail(dto.email);
@@ -79,13 +83,17 @@ export class StudentRegistrationService {
     }
 
     // 5. Create user account with student role
+    const password =
+      isDraft && !dto.password
+        ? `Draft_${Date.now()}_${Math.random().toString(36).slice(2)}`
+        : dto.password;
     const user = await this.usersService.create({
       email: dto.email,
-      password: dto.password,
+      password,
       firstName: dto.firstName,
       lastName: dto.lastName,
       role: { id: RoleEnum.student },
-      status: { id: StatusEnum.active },
+      status: { id: isDraft ? StatusEnum.inactive : StatusEnum.active },
     });
 
     // 6 & 7. Generate student ID and create student record
@@ -114,6 +122,7 @@ export class StudentRegistrationService {
           admissionDate: dto.admissionDate
             ? new Date(dto.admissionDate)
             : new Date(),
+          isDraft,
         } as any);
 
         // 8. Assign user to the current tenant so they can log in
@@ -329,20 +338,17 @@ export class StudentRegistrationService {
       throw new NotFoundException('Student not found');
     }
 
-    // Check for duplicate enrollment
-    const allEnrollments = await this.enrollmentRepository.findAll();
-    const duplicate = allEnrollments.find(
-      (e: any) =>
-        e.studentId === studentId &&
-        e.sectionId === dto.sectionId &&
-        e.academicYearId === dto.academicYearId,
+    // Check for duplicate enrollment (unique on student + academicYear)
+    const duplicate = await this.enrollmentRepository.findByStudentAndYear(
+      studentId,
+      dto.academicYearId,
     );
     if (duplicate) {
       throw new ConflictException({
         status: 409,
         errors: {
           enrollment:
-            'Student is already enrolled in this section for this academic year',
+            'Student is already enrolled for this academic year',
         },
       });
     }

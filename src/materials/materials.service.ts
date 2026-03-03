@@ -14,6 +14,7 @@ import { QueryMaterialDto } from './dto/query-material.dto';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
 import { SubmitAssignmentDto } from './dto/submit-assignment.dto';
+import { GradeSubmissionDto } from './dto/grade-submission.dto';
 import { CourseMaterial } from './domain/course-material';
 import { Assignment } from './domain/assignment';
 import { AssignmentSubmission } from './domain/assignment-submission';
@@ -169,6 +170,31 @@ export class MaterialsService {
     return this.assignmentRepository.findAll();
   }
 
+  /**
+   * Returns all assignments with the student's submission data merged in.
+   */
+  async findAssignmentsForStudent(
+    studentId: number,
+  ): Promise<
+    Array<Assignment & { submission?: AssignmentSubmission | null }>
+  > {
+    const [assignments, submissions] = await Promise.all([
+      this.assignmentRepository.findAll(),
+      this.submissionRepository.findByStudentId(studentId),
+    ]);
+
+    // Index submissions by assignmentId for O(1) lookup
+    const submissionByAssignment = new Map<number, AssignmentSubmission>();
+    for (const sub of submissions) {
+      submissionByAssignment.set(sub.assignmentId, sub);
+    }
+
+    return assignments.map((a) => ({
+      ...a,
+      submission: submissionByAssignment.get(a.id) ?? null,
+    }));
+  }
+
   async findOneAssignment(id: number): Promise<Assignment> {
     const assignment = await this.assignmentRepository.findById(id);
     if (!assignment) {
@@ -242,5 +268,33 @@ export class MaterialsService {
   async removeSubmission(id: number): Promise<void> {
     await this.findOneSubmission(id);
     return this.submissionRepository.remove(id);
+  }
+
+  async gradeSubmission(
+    id: number,
+    dto: GradeSubmissionDto,
+    gradedByUserId: number,
+  ): Promise<AssignmentSubmission> {
+    const submission = await this.findOneSubmission(id);
+
+    const updated = await this.submissionRepository.update(submission.id, {
+      marks: dto.marks,
+      grade: dto.grade ?? null,
+      feedback: dto.feedback ?? null,
+      gradedAt: new Date(),
+      gradedBy: gradedByUserId,
+    });
+
+    if (!updated) {
+      throw new NotFoundException('Submission not found after update');
+    }
+
+    return updated;
+  }
+
+  async findSubmissionsByStudent(
+    studentId: number,
+  ): Promise<AssignmentSubmission[]> {
+    return this.submissionRepository.findByStudentId(studentId);
   }
 }

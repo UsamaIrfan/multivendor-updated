@@ -22,6 +22,7 @@ export class StudentMapper {
     domain.nationality = entity.nationality;
     domain.religion = entity.religion;
     domain.admissionDate = entity.admissionDate;
+    domain.isDraft = entity.isDraft ?? false;
     domain.firstName = entity.user?.firstName ?? null;
     domain.lastName = entity.user?.lastName ?? null;
     domain.email = entity.user?.email ?? null;
@@ -62,6 +63,7 @@ export class StudentMapper {
     entity.nationality = domain.nationality;
     entity.religion = domain.religion;
     entity.admissionDate = domain.admissionDate;
+    entity.isDraft = domain.isDraft ?? false;
     entity.tenantId = domain.tenantId;
     entity.branchId = domain.branchId;
     entity.createdAt = domain.createdAt;

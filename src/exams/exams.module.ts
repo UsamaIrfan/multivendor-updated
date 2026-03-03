@@ -6,11 +6,13 @@ import { RankCalculatorService } from './rank-calculator.service';
 import { ReportCardService } from './report-card.service';
 import { ExamsRelationalPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 import { StudentRelationalPersistenceModule } from '../lms/student/infrastructure/persistence/relational/relational-persistence.module';
+import { CoursesRelationalPersistenceModule } from '../lms/courses/infrastructure/persistence/relational/relational-persistence.module';
 
 @Module({
   imports: [
     ExamsRelationalPersistenceModule,
     StudentRelationalPersistenceModule,
+    CoursesRelationalPersistenceModule,
   ],
   controllers: [ExamsController],
   providers: [

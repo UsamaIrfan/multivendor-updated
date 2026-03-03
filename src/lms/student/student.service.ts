@@ -139,8 +139,8 @@ export class StudentService {
     return this.studentEnrollmentRepository.create(dto);
   }
 
-  findAllStudentEnrollments() {
-    return this.studentEnrollmentRepository.findAll();
+  findAllStudentEnrollments(filter?: { sectionId?: number; status?: string }) {
+    return this.studentEnrollmentRepository.findAll(filter);
   }
 
   async findOneStudentEnrollment(id: number) {
