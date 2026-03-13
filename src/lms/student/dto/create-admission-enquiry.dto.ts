@@ -7,14 +7,17 @@ import {
   IsString,
   IsDateString,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { AdmissionStatusEnum } from '../../common/enums/admission-status.enum';
 import { EnquirySourceEnum } from '../../common/enums/general.enum';
 import { TenantAwareBaseDto } from '../../common/dto/tenant-aware-base.dto';
 
 export class CreateAdmissionEnquiryDto extends TenantAwareBaseDto {
-  @ApiProperty({ example: 1 })
+  @ApiPropertyOptional({ example: 1 })
+  @IsOptional()
   @IsInt()
-  institutionId: number;
+  @Type(() => Number)
+  institutionId?: number | null;
 
   @ApiProperty({ example: 'Jane Smith' })
   @IsNotEmpty()
@@ -75,5 +78,6 @@ export class CreateAdmissionEnquiryDto extends TenantAwareBaseDto {
   @ApiPropertyOptional({ example: null })
   @IsOptional()
   @IsInt()
+  @Type(() => Number)
   convertedStudentId?: number | null;
 }

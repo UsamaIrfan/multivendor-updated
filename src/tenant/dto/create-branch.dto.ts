@@ -2,10 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateBranchDto {
-  @ApiProperty({ type: String, format: 'uuid' })
-  @IsNotEmpty()
+  @ApiPropertyOptional({ type: String, format: 'uuid' })
+  @IsOptional()
   @IsUUID()
-  tenantId: string;
+  tenantId?: string;
 
   @ApiProperty({ example: 'Main Campus' })
   @IsNotEmpty()

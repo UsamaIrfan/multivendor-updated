@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   ParseIntPipe,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
@@ -26,6 +27,7 @@ import { RoleEnum } from '../roles/roles.enum';
 import { PermissionsGuard } from '../authorization/guards/permissions.guard';
 import { RequirePermissions } from '../authorization/decorators/require-permissions.decorator';
 import { TenantService } from './tenant.service';
+import { TenantContextService } from './tenant-context/tenant-context.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { CreateBranchDto } from './dto/create-branch.dto';
@@ -50,8 +52,8 @@ export class TenantController {
   @RequirePermissions('system.tenant.create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Tenant })
-  create(@Body() dto: CreateTenantDto) {
-    return this.service.createTenant(dto);
+  create(@Request() request, @Body() dto: CreateTenantDto) {
+    return this.service.createTenant(dto, request.user.id);
   }
 
   @Get()
@@ -101,7 +103,10 @@ export class TenantController {
 @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
 @Controller({ path: 'branches', version: '1' })
 export class BranchController {
-  constructor(private readonly service: TenantService) {}
+  constructor(
+    private readonly service: TenantService,
+    private readonly tenantContext: TenantContextService,
+  ) {}
 
   @Post()
   @Roles(RoleEnum.admin)
@@ -109,6 +114,9 @@ export class BranchController {
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: Branch })
   create(@Body() dto: CreateBranchDto) {
+    if (!dto.tenantId && this.tenantContext.hasContext()) {
+      dto.tenantId = this.tenantContext.getTenantId();
+    }
     return this.service.createBranch(dto);
   }
 

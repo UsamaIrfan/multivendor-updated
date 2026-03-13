@@ -4,8 +4,8 @@ import { AdmissionStatusEnum } from '../../common/enums/admission-status.enum';
 import { EnquirySourceEnum } from '../../common/enums/general.enum';
 
 export class AdmissionEnquiry extends LmsBaseDomain {
-  @ApiProperty({ type: Number })
-  institutionId!: number;
+  @ApiPropertyOptional({ type: Number })
+  institutionId!: number | null;
 
   @ApiProperty({ type: String })
   studentName!: string;

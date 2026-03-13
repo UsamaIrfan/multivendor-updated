@@ -18,8 +18,8 @@ export class AdmissionEnquiryEntity extends TenantAwareEntityHelper {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => InstitutionEntity, { onDelete: 'CASCADE' })
-  institution!: InstitutionEntity;
+  @ManyToOne(() => InstitutionEntity, { onDelete: 'CASCADE', nullable: true })
+  institution!: InstitutionEntity | null;
 
   @Index()
   @Column()

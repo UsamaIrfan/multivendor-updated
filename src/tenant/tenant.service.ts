@@ -25,18 +25,25 @@ export class TenantService {
 
   // ─── Tenants ──────────────────────────────────────────
 
-  async createTenant(dto: CreateTenantDto): Promise<Tenant> {
+  async createTenant(dto: CreateTenantDto, userId?: number): Promise<Tenant> {
     const existing = await this.tenantRepository.findBySlug(dto.slug);
     if (existing) {
       throw new ConflictException('Tenant with this slug already exists');
     }
-    return this.tenantRepository.create({
+    const tenant = await this.tenantRepository.create({
       ...dto,
       isActive: true,
       settings: null,
       contactEmail: dto.contactEmail ?? null,
       contactPhone: dto.contactPhone ?? null,
     });
+
+    // Auto-assign the creating user to the new tenant
+    if (userId && tenant.id) {
+      await this.assignUserToTenant({ tenantId: tenant.id, userId });
+    }
+
+    return tenant;
   }
 
   findAllTenants(): Promise<Tenant[]> {
@@ -64,6 +71,9 @@ export class TenantService {
   // ─── Branches ─────────────────────────────────────────
 
   async createBranch(dto: CreateBranchDto): Promise<Branch> {
+    if (!dto.tenantId) {
+      throw new ConflictException('tenantId is required to create a branch');
+    }
     await this.findOneTenant(dto.tenantId);
     const existing = await this.branchRepository.findByTenantAndCode(
       dto.tenantId,

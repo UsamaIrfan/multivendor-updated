@@ -75,7 +75,32 @@ describe('TenantService', () => {
     };
 
     describe('createTenant', () => {
-      it('should create a tenant', async () => {
+      it('should create a tenant and auto-assign user when userId is provided', async () => {
+        tenantRepo.findBySlug.mockResolvedValue(null);
+        tenantRepo.create.mockResolvedValue(mockTenant);
+        tenantRepo.findById.mockResolvedValue(mockTenant);
+        tenantUserRepo.findByTenantAndUser.mockResolvedValue(null);
+        tenantUserRepo.create.mockResolvedValue({
+          id: 'tu-1',
+          tenantId: mockTenant.id,
+          userId: 42,
+          isActive: true,
+        });
+
+        const result = await service.createTenant(
+          { name: 'Test Tenant', slug: 'test-tenant' },
+          42,
+        );
+        expect(result).toEqual(mockTenant);
+        expect(tenantRepo.create).toHaveBeenCalled();
+        expect(tenantUserRepo.create).toHaveBeenCalledWith({
+          tenantId: mockTenant.id,
+          userId: 42,
+          isActive: true,
+        });
+      });
+
+      it('should create a tenant without auto-assigning when no userId is provided', async () => {
         tenantRepo.findBySlug.mockResolvedValue(null);
         tenantRepo.create.mockResolvedValue(mockTenant);
 
@@ -85,6 +110,7 @@ describe('TenantService', () => {
         });
         expect(result).toEqual(mockTenant);
         expect(tenantRepo.create).toHaveBeenCalled();
+        expect(tenantUserRepo.create).not.toHaveBeenCalled();
       });
 
       it('should throw ConflictException if slug exists', async () => {

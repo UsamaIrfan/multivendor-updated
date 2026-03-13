@@ -6,7 +6,7 @@ export class AdmissionEnquiryMapper {
   static toDomain(entity: AdmissionEnquiryEntity): AdmissionEnquiry {
     const domain = new AdmissionEnquiry();
     domain.id = entity.id;
-    domain.institutionId = entity.institution?.id;
+    domain.institutionId = entity.institution?.id ?? null;
     domain.studentName = entity.studentName;
     domain.guardianName = entity.guardianName;
     domain.phone = entity.phone;
