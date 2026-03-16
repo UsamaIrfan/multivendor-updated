@@ -8,6 +8,16 @@ export class TenantUserMapper {
     domain.tenantId = entity.tenant?.id;
     domain.tenantName = entity.tenant?.name;
     domain.userId = entity.user?.id;
+    domain.userName = entity.user
+      ? [entity.user.firstName, entity.user.lastName]
+          .filter(Boolean)
+          .join(' ') || undefined
+      : undefined;
+    domain.userEmail = entity.user?.email ?? undefined;
+    domain.userRole =
+      entity.user?.role && typeof entity.user.role === 'object'
+        ? entity.user.role.id
+        : undefined;
     domain.isActive = entity.isActive;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;

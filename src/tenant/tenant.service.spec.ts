@@ -283,6 +283,15 @@ describe('TenantService', () => {
       });
     });
 
+    describe('findUsersByTenant', () => {
+      it('should return users for a tenant', async () => {
+        tenantUserRepo.findAllByTenant.mockResolvedValue([mockTenantUser]);
+        const result = await service.findUsersByTenant('uuid-1');
+        expect(result).toEqual([mockTenantUser]);
+        expect(tenantUserRepo.findAllByTenant).toHaveBeenCalledWith('uuid-1');
+      });
+    });
+
     describe('removeUserFromTenant', () => {
       it('should remove a user from a tenant', async () => {
         tenantUserRepo.findByTenantAndUser.mockResolvedValue(mockTenantUser);

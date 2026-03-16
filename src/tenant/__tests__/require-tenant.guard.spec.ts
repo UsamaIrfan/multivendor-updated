@@ -51,10 +51,7 @@ describe('RequireTenantGuard', () => {
   it('should allow when tenant is present in JWT user claim', () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
 
-    const ctx = createMockContext(
-      { id: 1, tenantId: 'some-uuid' },
-      {},
-    );
+    const ctx = createMockContext({ id: 1, tenantId: 'some-uuid' }, {});
     expect(guard.canActivate(ctx)).toBe(true);
   });
 
