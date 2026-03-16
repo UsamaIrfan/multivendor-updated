@@ -3,6 +3,12 @@ import { IsInt, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class QueryStudentEnrollmentDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  page?: number;
+
   @ApiPropertyOptional({ description: 'Filter by section ID' })
   @IsOptional()
   @IsInt()

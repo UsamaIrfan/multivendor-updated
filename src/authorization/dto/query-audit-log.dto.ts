@@ -19,6 +19,12 @@ export class QueryAuditLogDto {
   @IsString()
   resourceType?: string;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  page?: number;
+
   @ApiPropertyOptional({ default: 50 })
   @IsOptional()
   @IsInt()
